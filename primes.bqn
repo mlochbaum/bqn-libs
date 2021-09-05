@@ -38,7 +38,11 @@ Extend ← {
   next E∘(2⊸×⊸⌈)⍟< 𝕩
 }
 
+CheckNum  ← "Argument must be a non-negative number" ! (1=•Type)◶⟨0,0⊸≤⟩
+CheckNat  ← "Argument must be a natural number" ! (1=•Type)◶⟨0,|∘⌊⊸=⟩
+
 PrimesTo ⇐ {
+  CheckNum 𝕩
   Extend 𝕩
   primes (⍋↑⊣) 𝕩
 }
@@ -53,6 +57,8 @@ _getSegment ← {ind _𝕣:
   }
   # IsPrime¨⊸(𝕗◶⊣‿/) start(⊣+↕∘-˜)end
   {𝕊 start‿end:
+    CheckNat¨ 𝕩
+    "Range must be ordered" ! ≤´𝕩
     (wlen ↓ PrimesTo √end-1) (next≤start)◶S‿SN 𝕩
   }
 }
@@ -60,9 +66,9 @@ SieveSegment ⇐ 0 _getSegment  # IsPrime¨   (⊣+↕∘-˜)´
 PrimesIn     ⇐ 1 _getSegment  # IsPrime¨⊸/ (⊣+↕∘-˜)´
 
 Factor ⇐ {
-  !(1=•Type𝕩)∧(𝕩=⌊𝕩)∧0<𝕩
-  ∧ 𝕩 {(0<≠∘⊢)◶⟨⥊⊣,⊢∾𝕊⟩⍟(>⟜1)˜⟜(𝕨÷×´)𝕩/˜0=𝕩|𝕨} PrimesTo ⌈√𝕩
-}
+  CheckNat 𝕩
+  ∧ 𝕩 {(0<≠∘⊢)◶⟨⥊⊣,⊢∾𝕊⟩⍟(>⟜1)˜⟜(𝕨÷×´)𝕩/˜0=𝕩|𝕨} PrimesTo √𝕩
+}⚇0
 
 # Prime factors and exponents
-FactorExponents ⇐ (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣) Factor
+FactorExponents ⇐ (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣) ∘ Factor ⚇0

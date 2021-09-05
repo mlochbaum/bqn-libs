@@ -8,6 +8,7 @@ PrimesTo‿PrimesIn‿SieveSegment‿Factor‿FactorExponents ← p
 ! 0‿18‿20 ≡ /SieveSegment     0‿32+ 5423669
 
 ! 2081‿3709 ≡ Factor 7718429
+! ⟨⟨23⟩,2‿2‿2‿3,5‿5⟩ ≡ Factor 23‿24‿25
 
 ! (2‿3‿5‿7≍4‿2‿1‿1) ≡ FactorExponents ×´1+↕7
 
