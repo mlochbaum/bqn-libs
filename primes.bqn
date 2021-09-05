@@ -1,7 +1,9 @@
 ⟨
   PrimesTo
   PrimesIn, SieveSegment
-  Factor
+  IsPrime
+  Factor, FactorExponents
+  FactorCounts
 ⟩⇐
 
 # Wheel factorization
@@ -41,7 +43,7 @@ Extend ← {
 CheckNum  ← "Argument must be a non-negative number" ! (1=•Type)◶⟨0,0⊸≤⟩
 CheckNat  ← "Argument must be a natural number" ! (1=•Type)◶⟨0,|∘⌊⊸=⟩
 
-PrimesTo ⇐ {
+PrimesTo ← {
   CheckNum 𝕩
   Extend 𝕩
   primes (⍋↑⊣) 𝕩
@@ -62,13 +64,23 @@ _getSegment ← {ind _𝕣:
     (wlen ↓ PrimesTo √end-1) (next≤start)◶S‿SN 𝕩
   }
 }
-SieveSegment ⇐ 0 _getSegment  # IsPrime¨   (⊣+↕∘-˜)´
-PrimesIn     ⇐ 1 _getSegment  # IsPrime¨⊸/ (⊣+↕∘-˜)´
+SieveSegment ← 0 _getSegment  # IsPrime¨   (⊣+↕∘-˜)´
+PrimesIn     ← 1 _getSegment  # IsPrime¨⊸/ (⊣+↕∘-˜)´
 
-Factor ⇐ {
+IsPrime ← {
+  CheckNat 𝕩
+  next⊸≤◶⟨⊑∊⟜primes, ∧´0≠PrimesTo∘√⊸|⟩ 𝕩
+}⚇0
+
+Factor ← {
   CheckNat 𝕩
   ∧ 𝕩 {(0<≠∘⊢)◶⟨⥊⊣,⊢∾𝕊⟩⍟(>⟜1)˜⟜(𝕨÷×´)𝕩/˜0=𝕩|𝕨} PrimesTo √𝕩
 }⚇0
 
 # Prime factors and exponents
-FactorExponents ⇐ (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣) ∘ Factor ⚇0
+FactorExponents ← (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣) ∘ Factor ⚇0
+
+# Numbers of prime factors (with multiplicity) for ↕𝕩
+FactorCounts ← {
+  ¯1⌾⊑ +´ 𝕩{𝕗⥊0(1+⌾⊑⊢⌜)⍟(⌊𝕩⋆⁼𝕗)˜↕𝕩}¨ PrimesTo 𝕩
+}
