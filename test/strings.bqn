@@ -1,4 +1,7 @@
-_join‿Split‿tab‿cr‿lf‿crlf‿JoinLines‿Trim ← •Import "../strings.bqn"
+s ← •Import "../strings.bqn"
+tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ToBytes‿FromBytes ← s
+
+_fails ← {0∘𝔽⎊1}
 
 ! @ ≡ tab-9
 ! @ ≡ lf-10
@@ -17,9 +20,13 @@ _join‿Split‿tab‿cr‿lf‿crlf‿JoinLines‿Trim ← •Import "../string
 ! "" ≡ Trim "  "
 ! "" ≡ Trim ""
 
-"" !∘Split⎊@ "axxaoxxxbx"
+! "" Split _fails "axxaoxxxbx"
 ! "a"‿""‿"ao"‿""‿""‿"b"‿"" ≡ "x" Split "axxaoxxxbx"
 ! "a"‿"ao"‿"xbx" ≡ "xx" Split "axxaoxxxbx"
 ! "axxaoxx"‿"" ≡ "xbx" Split "axxaoxxxbx"
+
+! "latin" ≡ ToBytes "latin"
+! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"
+! FromBytes _fails "(+´÷≢)𝕩"
 
 •Out "All passed!"
