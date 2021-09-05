@@ -17,10 +17,10 @@ MakeWheel ← {
   Sieve ⇐ {pd 𝕊 start‿end:
     w←coprime,wn←numc,wl←len
     bc‿ep ← wl (⌊∘÷˜ ≍○< w⍋|) (𝕩-1)÷⌜pd
-    _u←{⟨⊏𝕩,𝕗+-˜˝𝕩⟩}
-    bs‿br← 1 _u bc
-    fs‿r ← wn _u (1(⊢≍«)∊/br) × br⊸/˘ ep-0‿wn
-    i ← (r/br/pd) × (r/wl×br(/+⊒∘/∘⊣)bs) + w⊏˜(⊒/r)+r/fs
+    U←{⟨r←𝕨+-˜˝𝕩,(⊒/r)+r/⊏𝕩⟩}
+    br‿bk ←  1 U bc
+    fr‿fk ← wn U (1(⊢≍«)∊/br) × br⊸/˘ ep-0‿wn
+    i ← (fr/br/pd) × (fr/wl×bk) + fk⊏w
 
     0¨⌾((i-start)⊸⊏) (end-start)⥊start⌽mask
   }
