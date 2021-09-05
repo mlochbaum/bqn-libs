@@ -1,6 +1,9 @@
-_join‿Split‿lf‿JoinLines‿Trim ← •Import "../strings.bqn"
+_join‿Split‿tab‿cr‿lf‿crlf‿JoinLines‿Trim ← •Import "../strings.bqn"
 
+! @ ≡ tab-9
 ! @ ≡ lf-10
+! @ ≡ cr-13
+! ⟨cr,lf⟩ ≡ crlf
 
 ! ⟨⟩ ≡ JoinLines ⟨⟩
 ! (∾⟜lf∘⊑ ≡ JoinLines) ⟨""⟩
