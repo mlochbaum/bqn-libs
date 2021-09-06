@@ -17,12 +17,22 @@ MakeWheel ← {
   Sieve ⇐ {pd 𝕊 start‿end:
     w←coprime,wn←numc,wl←len
     bc‿ep ← wl (⌊∘÷˜ ≍○< w⍋|) (𝕩-1)÷⌜pd
-    U←{⟨r←𝕨+-˜˝𝕩,(⊒/r)+r/⊏𝕩⟩}
-    br‿bk ←  1 U bc
-    fr‿fk ← wn U (1(⊢≍«)∊/br) × br⊸/˘ ep-0‿wn
-    i ← (fr/br/pd) × (fr/wl×bk) + fk⊏w
 
-    0¨⌾((i-start)⊸⊏) (end-start)⥊start⌽mask
+    # Do first partial wheels together
+    m ← ≠˝bc
+    U←{⟨r←𝕩-𝕨,(⊒/r)+r/𝕨⟩} #{⟨r←𝕩-𝕨,((↕·⊑¯1⊸↑)+r/𝕨-»)+`r⟩}
+    fr‿fk ← U⟜((m×wn)⊸⌈)˝ ep
+    j ← (fr/pd) × (fr/wl×⊏bc) + fk⊏w
+
+    # Then the remainder for each prime spanning multiple wheels
+    Rem ← {p‿s‿e‿o: # prime, start, end, overflow
+      pl←p×wl ⋄ pw←start-˜p×w
+      ⟨⥊(pl×s+↕e-s)+⌜pw, (pl×e)+o↑pw⟩
+    }
+    b ← Rem˘ ⍉>m⊸/¨⟨pd,1+⊏bc,1⊏bc,1⊏ep⟩
+
+    i ← ∾ ⟨j-start⟩∾⥊b
+    0¨⌾(i⊸⊏) (end-start)⥊start⌽mask
   }
 }
 
