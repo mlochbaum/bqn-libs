@@ -1,6 +1,7 @@
 ⟨
   PrimesTo
   PrimesIn, SieveSegment
+  Pi
   IsPrime
   Factor, FactorExponents
   FactorCounts
@@ -77,6 +78,25 @@ _getSegment ← {ind _𝕣:
 }
 SieveSegment ← 0 _getSegment  # IsPrime¨   (⊣+↕∘-˜)´
 PrimesIn     ← 1 _getSegment  # IsPrime¨⊸/ (⊣+↕∘-˜)´
+
+# Number of primes less than 𝕩
+Pi ← ((0=≡) ⊑∘⊢⍟⊣ {𝕩 LargePi∘⊣¨⌾((next<𝕩)⊸/) primes⍋𝕩}⌾⥊)∘⌊⚇1
+LargePi ← {
+  # Meissel-Lehmer algorithm
+  Extend 2×√𝕩  # Need one past √𝕩
+  a‿b‿c ← primes ⍋ 4‿2‿3 √ 𝕩
+
+  ph ← -´ +´¨ 2⌊∘÷˜1+ (↓⥊𝕩) (⊢∾⟜(0⊸<⊸/)¨·⌽⌊∘÷˜)´ 1↓a↑primes  # φ(𝕩,a)
+
+  p ← a↓b↑primes
+  w ← 𝕩 ÷ p
+  v ← w ↑˜ ca←c-a
+  j ← (primes ⍋ √v) - a+↕ca
+  r ← +´Pi w ∾ (j/v)÷(⊒⊸+/j)⊏p
+  is ← (b+a-2) × (b¬a) ÷ 2
+  js ← +´ j × (a+↕≠j)+(j-1)÷2
+  ph + is + js - r
+}
 
 IsPrime ← {
   CheckNat 𝕩

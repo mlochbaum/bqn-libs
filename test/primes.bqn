@@ -1,7 +1,10 @@
 p ← •Import "../primes.bqn"
-PrimesTo‿PrimesIn‿SieveSegment‿IsPrime‿Factor‿FactorExponents‿Totient ← p
+PrimesTo‿PrimesIn‿SieveSegment‿Pi‿IsPrime‿Factor‿FactorExponents‿Totient ← p
 
 ! 2‿3‿5‿7‿11‿13‿17‿19‿23‿29‿31 ≡ PrimesTo 32
+
+! 78498 ≡ Pi 1e6
+! (≠∘PrimesTo¨ ≡ Pi) 4389‿4391
 
 ! (0‿18‿20‿32⊸+ ≡ ·PrimesIn +⟜0‿33) 5423669
 ! (  18‿20   ⊸+ ≡ ·PrimesIn +⟜1‿32) 5423669
