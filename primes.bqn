@@ -4,6 +4,7 @@
   IsPrime
   Factor, FactorExponents
   FactorCounts
+  Totient
 ⟩⇐
 
 # Wheel factorization
@@ -94,3 +95,6 @@ FactorExponents ← (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣) ∘ Factor ⚇0
 FactorCounts ← {
   ¯1⌾⊑ +´ 𝕩{𝕗⥊0(1+⌾⊑⊢⌜)⍟(⌊𝕩⋆⁼𝕗)˜↕𝕩}¨ PrimesTo 𝕩
 }
+
+# Euler's Totient function
+Totient ← (×´ (-⟜1 × ⊣⋆⊢-1˙)˝)∘FactorExponents⚇0

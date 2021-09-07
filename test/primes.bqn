@@ -1,5 +1,5 @@
 p ← •Import "../primes.bqn"
-PrimesTo‿PrimesIn‿SieveSegment‿IsPrime‿Factor‿FactorExponents ← p
+PrimesTo‿PrimesIn‿SieveSegment‿IsPrime‿Factor‿FactorExponents‿Totient ← p
 
 ! 2‿3‿5‿7‿11‿13‿17‿19‿23‿29‿31 ≡ PrimesTo 32
 
@@ -14,5 +14,8 @@ PrimesTo‿PrimesIn‿SieveSegment‿IsPrime‿Factor‿FactorExponents ← p
 ! ⟨⟨23⟩,2‿2‿2‿3,5‿5⟩ ≡ Factor 23‿24‿25
 
 ! (2‿3‿5‿7≍4‿2‿1‿1) ≡ FactorExponents ×´1+↕7
+
+! 1 ≡ Totient 1
+! 16‿6‿18‿8 ≡ Totient 17‿18‿19‿20
 
 •Out "All passed!"
