@@ -1,6 +1,7 @@
 ⟨
   PrimesTo
   PrimesIn, SieveSegment
+  NextPrime, PrevPrime
   Pi
   IsPrime
   Factor, FactorExponents
@@ -65,7 +66,7 @@ _getSegment ← {ind _𝕣:
   PRange ← { primes (⊣⊏˜·(⊣+↕∘-˜)´⍋) 𝕩-1 }
   sn ← {⊑∘⊢+/∘𝕏}⍟𝕗 sieve
   pr ← {-˜´ ↑ ·/⁼𝕏-⊑}⍟(¬𝕗) prange
-  S ← {𝕊 s‿e:
+  S ← {pd 𝕊 s‿e:
     n ← next⌊e
     (PR s‿n) ∾ <´◶⟨⟩‿SN n‿e
   }
@@ -78,6 +79,9 @@ _getSegment ← {ind _𝕣:
 }
 SieveSegment ← 0 _getSegment  # IsPrime¨   (⊣+↕∘-˜)´
 PrimesIn     ← 1 _getSegment  # IsPrime¨⊸/ (⊣+↕∘-˜)´
+
+NextPrime ← {        (0<≠)◶⟨𝕊1⊑R,  ⊑ ⟩ PrimesIn r←  𝕩+1‿65 }⚇0
+PrevPrime ← { !2<𝕩 ⋄ (0<≠)◶⟨𝕊0⊑R,¯1⊑⊢⟩ PrimesIn r←1⌈𝕩-64‿0 }⚇0
 
 # Number of primes less than 𝕩
 Pi ← ((0=≡) ⊑∘⊢⍟⊣ {𝕩 LargePi∘⊣¨⌾((next<𝕩)⊸/) primes⍋𝕩}⌾⥊)∘⌊⚇1
