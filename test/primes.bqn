@@ -1,5 +1,5 @@
 p ← •Import "../primes.bqn"
-PrimesTo‿PrimesIn‿SieveSegment‿NextPrime‿PrevPrime‿Pi‿IsPrime‿Factor‿FactorExponents‿Totient ← p
+PrimesTo‿PrimesIn‿SieveSegment‿NextPrime‿PrevPrime‿IsPrime‿NthPrime‿Pi‿Factor‿FactorExponents‿Totient ← p
 
 ! 2‿3‿5‿7‿11‿13‿17‿19‿23‿29‿31 ≡ PrimesTo 32
 
@@ -16,6 +16,8 @@ PrimesTo‿PrimesIn‿SieveSegment‿NextPrime‿PrevPrime‿Pi‿IsPrime‿Fact
 
 ! IsPrime 37281953
 ! 20 ((SieveSegment 0⊸≍⊸+) ≡ (IsPrime ↕⊸+)) 37281945
+
+! (PrimesIn 8039‿8112) ≡ NthPrime 1010+↕10
 
 ! 2081‿3709 ≡ Factor 7718429
 ! ⟨⟨23⟩,2‿2‿2‿3,5‿5⟩ ≡ Factor 23‿24‿25

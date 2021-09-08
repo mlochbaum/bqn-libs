@@ -2,8 +2,9 @@
   PrimesTo
   PrimesIn, SieveSegment
   NextPrime, PrevPrime
-  Pi
   IsPrime
+  Pi
+  NthPrime
   Factor, FactorExponents
   FactorCounts
   Totient
@@ -83,7 +84,12 @@ PrimesIn     ← 1 _getSegment  # IsPrime¨⊸/ (⊣+↕∘-˜)´
 NextPrime ← {        (0<≠)◶⟨𝕊1⊑R,  ⊑ ⟩ PrimesIn r←  𝕩+1‿65 }⚇0
 PrevPrime ← { !2<𝕩 ⋄ (0<≠)◶⟨𝕊0⊑R,¯1⊑⊢⟩ PrimesIn r←1⌈𝕩-64‿0 }⚇0
 
-# Number of primes less than 𝕩
+IsPrime ← {
+  CheckNat 𝕩
+  next⊸≤◶⟨⊑∊⟜primes, ∧´0≠PrimesTo∘√⊸|⟩ 𝕩
+}⚇0
+
+# Number of primes less than or equal to 𝕩
 Pi ← ((0=≡) ⊑∘⊢⍟⊣ {𝕩 LargePi∘⊣¨⌾((next<𝕩)⊸/) primes⍋𝕩}⌾⥊)∘⌊⚇1
 LargePi ← {
   # Meissel-Lehmer algorithm
@@ -102,10 +108,14 @@ LargePi ← {
   ph + is + js - r
 }
 
-IsPrime ← {
-  CheckNat 𝕩
-  next⊸≤◶⟨⊑∊⟜primes, ∧´0≠PrimesTo∘√⊸|⟩ 𝕩
-}⚇0
+NthPrime ← {primes≠⊸≤◶⟨⊑˜,NP⟩𝕩}⚇0
+NP ← {
+  a ← ⌈ (1-˜⋆⁼⍟2(++-⟜2⊸÷)⋆⁼)⊸× 𝕩  # Approximation
+  d ← 𝕩 - Pi a-1                  # Primes remaining
+  p ← ⋆⁼a                         # Number→distance multiplier
+  e ← 8××d-0.5                    # Go a few primes further
+  a { 𝕩 (≥⟜-∧<)⟜≠◶⟨n𝕊⊣-×⊸×⟜≠,⊑⟩ PrimesIn ∧𝕨≍n←𝕨+⌊p×𝕩+e } d
+}
 
 Factor ← {
   CheckNat 𝕩
