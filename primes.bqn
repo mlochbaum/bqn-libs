@@ -97,10 +97,11 @@ MillerRabin ← { 𝕊 n:
   d ← (n-1) ÷ 2⋆s
 
   # Arithmetic mod n
-  q←2⋆26  # Half a double mantissa
+  q←2⋆27  # Half a double mantissa, rounded up
   Mul ← {a𝕊b:
     ah‿bh←ab-al‿bl←q|ab←a‿b
-    n | (al×bl) + (n|(al×bh)+bl×ah) + n|ah×bh
+    bm←2|bl  # Avoid 27×27 bits
+    ((n×<⟜0)⊸+ -⟜n+⊢)´ n | (a×bm) ∾ ⥊ah‿al×⌜bh‿(bl-bm)
   }
   Pow ← Mul{𝔽´𝔽˜⍟(/2|⌊∘÷⟜2⍟(↕·⌈2⋆⁼⊢)𝕩)𝕨}
 
