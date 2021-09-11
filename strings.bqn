@@ -1,6 +1,7 @@
 ⟨
   _join
   Split, Locate
+  ReplaceAll
   tab,lf,cr,crlf, JoinLines
   Trim
   ToBytes, FromBytes
@@ -39,6 +40,18 @@ Split ← (0<≠∘⊢)◶⟨
   ≍○<⊢
   (1+`⊢)⊸((1-˜×)∾¯1⊏⊣)´∘MarkSplit⍟(0<≠∘⊢) ⊔ ⊢
 ⟩
+
+# Replace each instance of a string in old with the corresponding
+# string in new.
+# Instances are non-overlapping, and earlier ones take precedence.
+ReplaceAll ← { ⟨old,new⟩ 𝕊 str:
+  ! (≠new) ≡ l ← ≠old
+  match ← 1-˜ (l+1)|⌊´ (↕⊸-l) × old Locate¨ <str
+  cont ← (-⟜1⌈≤⟜1×⊢)` match ⊏ (≠¨old)∾0
+  keep ← ≍○<⟜(⊏⟜str) / 0=cont
+  insert ← (new⊏˜⊏⟜match)⊸(≠¨⊸/≍○<∾∘⊣) / (0⊸<∧»⊸≤) cont
+  ⍋⊸⊏´ keep ∾¨ insert
+}
 
 ToBytes ← ∾ (2⋆7)⊸(⊣+(2⋆6){𝕨 ≤◶⟨⥊⊢-2×-⟜𝕗 ⋄ 𝕗(|∾˜(2÷˜⌊⟜𝕨)𝕊⌊∘÷˜)⊢⟩ 𝕩}¨)⌾(-⟜@)
 FromBytes ← (+`2⋆7-↕5){

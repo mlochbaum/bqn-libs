@@ -1,5 +1,5 @@
 s ← •Import "../strings.bqn"
-tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ToBytes‿FromBytes ← s
+tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ReplaceAll‿ToBytes‿FromBytes ← s
 
 _fails ← {0∘𝔽⎊1}
 
@@ -24,6 +24,11 @@ _fails ← {0∘𝔽⎊1}
 ! "a"‿""‿"ao"‿""‿""‿"b"‿"" ≡ "x" Split "axxaoxxxbx"
 ! "a"‿"ao"‿"xbx" ≡ "xx" Split "axxaoxxxbx"
 ! "axxaoxx"‿"" ≡ "xbx" Split "axxaoxxxbx"
+
+! ⟨'a'⟩‿⟨"x"⟩ (ReplaceAll ≡ {'x'¨⌾(('a'=𝕩)⊸/)𝕩}) "abaababaaaba"
+! "yxbyxzcz" ≡ ⟨"aa","ab",'a'⟩‿(⥊¨"xyz") ReplaceAll "abaababaaaca"
+! (10⥊"a") ≡ ⟨"aaa"⟩‿⟨"aaaa"⟩ ReplaceAll 8⥊"a"
+! "end is start" ≡ (≍○<⟜⌽ "start"‿"end") ReplaceAll "start is end"
 
 ! "latin" ≡ ToBytes "latin"
 ! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"
