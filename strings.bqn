@@ -2,6 +2,7 @@
   _join
   Split, Locate
   ReplaceAll
+  _template
   tab,lf,cr,crlf, JoinLines
   Trim
   ToBytes, FromBytes
@@ -52,6 +53,9 @@ ReplaceAll ← { ⟨old,new⟩ 𝕊 str:
   insert ← (new⊏˜⊏⟜match)⊸(≠¨⊸/≍○<∾∘⊣) / (0⊸<∧»⊸≤) cont
   ⍋⊸⊏´ keep ∾¨ insert
 }
+
+# Replace instances of 𝕗 in 𝕨 with successive elements of 𝕩
+_template ← { ∾ 1 (↑∾·⥊𝕩≍˘↓) 𝕗 Split 𝕨 }
 
 ToBytes ← ∾ (2⋆7)⊸(⊣+(2⋆6){𝕨 ≤◶⟨⥊⊢-2×-⟜𝕗 ⋄ 𝕗(|∾˜(2÷˜⌊⟜𝕨)𝕊⌊∘÷˜)⊢⟩ 𝕩}¨)⌾(-⟜@)
 FromBytes ← (+`2⋆7-↕5){
