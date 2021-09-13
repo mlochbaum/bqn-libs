@@ -1,4 +1,4 @@
-# Arithmetic on large integers.
+# Arithmetic on large natural numbers.
 
 base ← ⊑ •args ∾ 2⋆24  # Less than half 2⋆53
 
