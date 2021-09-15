@@ -19,6 +19,7 @@ PrimesTo‿PrimesIn‿SieveSegment‿NextPrime‿PrevPrime‿IsPrime‿NthPrime�
 
 ! (PrimesIn 8039‿8112) ≡ NthPrime 1010+↕10
 
+! (⥊ ≡ Factor) 2261093
 ! 2081‿3709 ≡ Factor 7718429
 ! ⟨⟨23⟩,2‿2‿2‿3,5‿5⟩ ≡ Factor 23‿24‿25
 

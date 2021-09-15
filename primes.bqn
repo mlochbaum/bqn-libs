@@ -153,8 +153,11 @@ NP ← {
 }
 
 # Prime factors and exponents
-FactorExponents ← { 𝕊n:
-  CheckNat n ⋄ !1≤n
+FactorExponents ← {
+  CheckNat 𝕩
+  2⊸⌊◶⟨!∘"Can't factor 0", 2‿0⊸⥊, IsPrime◶⟨FactorTrial, ≍˘≍⟜1⟩⟩ 𝕩
+}⚇0
+FactorTrial ← { 𝕊n:
   Extend s ← √n
   r ← 0‿2⥊0
   Try ← {𝕊p: # Add exponents of p to result; return 0 if done
@@ -169,7 +172,7 @@ FactorExponents ← { 𝕊n:
   _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
   1⊸+_while_(Try ⊑⟜primes) 0
   ⍉ r ∾ (1<n)/≍n‿1
-}⚇0
+}
 
 # Prime factors with repetition
 Factor ← /˜˝∘FactorExponents⚇0
