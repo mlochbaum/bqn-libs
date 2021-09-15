@@ -152,13 +152,27 @@ NP ← {
   a { 𝕩 (≥⟜-∧<)⟜≠◶⟨n𝕊⊣-×⊸×⟜≠,⊑⟩ PrimesIn ∧𝕨≍n←𝕨+⌊p×𝕩+e } d
 }
 
-Factor ← {
-  CheckNat 𝕩
-  ∧ 𝕩 {(0<≠∘⊢)◶⟨⥊⊣,⊢∾𝕊⟩⍟(>⟜1)˜⟜(𝕨÷×´)𝕩/˜0=𝕩|𝕨} PrimesTo √𝕩
+# Prime factors and exponents
+FactorExponents ← { 𝕊n:
+  CheckNat n ⋄ !1≤n
+  Extend s ← √n
+  r ← 0‿2⥊0
+  Try ← {𝕊p: # Add exponents of p to result; return 0 if done
+    D←0=p|⊢
+    {𝕤
+      e ← 0
+      s ↩ √n ↩ {e+↩1⋄𝕊⍟D𝕩÷p} n
+      r∾↩ p‿e
+      p≤s  # Avoid trying a prime one past the end
+    }⍟(D∘n)⍟⊢ p≤s
+  }
+  _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
+  1⊸+_while_(Try ⊑⟜primes) 0
+  ⍉ r ∾ (1<n)/≍n‿1
 }⚇0
 
-# Prime factors and exponents
-FactorExponents ← (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣) ∘ Factor ⚇0
+# Prime factors with repetition
+Factor ← /˜˝∘FactorExponents⚇0
 
 # Numbers of prime factors (with multiplicity) for ↕𝕩
 FactorCounts ← {
