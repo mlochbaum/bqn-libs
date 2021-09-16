@@ -158,19 +158,17 @@ FactorExponents ← {
   2⊸⌊◶⟨!∘"Can't factor 0", 2‿0⊸⥊, IsPrime◶⟨FactorTrial, ≍˘≍⟜1⟩⟩ 𝕩
 }⚇0
 FactorTrial ← { 𝕊n:
-  Extend s ← √n
-  r ← 0‿2⥊0
-  Try ← {𝕊p: # Add exponents of p to result; return 0 if done
+  r ← 0‿2⥊0  # Transposed result
+  Div ← {𝕊p: # Add exponents of p to result
     D←0=p|⊢
-    {𝕤
-      e ← 0
-      s ↩ √n ↩ {e+↩1⋄𝕊⍟D𝕩÷p} n
-      r∾↩ p‿e
-      p≤s  # Avoid trying a prime one past the end
-    }⍟(D∘n)⍟⊢ p≤s
+    e←0 ⋄ n↩{e+↩1⋄𝕊⍟D𝕩÷p}n
+    r∾↩p‿e
   }
-  _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
-  1⊸+_while_(Try ⊑⟜primes) 0
+  Try ← {
+    Div¨ (0=|⟜n)⊸/ PrimesIn 𝕨‿𝕩
+    𝕩 Try (1+⌊√n)⌊2×𝕩
+  }⍟<
+  2 Try (1+⌊√n)⌊64
   ⍉ r ∾ (1<n)/≍n‿1
 }
 
