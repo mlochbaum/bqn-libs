@@ -32,6 +32,9 @@ qr ← {
     uTri.Verify r
     ! ∧´ ⥊ 5e¯14≥| (=⌜´↕¨∘≢)⊸- H⊸MP q
   }
+  Inverse ⇐ uTri.Inverse⊸MP⟜H˜´
+
+  # Recursive Gram-Schmidt
   Decompose ⇐ { QR a:
     !2==a ⋄ !≥´≢a
     n←⊢´≢a
@@ -46,8 +49,26 @@ qr ← {
       ⟨q0∾˘q1 , (r0∾˘t)∾(-n)↑˘r1⟩
     }@
   }
-  Inverse ⇐ uTri.Inverse⊸MP⟜H˜´
+
+  # QR decomposition using Householder reflections.
+  DecomposeHH ⇐ { 𝕊 a:
+    m‿n←≢a
+    q←=⌜˜↕m
+    Step ← {𝕊k:
+      i←k+↕m-k ⋄ _col←{⟨i,<𝕗⟩⊸⊏}
+      Norm←+˝∘|⌾(×˜)
+      nz←Norm z←k _col a
+      nv←Norm v←-(nz××)⊸+⌾⊏z
+      v÷↩nv
+      HH ← {-⟜(v × 2 × (+v) +´∘× ⊢)⌾(𝕨_col) 𝕩}´⟜⌽⍟(nv≥2⋆¯52)
+      a HH↩ ↕n
+      q HH↩ ↕m
+    }
+    Step¨ ↕n
+    ⟨H q, a×m≤⌜○↕n⟩
+  }
 }
 
 # Default matrix inverse
-Inverse ⇐ qr.Inverse qr.Decompose
+Inverse ← qr.Inverse qr.Decompose
+
