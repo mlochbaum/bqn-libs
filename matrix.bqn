@@ -2,6 +2,7 @@
   MP, H
   uTri, qr
   Inverse
+  Solve
 ⟩⇐
 
 MP ← +˝∘×⎉1‿∞  # matrix product
@@ -21,6 +22,16 @@ uTri ← {
     z ← 0 ⥊˜ ⟨l-m,m⟩
     ∾ ai‿x ≍ z‿di
   }
+  Solve ⇐ { u 𝕊 b:
+    ! u=○≠b
+    >{
+      i←1-˜≠b
+      bp‿bi←i(↑≍○<⊏)b
+      lp‿li←i(↑≍○<⊏)𝕩
+      b↩bp-lp×⌜new←bi÷li
+      new
+    }¨⌾⌽ <˘⍉u
+  }
 }
 
 # QR decomposition
@@ -33,6 +44,7 @@ qr ← {
     ! ∧´ ⥊ 5e¯14≥| (=⌜´↕¨∘≢)⊸- H⊸MP q
   }
   Inverse ⇐ uTri.Inverse⊸MP⟜H˜´
+  Solve ⇐ { q‿r 𝕊 b: r uTri.Solve (H q) MP b }
 
   # Recursive Gram-Schmidt
   Decompose ⇐ { QR a:
@@ -69,6 +81,6 @@ qr ← {
   }
 }
 
-# Default matrix inverse
+# Default matrix inverse and solve
 Inverse ← qr.Inverse qr.Decompose
-
+Solve ← qr.Decompose ⊸ qr.Solve
