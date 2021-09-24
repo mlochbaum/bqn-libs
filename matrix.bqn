@@ -1,6 +1,6 @@
 ⟨
   MP, H
-  uTri, qr
+  uTri, qr, lup
   Inverse
   Solve
 ⟩⇐
@@ -26,11 +26,49 @@ uTri ← {
     ! u=○≠b
     >{
       i←1-˜≠b
-      bp‿bi←i(↑≍○<⊏)b
-      lp‿li←i(↑≍○<⊏)𝕩
-      b↩bp-lp×⌜new←bi÷li
+      new←b÷○(i⊸⊏)𝕩
+      b↩b-⟜(×⌜⟜new)○(i⊸↑)𝕩
       new
     }¨⌾⌽ <˘⍉u
+  }
+}
+lTri ← {
+  Verify ⇐ uTri.Verify ⍉
+  Inverse ⇐ uTri.Inverse⌾⍉
+}
+
+lup ← {
+  Compose ⇐ { 𝕊 p‿l‿u: p⊸⊏˘ l MP u }
+  Verify ⇐ { 𝕊 p‿l‿u:
+    ! ≤´ m‿n ← ≢u
+    ! n‿n ≡ ≢l
+    ! (∧p) ≡ ↕n
+    uTri.Verify u
+    lTri.Verify l
+    ! ∧´ 1 = 0‿0⍉l
+  }
+  Inverse ⇐ { 𝕊 p‿l‿u: (⍋p) ⊏ (uTri.Inverse u) MP lTri.Inverse l }
+  Solve ⇐ { p‿l‿u 𝕊 𝕩: (⍋p) ⊏ u uTri.Solve l lTri.Solve 𝕩 }
+
+  # Recursive method
+  Decompose ⇐ LU ← (2⌊≠)◶{
+    ⟨↕¯1⊑≢𝕩 , 0‿0⥊0 , 𝕩⟩
+  }‿{
+    p ← (+´∧`0=v) {⌽⌾(0‿𝕨⊸⊏)𝕩}⍟(0<⊣) ↕≠v←⥊𝕩
+    ⟨p , ≍≍1 , ≍p⊏v⟩
+  }‿{ 𝕊a:
+    m‿n ← ≢a
+    m2 ← ⌈m÷2
+    a1‿a2 ← m2(↑≍○<↓)a
+    p1‿l1‿u1 ← LU a1
+    g1 ← ⍋p1
+    fe1← ((m2↑g1)⊸⊏˘ a2) MP uTri.Inverse m2 ↑˘ u1
+    g  ← ((m2↓g1)⊸⊏˘ a2) -        fe1 MP m2 ↓˘ u1
+    p2‿l2‿u2 ← LU g
+    p3 ← m2(↕∘⊣∾+)p2
+    h  ← (⍋p3)⊸⊏˘ u1
+    z  ← m2‿(m-m2)⥊0
+    ⟨ p1⊏p3 , ∾l1‿z≍fe1‿l2 , h∾(-n)↑˘u2 ⟩
   }
 }
 
