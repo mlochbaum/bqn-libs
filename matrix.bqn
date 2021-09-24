@@ -89,24 +89,24 @@ qr ← {
     !2==a ⋄ !≥´≢a
     n←⊢´≢a
     (1<n)◶{
-      a (÷⟜⊑ ≍○< ⊢) √ H⊸MP a
+      𝕩 (÷⟜⊑ ≍○< ⊢) √ H⊸MP 𝕩
     }‿{𝕤
       m ←⌈n÷2
-      a0←m↑˘a
-      a1←m↓˘a
+      a0←m↑˘𝕩
+      a1←m↓˘𝕩
       q0‿r0←QR a0
       q1‿r1←QR a1 - q0 MP t ← q0 H⊸MP a1
       ⟨q0∾˘q1 , (r0∾˘t)∾(-n)↑˘r1⟩
-    }@
+    }a
   }
 
-  # QR decomposition using Householder reflections.
+  # Householder reflections: slower; more stable
   DecomposeHH ⇐ { 𝕊 a:
     m‿n←≢a
     q←=⌜˜↕m
     Step ← {𝕊k:
       i←k+↕m-k ⋄ _col←{⟨i,<𝕗⟩⊸⊏}
-      Norm←+˝∘|⌾(×˜)
+      Norm←+´∘|⌾(×˜)
       nz←Norm z←k _col a
       nv←Norm v←-(nz××)⊸+⌾⊏z
       v÷↩nv
