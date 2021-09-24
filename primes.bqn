@@ -146,10 +146,10 @@ LargePi ← {
 
 NthPrime ← {primes≠⊸≤◶⟨⊑˜,NP⟩𝕩}⚇0
 NP ← {
-  a ← ⌈ (1-˜⋆⁼⍟2(++-⟜2⊸÷)⋆⁼)⊸× 𝕩  # Approximation
-  d ← 𝕩 - Pi a-1                  # Primes remaining
-  p ← ⋆⁼a                         # Number→distance multiplier
-  e ← 8××d-0.5                    # Go a few primes further
+  a ← 2⌈⌈ (1-˜⋆⁼⍟2(++-⟜2⊸÷)⋆⁼)⊸× 𝕩 # Approximation
+  d ← 𝕩 - Pi a-1                   # Primes remaining
+  p ← ⋆⁼a                          # Number→distance multiplier
+  e ← 8××d-0.5                     # Go a few primes further
   a { 𝕩 (≥⟜-∧<)⟜≠◶⟨n𝕊⊣-×⊸×⟜≠,⊑⟩ PrimesIn ∧𝕨≍n←𝕨+⌊p×𝕩+e } d
 }
 
