@@ -105,7 +105,7 @@ qr ← {
     m‿n←≢a
     q←=⌜˜↕m
     Step ← {𝕊k:
-      i←k+↕m-k ⋄ _col←{⟨i,<𝕗⟩⊸⊏}
+      i←k+↕m-k ⋄ ni←n×i ⋄ _col←{(𝕗+ni)⊏⥊} #{⟨i,<𝕗⟩⊸⊏}
       Norm←+´∘|⌾(×˜)
       nz←Norm z←k _col a
       nv←Norm v←-(nz××)⊸+⌾⊏z
