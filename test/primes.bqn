@@ -15,12 +15,12 @@ PrimesTo‿PrimesIn‿SieveSegment‿NextPrime‿PrevPrime‿IsPrime‿NthPrime�
 ! 11‿13 ≡ (PrevPrime ≍ NextPrime) 12
 
 ! IsPrime 37281953
+! (PrimesTo ≡ /∘IsPrime∘↕) 10
 ! 20 ((SieveSegment 0⊸≍⊸+) ≡ (IsPrime ↕⊸+)) 37281945
 
 ! (PrimesIn 8039‿8112) ≡ NthPrime 1010+↕10
 
-IsPrime 257
-! (⥊¨ ≡ Factor) 257‿2261093
+! (⥊¨ ≡ Factor) 5‿257‿2261093
 ! 2081‿3709 ≡ Factor 7718429
 ! ⟨⟨23⟩,2‿2‿2‿3,5‿5⟩ ≡ Factor 23‿24‿25
 
