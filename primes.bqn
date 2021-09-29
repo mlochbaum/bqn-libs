@@ -91,18 +91,21 @@ IsPrime ← {
   (∨´c)◶⟨(×˜¯1⊑p)⊸<◶⟨1⊸≠,MillerRabin⟩, c⊑∘/⟜p⊸=⊢ ⟩ 𝕩
 }⚇0
 
+_modMul ← { n _𝕣:
+  q←2⋆27  # Half a double mantissa, rounded up
+  {a𝕊b:
+    ah‿bh←ab-al‿bl←q|ab←a‿b
+    bm←2|bl  # Avoid 27×27 bits
+    ((n×<⟜0)⊸+ -⟜n+⊢)´ n | (a×bm) ∾ ⥊ah‿al×⌜bh‿(bl-bm)
+  }
+}
 MillerRabin ← { 𝕊 n:
   # n = 1 + d×2⋆s
   s ← 0 {𝕨 2⊸|◶⟨+⟜1𝕊2⌊∘÷˜⊢,⊣⟩ 𝕩} n-1
   d ← (n-1) ÷ 2⋆s
 
   # Arithmetic mod n
-  q←2⋆27  # Half a double mantissa, rounded up
-  Mul ← {a𝕊b:
-    ah‿bh←ab-al‿bl←q|ab←a‿b
-    bm←2|bl  # Avoid 27×27 bits
-    ((n×<⟜0)⊸+ -⟜n+⊢)´ n | (a×bm) ∾ ⥊ah‿al×⌜bh‿(bl-bm)
-  }
+  Mul ← n _modMul
   Pow ← (1<⊢)◶⟨⋆,Mul{𝔽´𝔽˜⍟(/2|⌊∘÷⟜2⍟(↕·⌈2⋆⁼⊢)𝕩)𝕨}⟩
 
   # Miller-Rabin test
@@ -166,11 +169,52 @@ FactorTrial ← { 𝕊n:
     r∾↩p‿e
   }
   Try ← {
+    𝕩 ⌊↩ 1+⌊√n
+    𝕨<𝕩 ?
     Div¨ (0=|⟜n)⊸/ PrimesIn 𝕨‿𝕩
-    𝕩 Try (1+⌊√n)⌊2×𝕩
-  }⍟<
-  2 Try (1+⌊√n)⌊64
+    {r∾↩⍉PollardFactors n⋄n↩1⋄𝕩}⍟¬ 𝕩<pollardThreshold ?
+    𝕩 𝕊 2×𝕩
+  ;@}
+  2 Try 64
   ⍉ r ∾ (1<n)/≍n‿1
+}
+
+# Pollard's rho algorithm
+# https://maths-people.anu.edu.au/~brent/pub/pub051.html
+pollardThreshold ← 2⋆16
+_while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
+GCD ← {𝕨(|𝕊⍟(>⟜0)⊣)𝕩}
+# Return a divisor of n other than 1. Can be n if the algorithm fails.
+# c should be in ↕n but not 0 or n-2.
+PollardRho ← { c 𝕊 n:
+  x←ys←y ← 2
+  q ← 1
+  Mul ← n _modMul
+  Adv ← {n-˜⍟≤c+Mul˜𝕩}
+  NextY ← {𝕤⋄ |x-(y Adv↩)}
+  g ← { 𝕊 r:
+    x ↩ y
+    y Adv⍟r↩
+    k ← 0
+    m ← 100  # Check GCD to see if we can stop every m iterations
+    FindG ← {𝕤
+      k0 ← k
+      k ↩ r ⌊ k+m
+      ys ↩ y
+      q Mul⟜NextY⍟(k-k0)↩
+      n GCD q
+    } _while_ {k<r? 1=𝕩; 0}
+    𝕊∘(r×2)⍟(1⊸=) FindG 1
+  } 1
+  y ↩ ys  # Backtrack if n=g
+  (n GCD NextY)_while_(1⊸=)∘1⍟(n⊸=) g
+}
+Exps ← (/≠⟜«)⊸(⊏ ≍ -⟜(¯1⊸»)∘⊣)∘∧  # Exponents from list of factors
+PollardFactors ← Exps ∘ { 𝕊 n:
+  pollardThreshold<n ? ¬IsPrime n ?
+  g←n ⋄ 1⊸+ _while_ {n=g↩𝕩 PollardRho n} 1
+  g ∾○𝕊 n÷g
+; ≍𝕩
 }
 
 # Prime factors with repetition

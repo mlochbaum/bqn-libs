@@ -25,6 +25,7 @@ PrimesTo‿PrimesIn‿SieveSegment‿NextPrime‿PrevPrime‿IsPrime‿NthPrime�
 ! ⟨⟨23⟩,2‿2‿2‿3,5‿5⟩ ≡ Factor 23‿24‿25
 
 ! (2‿3‿5‿7≍4‿2‿1‿1) ≡ FactorExponents ×´1+↕7
+! ∧´ (≍⟜(1¨) ≡ FactorExponents∘(×´))¨ ⟨37951‿113171,3793‿1132333,(2⋆17‿31)-1⟩
 
 ! 1 ≡ Totient 1
 ! 16‿6‿18‿8 ≡ Totient 17‿18‿19‿20
