@@ -1,5 +1,6 @@
 ⟨
   Min1
+  _powell
 ⟩⇐
 
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
@@ -62,9 +63,59 @@ Min1 ← { tol 𝕊 f:
 # linear minimizer in multidimensions
 # y is (initial value ≍ direction vector);(tolerance)
 # returns (lowest point);(function value)
-_linmin ← { 𝔽_𝕣 pts‿tol:
-  start‿dir ← <˘pts
+_linmin ← { 𝔽_𝕣 start‿dir‿tol:
   Trans ← start + dir⊸×
   Fn ← 𝔽∘Trans⚇0
   Trans⌾⊑ tol Min1 fn
+}
+
+
+#⌜
+# (Enhanced) Powell's direction-set method
+
+# Works with a set of directions, one for each dimension
+# Idea is to optimize in all directions in order, then possibly add the
+# total distance travelled as a new direction
+
+Powell_sub ← { Fn‿Min‿p‿tol‿max_iter:
+  fp ← Fn p     # Current function value
+  pt ← p        # Baseline to find new directions
+  dp ← <⊸= ↕≠p  # Initialize direction set with basis vectors
+
+  iter ← 0
+  ⊢_while_ {𝕤
+    max_iter > iter+↩1 ?
+    fi ← fp
+
+    # Minimize in each direction successively, and record change in f
+    df ← { f0←fp ⋄ p‿fp↩Min p‿𝕩 ⋄ f0-fp }¨ dp
+
+    # Relative tolerance
+    (2×|fi-fp) > tol × fi +○| fp ?
+
+    dt ← p - pt
+    fe ← Fn pe ← p + dt  # Extrapolate
+    pt ↩ p               # Starting point for next dt
+
+    # Now fi → fp → fe are successive values separated by dt
+    # Consider adding dt to the direction set
+    # Replace the direction of largest increase to maintain independence
+    { fe < fi ?
+      mdf ← ⌈´df          # Largest decrease
+      d2f ← fi+fe - 2×fp  # Approximate second derivative wrt dt
+      (2×d2f × ×˜ (fp+mdf)-fi) < mdf × ×˜ fe-fi ?
+      p‿fp ↩ Min p‿dt
+      dp dt⌾((⊑df⊐mdf)⊸⊑)↩
+    ;@}
+    1;0
+  }@
+
+  p‿fp
+}
+
+_powell ← {
+  tol ← 𝕨⊣1e¯10
+  step ← ÷4
+  ltol ← 1e¯4
+  Powell_sub ⟨𝔽, 𝔽 _linmin {p‿d:𝕩⋄⟨p,step×d,ltol⟩}, 𝕩, tol, 50⟩
 }
