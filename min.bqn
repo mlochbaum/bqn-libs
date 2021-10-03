@@ -1,10 +1,50 @@
 ⟨
   Min1
   _powell
+  _nelderMead
 ⟩⇐
 
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 
+#⌜
+# Nelder and Mead's downhill simplex method
+NelderMead_sub ← { Fn‿excessvol‿pts:
+  beta_vol ← 2⋆⁼|betas ← ¯0.5‿1‿2
+
+  fp ← Fn¨ pts
+  fp‿pts (⍋fp)⊸⊏¨↩ 
+
+  # Perform one step and return log base 2 of change in volume
+  Loop ← {𝕤
+    centroid ← (+˝÷≠) ¯1↓pts
+    # Points to try: linear combinations of the centroid and worst
+    try ← centroid (⊣ + betas×-) ¯1⊏pts
+    min ← ⌊˝ ft ← Fn¨ try
+    p ← ⊑ fp ⍋ min            # Place relative to existing points
+    p < ≠fp ?
+      # New point improves on at least one other
+      i ← ⊑ ft ⊐ min
+      pts‿fp {p (↑∾𝕩»↓) 𝕨}¨↩ ⟨i⊏try,min⟩
+      i ⊑ beta_vol            # Volume changes proportional to beta
+    ;
+      # New point is still the worst
+      fp ↩ Fn¨ pts (2÷˜+)⟜⊏↩  # Contract towards best point
+      fp‿pts (⍋fp)⊸⊏¨↩        # Reorder
+      1-≠pts                  # Volume shrinks by half in each dimension
+  }
+
+  # Keep going until volume decreases enough
+  Loop⊸+ _while_ (0⊸<) excessvol
+  ⟨⊑pts, ⊑fp⟩
+}
+
+_nelderMead ← {
+  simplex ← ⟨𝕩⟩∾𝕩⊸+¨<⊸=↕≠𝕩
+  NelderMead_sub ⟨𝔽, (-2⋆⁼𝕨)⊣30, simplex⟩
+}
+
+
+#⌜
 # 1-dimensional minimization, beginning at interval ¯1‿1
 # Return ⟨argument, value⟩ for a local minimum
 Min1 ← { tol 𝕊 f:
