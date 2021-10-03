@@ -55,7 +55,7 @@ Min1 ← { tol 𝕊 f:
   # Find initial minimum range, with steps increasing by factors of phi
   Init ← ∾{
     v ← (⊢ + phi × -˜)´ ¯2↑𝕨
-    (v𝔽𝕨) (<´1↓⊢)◶⟨«_𝕣,≍˘⟩ (F v)𝔽𝕩
+    (v𝔽𝕨) (≤´1↓⊢)◶⟨«_𝕣,≍˘⟩ (F v)𝔽𝕩
   }
   val ← ∧ {𝕨 Init○((⍒𝕩)⊸⊏) 𝕩}⟜F ¯1‿1
 
