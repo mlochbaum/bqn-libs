@@ -91,13 +91,13 @@ IsPrime ← {
   (∨´c)◶⟨(×˜¯1⊑p)⊸<◶⟨1⊸≠,MillerRabin⟩, c⊑∘/⟜p⊸=⊢ ⟩ 𝕩
 }⚇0
 
+# Compute n|𝕨×𝕩 in high precision
 _modMul ← { n _𝕣:
-  q←2⋆27  # Half a double mantissa, rounded up
-  {a𝕊b:
-    ah‿bh←ab-al‿bl←q|ab←a‿b
-    bm←2|bl  # Avoid 27×27 bits
-    ((n×<⟜0)⊸+ -⟜n+⊢)´ n | (a×bm) ∾ ⥊ah‿al×⌜bh‿(bl-bm)
-  }
+  # Split each argument into two 26-bit numbers, with the remaining
+  # mantissa bit encoded in the sign of the lower-order part.
+  q←1+2⋆27
+  Split ← { h←(q×𝕩)(⊣--)𝕩 ⋄ ⟨h,𝕩-h⟩ }
+  ((n×<⟜0)⊸+ -⟜n+⊢)´∘⥊ n | ×⌜○Split
 }
 MillerRabin ← { 𝕊 n:
   # n = 1 + d×2⋆s
