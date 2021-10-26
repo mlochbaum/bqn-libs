@@ -13,6 +13,7 @@ LUTri ← {𝕊 l:
     ! 2==𝕩
     ! ∧´⥊ (𝕩=0) ≥ 𝔽⌜´↕¨≢𝕩
   }
+  # Inverse by recursive blocking
   P ← (c←l⊑⟨≍,≍˜⟩)○<
   Inverse ⇐ (1<≠)◶÷‿{
     l ← ≠𝕩
@@ -23,20 +24,18 @@ LUTri ← {𝕊 l:
     z ← 0 ⥊˜ (l-m) P m
     ∾ (ai P x) C (z P di)
   }
-}
-uTri ← {
-  Verify‿Inverse ⇐ LUTri 0
-  Solve ⇐ { u 𝕊 b:
-    ! u=○≠b
+  # Forward or backward substitution
+  s←¯1⋆¬l ⋄ j←l-1 ⋄ rev ← l⊑{𝔽⌾⌽}‿{𝔽}
+  Solve ⇐ { t 𝕊 b:
+    ! t=○≠b
     >{
-      i←1-˜≠b
-      new←b÷○(i⊸⊏)𝕩
-      b↩b-⟜(×⌜⟜new)○(i⊸↑)𝕩
+      new←b÷○(j⊸⊏)𝕩
+      b↩b-⟜(×⌜⟜new)○(s⊸↓)𝕩
       new
-    }¨⌾⌽ <˘⍉u
+    }¨∘((s×↕∘≠)↓¨⊢)_rev <˘⍉t
   }
 }
-lTri ← LUTri 1
+uTri‿lTri ←  LUTri¨ ↕2
 
 lup ← {
   Compose ⇐ { 𝕊 p‿l‿u: p⊸⊏˘ l MP u }
