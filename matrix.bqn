@@ -8,20 +8,24 @@
 MP ← +˝∘×⎉1‿∞  # matrix product
 H  ← +⍉        # conjugate transpose
 
-uTri ← {
-  Verify ⇐ {
+LUTri ← {𝕊 l:
+  Verify ⇐ (l⊑>‿<){
     ! 2==𝕩
-    ! ∧´⥊ (𝕩=0) ≥ >⌜´↕¨≢𝕩
+    ! ∧´⥊ (𝕩=0) ≥ 𝔽⌜´↕¨≢𝕩
   }
+  P ← (c←l⊑⟨≍,≍˜⟩)○<
   Inverse ⇐ (1<≠)◶÷‿{
     l ← ≠𝕩
     m ← ⌈l÷2
-    ai‿di ← Inverse¨ m‿m(↑≍○<↓)𝕩
-    b ← ⟨m,m-l⟩↑𝕩
+    ai‿di ← Inverse¨ m‿m(↑P↓)𝕩
+    b ← (m P m-l)↑𝕩
     x ← - ai MP b MP di
-    z ← 0 ⥊˜ ⟨l-m,m⟩
-    ∾ ai‿x ≍ z‿di
+    z ← 0 ⥊˜ (l-m) P m
+    ∾ (ai P x) C (z P di)
   }
+}
+uTri ← {
+  Verify‿Inverse ⇐ LUTri 0
   Solve ⇐ { u 𝕊 b:
     ! u=○≠b
     >{
@@ -32,10 +36,7 @@ uTri ← {
     }¨⌾⌽ <˘⍉u
   }
 }
-lTri ← {
-  Verify ⇐ uTri.Verify ⍉
-  Inverse ⇐ uTri.Inverse⌾⍉
-}
+lTri ← LUTri 1
 
 lup ← {
   Compose ⇐ { 𝕊 p‿l‿u: p⊸⊏˘ l MP u }
