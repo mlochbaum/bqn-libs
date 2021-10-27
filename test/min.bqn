@@ -13,12 +13,13 @@ Rosenbrock ← 1‿100 { a‿b _𝕣:
   {x‿y: (×˜a-x) + b××˜(y-×˜x)}
 }
 CheckMin ← { tol 𝕊 opt:
-  start ← ≍˜¯1.9
-  {
-    res ← 𝕏 _opt start
+  C ← {
+    res ← 𝕏 _opt 𝕨
     ! 𝕏⊸≡´ res
     ! tol > 1⊑res
-  }¨ ⟨sphere,booth,matyas,rosenbrock⟩
+  }
+  (2⥊¯1.9)⊸C¨ ⟨sphere,booth,matyas,rosenbrock⟩
+  (7⥊4) C sphere
 }
 
 1e¯20 CheckMin powell

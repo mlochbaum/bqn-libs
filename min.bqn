@@ -40,7 +40,7 @@ NelderMead_sub ← { Fn‿excessvol‿pts:
 
 _nelderMead ← {
   simplex ← ⟨𝕩⟩∾𝕩⊸+¨<⊸=↕≠𝕩
-  NelderMead_sub ⟨𝔽, (-2⋆⁼𝕨)⊣30, simplex⟩
+  NelderMead_sub ⟨𝔽, (≠𝕩)×(-2⋆⁼𝕨)⊣15, simplex⟩
 }
 
 
@@ -157,5 +157,5 @@ _powell ← {
   tol ← 𝕨⊣1e¯10
   step ← ÷4
   ltol ← 1e¯4
-  Powell_sub ⟨𝔽, 𝔽 _linmin {p‿d:𝕩⋄⟨p,step×d,ltol⟩}, 𝕩, tol, 50⟩
+  Powell_sub ⟨𝔽, 𝔽 _linmin {p‿d:𝕩⋄⟨p,step×d,ltol⟩}, 𝕩, tol, 50×≠𝕩⟩
 }
