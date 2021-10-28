@@ -1,6 +1,6 @@
 ⟨
   MP, H
-  uTri, qr, lup
+  lTri, uTri, qr, lup, cholesky
   Inverse
   Solve
 ⟩⇐
@@ -122,3 +122,22 @@ qr ← {
 # Default matrix inverse and solve
 Inverse ← qr.Inverse qr.Decompose
 Solve ← qr.Decompose ⊸ qr.Solve
+
+# Cholesky decomposition
+cholesky ← {
+  Verify ⇐ lTri.Verify
+  Compose ⇐ MP⟜H
+  Inverse ⇐ H⊸MP lTri.Inverse
+  Solve ⇐ H∘⊣ uTri.Solve lTri.Solve
+  Decompose ⇐ (1<≠)◶{
+    ! 0<⊑𝕩
+    √𝕩
+  }‿{
+    n ← ≠𝕩
+    m ← ⌈n÷2
+    x‿y‿z ← ⟨m‿m,m≍m-n,2⥊m-n⟩ ↑¨ <𝕩
+    l0 ← Decompose x
+    l1 ← Decompose z - (t←H ly) MP ly ← l0 lTri.Solve y
+    ∾ ⟨l0,⟨m,n-m⟩⥊0⟩≍⟨t,l1⟩
+  }
+}
