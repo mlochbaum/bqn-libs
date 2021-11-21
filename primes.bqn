@@ -20,7 +20,7 @@ MakeWheel ← {
   # Assumes pd doesn't intersect primes, or [start,end)
   Sieve ⇐ {pd 𝕊 start‿end:
     w←coprime,wn←numc,wl←len
-    bc‿ep ← wl (⌊∘÷˜ ≍○< w⍋|) (𝕩-1)÷⌜pd
+    bc‿ep ← wl (⌊∘÷˜ ⋈ w⍋|) (𝕩-1)÷⌜pd
 
     # Do first partial wheels together
     m ← ≠˝bc
@@ -98,7 +98,7 @@ _modMul ← { n _𝕣:
   q←1+2⋆27
   Split ← { h←(q×𝕩)(⊣--)𝕩 ⋄ ⟨𝕩-h,h⟩ }
   # The product, and an error relative to precise split multiplication.
-  Mul ← × (⊣ ≍ -⊸(+´)) ·⥊×⌜○Split
+  Mul ← × (⊣ ⋈ -⊸(+´)) ·⥊×⌜○Split
   ((n×<⟜0)⊸+ -⟜n+⊢)´ n | Mul
 }
 MillerRabin ← { 𝕊 n:
@@ -155,13 +155,13 @@ NP ← {
   d ← 𝕩 - Pi a-1                   # Primes remaining
   p ← ⋆⁼a                          # Number→distance multiplier
   e ← 8××d-0.5                     # Go a few primes further
-  a { 𝕩 (≥⟜-∧<)⟜≠◶⟨n𝕊⊣-×⊸×⟜≠,⊑⟩ PrimesIn ∧𝕨≍n←𝕨+⌊p×𝕩+e } d
+  a { 𝕩 (≥⟜-∧<)⟜≠◶⟨n𝕊⊣-×⊸×⟜≠,⊑⟩ PrimesIn ∧𝕨⋈n←𝕨+⌊p×𝕩+e } d
 }
 
 # Prime factors and exponents
 FactorExponents ← {
   CheckNat 𝕩
-  2⊸⌊◶⟨!∘"Can't factor 0", 2‿0⊸⥊, IsPrime◶⟨FactorTrial, ≍˘≍⟜1⟩⟩ 𝕩
+  2⊸⌊◶⟨!∘"Can't factor 0", 2‿0⊸⥊, IsPrime◶⟨FactorTrial, ≍˘⋈⟜1⟩⟩ 𝕩
 }⚇0
 FactorTrial ← { 𝕊n:
   r ← 0‿2⥊0  # Transposed result

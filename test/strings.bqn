@@ -28,7 +28,7 @@ _fails ← {0∘𝔽⎊1}
 ! ⟨'a'⟩‿⟨"x"⟩ (ReplaceAll ≡ {'x'¨⌾(('a'=𝕩)⊸/)𝕩}) "abaababaaaba"
 ! "yxbyxzcz" ≡ ⟨"aa","ab",'a'⟩‿(⥊¨"xyz") ReplaceAll "abaababaaaca"
 ! (10⥊"a") ≡ ⟨"aaa"⟩‿⟨"aaaa"⟩ ReplaceAll 8⥊"a"
-! "end is start" ≡ (≍○<⟜⌽ "start"‿"end") ReplaceAll "start is end"
+! "end is start" ≡ (⋈⟜⌽ "start"‿"end") ReplaceAll "start is end"
 
 ! "a0b12cd3" ≡ "a%b%%cd%" '%'_template ⥊¨'0'+↕4
 ! "|a|bc|def|" ≡ "|-||-||-||-|" "|-"_template (↕4)/⊸⊔"abcdef"
