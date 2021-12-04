@@ -1,5 +1,5 @@
 ⟨
-  MP, H
+  MP, H, Trace
   lTri, uTri, qr, lup, cholesky
   Inverse
   Solve
@@ -7,13 +7,16 @@
 
 MP ← +˝∘×⎉1‿∞  # matrix product
 H  ← +⍉        # conjugate transpose
+Di ← 0‿0⍉⊢     # diagonal
+
+Trace ← +´Di
 
 LUTri ← {𝕊 l:
   Verify ⇐ (l⊑>‿<){
     ! 2==𝕩
     ! ∧´⥊ (𝕩=0) ≥ 𝔽⌜´↕¨≢𝕩
   }
-  Determinant ⇐ {×´0‿0⍉𝕩}
+  Determinant ⇐ ×´Di
   # Inverse by recursive blocking
   p‿c ← {𝕏˜}¨⍟l ⋈‿≍
   Inverse ⇐ (1<≠)◶÷‿{
@@ -46,7 +49,7 @@ lup ← {
     ! (∧p) ≡ ↕n
     uTri.Verify u
     lTri.Verify l
-    ! ∧´ 1 = 0‿0⍉l
+    ! ∧´ 1 = Di l
   }
   Inverse ⇐ { 𝕊 p‿l‿u: (⍋p) ⊏ (uTri.Inverse u) MP lTri.Inverse l }
   Solve ⇐ { p‿l‿u 𝕊 𝕩: (⍋p) ⊏ u uTri.Solve l lTri.Solve 𝕩 }
