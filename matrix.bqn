@@ -13,6 +13,7 @@ LUTri ← {𝕊 l:
     ! 2==𝕩
     ! ∧´⥊ (𝕩=0) ≥ 𝔽⌜´↕¨≢𝕩
   }
+  Determinant ⇐ {×´0‿0⍉𝕩}
   # Inverse by recursive blocking
   p‿c ← {𝕏˜}¨⍟l ⋈‿≍
   Inverse ⇐ (1<≠)◶÷‿{
@@ -49,6 +50,10 @@ lup ← {
   }
   Inverse ⇐ { 𝕊 p‿l‿u: (⍋p) ⊏ (uTri.Inverse u) MP lTri.Inverse l }
   Solve ⇐ { p‿l‿u 𝕊 𝕩: (⍋p) ⊏ u uTri.Solve l lTri.Solve 𝕩 }
+  Determinant ⇐ { 𝕊 p‿l‿u:
+    s ← ¯1⋆+´∾(≠↑↑)⊸>p  # Sign of permutation
+    s × uTri.Determinant u
+  }
 
   # Recursive method
   Decompose ⇐ LU ← (2⌊≠)◶{
@@ -83,6 +88,7 @@ qr ← {
   }
   Inverse ⇐ uTri.Inverse⊸MP⟜H˜´
   Solve ⇐ { q‿r 𝕊 b: r uTri.Solve (H q) MP b }
+  AbsDeterminant ⇐ { 𝕊 q‿r: | uTri.Determinant r }
 
   # Recursive Gram-Schmidt
   Decompose ⇐ { QR a:
@@ -129,6 +135,7 @@ cholesky ← {
   Compose ⇐ MP⟜H
   Inverse ⇐ H⊸MP lTri.Inverse
   Solve ⇐ H∘⊣ uTri.Solve lTri.Solve
+  Determinant ⇐ ×˜ lTri.Determinant
   Decompose ⇐ (1<≠)◶{
     ! 0<⊑𝕩
     √𝕩
