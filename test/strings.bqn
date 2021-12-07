@@ -1,5 +1,6 @@
 s ← •Import "../strings.bqn"
-tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ReplaceAll‿_template‿ToBytes‿FromBytes ← s
+tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ReplaceAll‿_template ← s
+ToBytes‿FromBytes‿ToNats‿ToNums ← s
 
 _fails ← {0∘𝔽⎊1}
 
@@ -37,5 +38,11 @@ _fails ← {0∘𝔽⎊1}
 ! "latin" ≡ ToBytes "latin"
 ! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"
 ! FromBytes _fails "(+´÷≢)𝕩"
+
+! (•BQN ≡ ToNats) "2‿030‿40‿00999 "
+! ⟨123456789⟩ ≡ ToNats '0'+↕10
+! 13‿5e¯5‿0.04‿∞ ≡ ToNums ",13;05E¯5,::.04%∞"
+! (•BQN ≡ ToNums) "⟨13,05E¯5,, 2.04,∞,⟩"
+! ∧´ (⋈∘•BQN ≡ ToNums)¨ ⟨"000","0.0e0","¯1e10","π"⟩
 
 •Out "All passed!"
