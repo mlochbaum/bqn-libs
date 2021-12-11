@@ -119,7 +119,7 @@ qr ← {
       nz←Norm z←k _col a
       nv←Norm v←-(nz××)⊸+⌾⊏z
       v÷↩nv
-      HH ← {-⟜(v × 2 × (+v) +´∘× ⊢)⌾(𝕨_col) 𝕩}´⟜⌽⍟(nv≥2⋆¯52)
+      HH ← (nv≥2⋆¯52)◶⟨⊣,{-⟜(v × 2 × (+v) +´∘× ⊢)⌾(𝕨_col) 𝕩}´⟜⌽⟩
       a HH↩ ↕n
       q HH↩ ↕m
     }
