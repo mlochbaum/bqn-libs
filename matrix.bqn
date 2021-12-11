@@ -1,6 +1,6 @@
 ⟨
   MP, H, Trace, Determinant
-  Inverse, Solve
+  Inverse, Solve, Eigenvalues
   lTri, uTri, qr, lup, cholesky
 ⟩⇐
 
@@ -10,6 +10,7 @@ Di ← 0‿0⍉⊢     # diagonal
 
 Trace ← +´Di
 
+# Lower (l←1) or upper (l←0) triangular matrix
 LUTri ← {𝕊 l:
   Verify ⇐ (l⊑>‿<){
     ! 2==𝕩
@@ -41,6 +42,7 @@ LUTri ← {𝕊 l:
 }
 uTri‿lTri ←  LUTri¨ ↕2
 
+# LU decomposition with pivoting
 lup ← {
   Compose ⇐ { 𝕊 p‿l‿u: p⊸⊏˘ l MP u }
   Verify ⇐ { 𝕊 p‿l‿u:
@@ -147,3 +149,32 @@ cholesky ← {
 Inverse ← qr.Inverse qr.Decompose
 Solve ← qr.Decompose ⊸ qr.Solve
 Determinant ← lup.Determinant lup.Decompose
+
+# List of eigenvalues of 𝕩
+# QR algorithm with Hessenberg reduction and Wilkinson shifts
+# Returns NaNs or fails to converge if there are complex eigenvalues
+Eigenvalues ← {
+  # Return a Hessenberg matrix (0⊸≠<1≥-⌜˜∘↕∘≠) similar to 𝕩
+  Hessenberg ← {
+    v ← (-≠𝕩) ↑ {((+´⌾(×˜)𝕩)×¯1⋆<⟜0)⊸+⌾⊑ 𝕩} (1+𝕨)↓𝕨⊏˘𝕩
+    # Multiply on both sides by symmetric orthogonal matrix id-2×u×⌜u
+    # where u ← v÷+´⌾(×˜)v
+    v2 ← 2 × v ÷ +´×˜v
+    (⊢-v×⌜v2+˝∘×⊢) (⊢-v×⌜˜+˝∘×⟜v2˘) 𝕩
+  }´⟜(↕≠-2˙)
+
+  # Shift based on eigenvalues of a symmetric matrix
+  WilkinsonShift ← { 𝕊a‿·‿b‿c:
+    d ← 2÷˜a-c ⋄ b2 ← ×˜b
+    c - b2 ÷ d + (×d) × b2⊸+⌾(×˜)d
+  }
+
+  # Get one eigenvalue with QR
+  QRAlg ← {
+    mu ← WilkinsonShift ⥊¯2‿¯2↑𝕩
+    # TODO: custom QR decomposition for speed
+    MP˜´∘qr.DecomposeHH⌾(-⟜(mu×=⌜˜↕≠𝕩)) 𝕩
+  }•_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
+
+  { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (⊑∾𝕊∘↓) QRAlg Hessenberg 𝕩 } 𝕩
+}
