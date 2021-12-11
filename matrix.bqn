@@ -1,8 +1,7 @@
 ⟨
-  MP, H, Trace
+  MP, H, Trace, Determinant
+  Inverse, Solve
   lTri, uTri, qr, lup, cholesky
-  Inverse
-  Solve
 ⟩⇐
 
 MP ← +˝∘×⎉1‿∞  # matrix product
@@ -125,10 +124,6 @@ qr ← {
   }
 }
 
-# Default matrix inverse and solve
-Inverse ← qr.Inverse qr.Decompose
-Solve ← qr.Decompose ⊸ qr.Solve
-
 # Cholesky decomposition
 cholesky ← {
   Verify ⇐ lTri.Verify
@@ -147,3 +142,8 @@ cholesky ← {
     √𝕩
   }
 }
+
+# Default implementations
+Inverse ← qr.Inverse qr.Decompose
+Solve ← qr.Decompose ⊸ qr.Solve
+Determinant ← lup.Determinant lup.Decompose
