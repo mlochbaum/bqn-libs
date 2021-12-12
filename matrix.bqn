@@ -154,14 +154,15 @@ Determinant ← lup.Determinant lup.Decompose
 # QR algorithm with Hessenberg reduction and Wilkinson shifts
 # Returns NaNs or fails to converge if there are complex eigenvalues
 Eigenvalues ← {
+  Norm ← +´⌾(×˜)
   # Return a Hessenberg matrix (0⊸≠<1≥-⌜˜∘↕∘≠) similar to 𝕩
   Hessenberg ← {
-    v ← (-≠𝕩) ↑ {((+´⌾(×˜)𝕩)×¯1⋆<⟜0)⊸+⌾⊑ 𝕩} (1+𝕨)↓𝕨⊏˘𝕩
+    v ← (-≠𝕩) ↑ {((Norm𝕩)×¯1⋆<⟜0)⊸+⌾⊑ 𝕩} (1+𝕨)↓𝕨⊏˘𝕩
     # Multiply on both sides by symmetric orthogonal matrix id-2×u×⌜u
-    # where u ← v÷+´⌾(×˜)v
+    # where u ← v÷Norm v
     v2 ← 2 × v ÷ +´×˜v
     (⊢-v×⌜v2+˝∘×⊢) (⊢-v×⌜˜+˝∘×⟜v2˘) 𝕩
-  }´⟜(↕≠-2˙)
+  }´⟜(⌽∘↕0⌈≠-2˙)
 
   # Shift based on eigenvalues of a symmetric matrix
   WilkinsonShift ← { 𝕊a‿·‿b‿c:
@@ -169,12 +170,20 @@ Eigenvalues ← {
     c - b2 ÷ d + (×d) × b2⊸+⌾(×˜)d
   }
 
+  # Obtain r MP q, where 𝕩≡q MP r is a QR decomposition
+  QRev ← {𝕊a:
+    Giv ← { ≍⟜(-⌾⊑⌽) ÷⟜Norm ⟨𝕨+↕2,<𝕨⟩⊏𝕩 }  # Givens rotation matrix, transposed
+    n ← ≠𝕩
+    i←⥊⟜(↕×´)2‿n  # First two rows
+    gs ← { g←𝕩 Giv a ⋄ a g⊸MP⌾(i⊏⥊)↩ ⋄ i↓˜↩0‿1⋄i+↩n ⋄ g }¨ ↕n-1
+    i↩≍¯1‿0 ⋄ a { i+↩1⋄i∾↩n+¯1↑i ⋄ MP⟜(⍉𝕨)⌾(i⊏⥊)𝕩 }´ ⌽gs
+  }
+
   # Get one eigenvalue with QR
   QRAlg ← {
     mu ← WilkinsonShift ⥊¯2‿¯2↑𝕩
-    # TODO: custom QR decomposition for speed
-    MP˜´∘qr.DecomposeHH⌾(-⟜(mu×=⌜˜↕≠𝕩)) 𝕩
+    QRev⌾(-⟜(mu×=⌜˜↕≠𝕩)) 𝕩
   }•_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
 
-  { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (⊑∾𝕊∘↓) QRAlg Hessenberg 𝕩 } 𝕩
+  { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (⊑∾𝕊∘↓) QRAlg 𝕩 } Hessenberg 𝕩
 }
