@@ -167,7 +167,7 @@ Eigenvalues ← {
   # Shift based on eigenvalues of a symmetric matrix
   WilkinsonShift ← { 𝕊a‿·‿b‿c:
     d ← 2÷˜a-c ⋄ b2 ← ×˜b
-    c - b2 ÷ d + (×d) × b2⊸+⌾(×˜)d
+    c - b2 0⊸≠◶0‿÷ d + (×d) × b2⊸+⌾(×˜)d
   }
 
   # Obtain r MP q, where 𝕩≡q MP r is a QR decomposition
@@ -180,10 +180,11 @@ Eigenvalues ← {
   }
 
   # Get one eigenvalue with QR
+  _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
   QRAlg ← {
     mu ← WilkinsonShift ⥊¯2‿¯2↑𝕩
     QRev⌾(-⟜(mu×=⌜˜↕≠𝕩)) 𝕩
-  }•_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
+  }_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
 
-  { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (⊑∾𝕊∘↓) QRAlg 𝕩 } Hessenberg 𝕩
+  { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (𝕊∘↓∾˜⊑) QRAlg 𝕩 } Hessenberg 𝕩
 }
