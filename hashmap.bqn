@@ -44,7 +44,7 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
     Next•_while_(¯1⊸≠◶⟨0,"Duplicate key"!key≢⊑⟜keys⟩⊑⟜table) Ind key
   }
   Set ⇐ { key 𝕊 val:
-    New ← {len ST 𝕩 ⋄ keys∾↩key ⋄ vals∾↩val ⋄ len+↩1 ⋄ 0}
+    New ← {len ST 𝕩 ⋄ keys∾↩<key ⋄ vals∾↩<val ⋄ len+↩1 ⋄ 0}
     i ← Next•_while_(¯1⊸≠◶⟨New⊣,key≢⊢⊑keys˙⟩⟜(⊑⟜table)) Ind key
     vals val˙⌾((i⊑table)⊸⊑)↩
     self
