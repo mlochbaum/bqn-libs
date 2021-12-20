@@ -21,11 +21,17 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
   "HashMap: keys 𝕨 and values 𝕩 must be arrays" ! ∧´ (0=•Type)¨keys‿vals
   "HashMap: key and value arrays must have the same shape" ! keys ≡○≢ vals
   keys‿vals ⥊¨↩
-  hlen ← 2 ⋆ bits ← 1+⌈2⋆⁼ len ← ≠keys  # hlen ≥ 2×len
-  Ind ← bits _hash
-  Next ← hlen⊸>⊸× 1+⊢
-  table ← ¯1 ⥊˜ hlen ⋄ ST ← {table 𝕨⌾(𝕩⊸⊑)↩⋄@}
+  hlen←bits←table←0 ⋄ Ind←Next←⊢
+  InitSize ← {
+    hlen ↩ 2 ⋆ bits ↩ 1+⌈2⋆⁼ 1⌈𝕩  # hlen ≥ 2×len
+    Ind ↩ bits _hash
+    Next ↩ hlen⊸>⊸× 1+⊢
+    table ↩ hlen ⥊ ¯1
+  }
+  ST ← {table 𝕨⌾(𝕩⊸⊑)↩⋄@}
   Count ⇐ {𝕊:len}
+
+  # Lookup and modify
   Find ← { 𝕊 key:
     T ← ("Not found!"!¯1⊸≠)⊸⊢ ⊑⟜table
     table ⊑˜ Next•_while_(key≢keys⊑˜T) Ind key
@@ -34,7 +40,7 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
   tombstone ← {⇐}
   Delete ⇐ { 𝕊 key:
     keys tombstone⌾((Find key)⊸⊑)↩
-    len -↩ 1
+    DecLen 1
     self
   }
   Has ⇐ { 𝕊 key:
@@ -44,10 +50,38 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
     Next•_while_(¯1⊸≠◶⟨0,"Duplicate key"!key≢⊑⟜keys⟩⊑⟜table) Ind key
   }
   Set ⇐ { key 𝕊 val:
-    New ← {len ST 𝕩 ⋄ keys∾↩<key ⋄ vals∾↩<val ⋄ len+↩1 ⋄ 0}
-    i ← Next•_while_(¯1⊸≠◶⟨New⊣,key≢⊢⊑keys˙⟩⟜(⊑⟜table)) Ind key
-    vals val˙⌾((i⊑table)⊸⊑)↩
+    New ← {len ST 𝕨 ⋄ keys∾↩<key ⋄ vals∾↩<val ⋄ IncLen 1 ⋄ 0}
+    Mod ← {vals val˙⌾((𝕨⊑table)⊸⊑)↩ ⋄ 0}
+    Next•_while_(¯1⊸≠◶⟨New,Mod⍟(¬⊢)⟜(key≢⊑⟜keys)⟩⟜(⊑⟜table)) Ind key
     self
   }
-  (↕len) ST⟜DefKey¨ keys
+
+  # Resize
+  Init ← {
+    InitSize 𝕩
+    (↕𝕩) ST⟜DefKey¨ keys
+  }
+  ClearTombs ← {𝕊:
+    ! len ≡ +´ k ← tombstone⊸≢¨ keys
+    keys‿vals k⊸/¨↩
+    k
+  }
+  Renumber ← { # Based on filter 𝕩
+    table ⊏↩ 1-˜(𝕩×+`𝕩)∾0
+    @
+  }
+  IncLen ← {
+    len +↩ 𝕩
+    hlen ≥ 2 × ≠keys ? @ ;
+    k ← ClearTombs@
+    hlen ≥ 1.75 × len ? Renumber k ;
+    Init len
+  }
+  DecLen ← {
+    len -↩ 𝕩
+    hlen < 6 × len ? @ ;
+    ClearTombs@
+    Init len
+  }
+  Init len ← ≠keys
 }

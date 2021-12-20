@@ -18,9 +18,21 @@
   ! n ≡ m.Count@
   ! 0 ≡ m.Has 4
   ! m ≡ m.Delete "str"
+  ! 0∘m.Delete⎊1 "str"
   ! (n-1) ≡ m.Count@
   ! 0∘m.Get⎊1 "str"
   ! (("new"⌾⊑k⊐⊢) ≡ m.Get¨) 3‿¯π‿'k'‿'j'
+
+  # Resizing probably
+  (k10 ← ≍⍟(↕10) @) m.Set¨ (<"ab")+↕10
+  ! (n+9) ≡ m.Count@
+  ! 0 ≡ m.Has 4
+  ! ("ab"+6) ≡ m.Get ≍⍟6 @
+  m.Delete⎊@¨ k
+  ! 10 ≡ m.Count@
+  m.Delete¨ k10
+  ! 0 ≡ m.Count@
+  ! ∧´ 0 = m.Has¨ k∾⟨≍⍟3 @,"thing"⟩
 }
 
 •Out "All passed!"
