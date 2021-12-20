@@ -148,7 +148,12 @@ cholesky ← {
 # Default implementations
 Inverse ← qr.Inverse qr.Decompose
 Solve ← qr.Decompose ⊸ qr.Solve
-Determinant ← lup.Determinant lup.Decompose
+Determinant ← 0⍟≠´∘≢◶⟨
+  lup.Determinant lup.Decompose
+  ⊑                     # 1×1
+  -´×⟜⌽˝                # 2×2
+  +´(↕3)(×˝⌽˘){𝔽--⊸𝔽}⊢  # 3×3
+⟩
 
 # List of eigenvalues of 𝕩
 # QR algorithm with Hessenberg reduction and Wilkinson shifts
