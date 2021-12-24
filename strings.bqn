@@ -6,6 +6,7 @@
   tab,lf,cr,crlf, JoinLines
   Trim
   ToBytes, FromBytes
+  ToBase64, FromBase64
   ToNats, ToNums
   Lcs, LcsLen, Levenshtein
 ⟩⇐
@@ -68,6 +69,25 @@ FromBytes ← (+`2⋆7-↕5){
   r←(2⋆6)⊸×⊸+˜´∘⌽¨(¯1+`t≠1)⊔𝕩-t⊏»𝕗
   r
 }⌾(-⟜@)
+
+# Base64
+b64 ← ∾ (⊣+↕∘¬˜)¨˝˘ ∘‿2⥊"AZaz09++//"
+K64 ← ⥊¨⟜(4⋆⟨1+↕3,2-↕3⟩) # Bytes split as 6/2-4/4-2/6
+ToBase64 ← {𝕊⁼𝕩: FromBase64𝕩;
+  l←≠i←𝕩-@ ⋄ "Base64 input must consist of bytes (<@+256)" ! ∧´256>i
+  f←l⥊1+0=↕3
+  M←((+´f)⥊0<↕4) × f⊸/
+  a‿b←K64 l
+  v←a (⌊∘÷˜ «⊸+○M b×|) i
+  (v⊏b64)∾(3|-l)⥊'='
+}
+FromBase64 ← {𝕊⁼𝕩: ToBase64𝕩;
+  p←64>i←b64⊐𝕩
+  "Invalid Base64 characters" ! ∧`⊸≡ p
+  i↑˜↩l←+´p
+  a‿b←K64 +´f←l⥊0<↕4
+  @ + (256|a×(«f)/i) + b⌊∘÷˜f/i
+}
 
 # Parse numbers from a string, treating non-numeric characters as
 # separators

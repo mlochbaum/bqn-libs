@@ -1,6 +1,6 @@
 s ← •Import "../strings.bqn"
 tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ReplaceAll‿_template ← s
-ToBytes‿FromBytes‿ToNats‿ToNums ← s
+ToBytes‿FromBytes‿ToBase64‿FromBase64‿ToNats‿ToNums ← s
 LcsLen‿Lcs‿Levenshtein ← s
 
 _fails ← {0∘𝔽⎊1}
@@ -39,6 +39,12 @@ _fails ← {0∘𝔽⎊1}
 ! "latin" ≡ ToBytes "latin"
 ! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"
 ! FromBytes _fails "(+´÷≢)𝕩"
+
+! (@+5‿171‿30‿235) ≡ FromBase64 "Base64"
+! "38Wn67g2NCE=" ≡ ToBase64 "ßÅ§ë¸64!"
+! ⊢⌾ToBase64¨⊸≡ ↑ @+255‿0‿122‿3‿254‿255‿255‿33
+! ToBase64 _fails ↕10
+! FromBase64 _fails "(+´÷≢)𝕩"
 
 ! (•BQN ≡ ToNats) "2‿030‿40‿00999 "
 ! ⟨123456789⟩ ≡ ToNats '0'+↕10
