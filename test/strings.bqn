@@ -1,6 +1,7 @@
 s ← •Import "../strings.bqn"
 tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ReplaceAll‿_template ← s
 ToBytes‿FromBytes‿ToNats‿ToNums ← s
+LcsLen‿Lcs‿Levenshtein ← s
 
 _fails ← {0∘𝔽⎊1}
 
@@ -44,5 +45,13 @@ _fails ← {0∘𝔽⎊1}
 ! 13‿5e¯5‿0.04‿∞ ≡ ToNums ",13;05E¯5,::.04%∞"
 ! (•BQN ≡ ToNums) "⟨13,05E¯5,, 2.04,∞,⟩"
 ! ∧´ (⋈∘•BQN ≡ ToNums)¨ ⟨"000","0.0e0","¯1e10","π"⟩
+
+! (LcsLen⌜ ≡ ⌊○≠⌜)˜ ""‿"ab"‿"baba"
+! (Lcs⌜ ≡ ⊣⍟(≤○≠)⌜)˜ ""‿"ab"‿"baba"
+! (Levenshtein⌜ ≡ |∘-○≠⌜)˜ ""‿"ab"‿"baba"
+! ((7≡LcsLen) ∧ "tsitest"≡Lcs)´ "thisisatest"‿"testing123testing"
+! 3 ≡ "kitten" Levenshtein "sitting"
+! 3 ≡ "Saturday" Levenshtein "Sunday"
+! 8 ≡ "rosettacode" Levenshtein "raisethysword"
 
 •Out "All passed!"

@@ -7,6 +7,7 @@
   Trim
   ToBytes, FromBytes
   ToNats, ToNums
+  Lcs, LcsLen, Levenshtein
 ⟩⇐
 
 # Whitespace characters: tab, linefeed, carriage return
@@ -93,3 +94,8 @@ ToNums ← {
   q←10⋆|ee←dp-˜vm/«v×¬vm                    # Power of 10
   q÷˜⌾((0>ee)⊸/)q×⌾((0<ee)⊸/)vm/v×(r/i)⊏1‿∞ # Correct ∞ then ×10⋆ee
 }
+
+# String similarity
+LcsLen ← ∧○(0<≠)◶⟨0, ¯1 ⊑ 0¨∘⊢ {𝕩⌈⌈`𝕨+»𝕩}˝ =⌜⟜⌽⟩
+Lcs ← ¯1 ⊑ "" <⊸∾ ""¨∘⊢ ⊣⍟(>○≠){𝕩𝔽¨𝔽`𝕨∾¨""<⊸»𝕩}˝ (=⌜⥊¨⊣)⟜⌽
+Levenshtein ← ¯1⊑{𝕨((1⊸+⥊+)○≠(⌊`⊢⌊⊏⊸»∘⊢-0∾1+=⟜𝕩)´⌽∘⊣)𝕩}
