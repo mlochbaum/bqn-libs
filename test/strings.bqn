@@ -1,6 +1,6 @@
 s ← •Import "../strings.bqn"
 tab‿cr‿lf‿crlf‿JoinLines‿_join‿Trim‿Split‿ReplaceAll‿_template ← s
-ToBytes‿FromBytes‿ToBase64‿FromBase64‿ToNats‿ToNums ← s
+CEscape‿ToBytes‿FromBytes‿ToBase64‿FromBase64‿ToNats‿ToNums ← s
 LcsLen‿Lcs‿Levenshtein ← s
 
 _fails ← {0∘𝔽⎊1}
@@ -35,6 +35,11 @@ _fails ← {0∘𝔽⎊1}
 ! "a0b12cd3" ≡ "a%b%%cd%" '%'_template ⥊¨'0'+↕4
 ! "|a|bc|def|" ≡ "|-||-||-||-|" "|-"_template (↕4)/⊸⊔"abcdef"
 ! "" ≡ "" "+"_template ""
+
+!  ""             ≡ CEscape ""
+!  ((@+7)∾"b""c") ≡ CEscape "\ab\""c"
+!  "Ày2À{3þga"    ≡ CEscape "\xC0y2\u00C0\1733\xfega"
+!  "y2Àga"        ≡ CEscape "y2\u00C0ga"
 
 ! "latin" ≡ ToBytes "latin"
 ! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"

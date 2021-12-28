@@ -5,6 +5,7 @@
   _template
   tab,lf,cr,crlf, JoinLines
   Trim
+  CEscape
   ToBytes, FromBytes
   ToBase64, FromBase64
   ToNats, ToNums
@@ -59,6 +60,48 @@ ReplaceAll ← { ⟨old,new⟩ 𝕊 str:
 
 # Replace instances of 𝕗 in 𝕨 with successive elements of 𝕩
 _template ← { ∾ 1 (↑∾·⥊𝕩≍˘↓) 𝕗 Split 𝕨 }
+
+# String escaping
+⟨CEscape⟩ ← {
+  basic ← """'?\abefnrtv"
+  comp  ← (hex←"uUx")∾(oct←'0'+↕8)
+  in  ← basic∾comp
+  out ← ∾⟨4↑in, @+7‿8‿27‿12‿10‿13‿9‿11, @¨comp⟩
+  c_hex ← (≠hex) + c_basic ← ≠basic
+  c_fix ← 2 + c_basic
+  len ← ∾⟨0¨basic, 4‿8‿∞, 3¨oct⟩
+  CEscape ⇐ { 𝕊s:
+    m ← » bs ← <`s='\'
+    max ← ⌈´ i ← in ⊐ m/s
+    "Unsupported escape sequence" ! max<≠in
+    keep ← ¬bs
+    o ← i⊏out
+    { max < c_basic ?@; # If compound escapes
+      f ← i ≥ c_basic
+      ic ← f/i ⋄  im ← f//m
+      d ← ic<c_hex
+      l ← (ic⊏len) ⌊ (1+d) -˜ (≠m)(«-⊢)im
+      ld ← l/d
+      sel ← s ⊏˜ ia ← (l/im+d)+li←⊒/l
+      dig ← ("Aa"-'0')⊸(⊢+(0∾10-⊣)⊏˜⍋)⌾(ld⊸/) '0'-˜sel
+      isdig ← (0⊸≤ ∧ <⟜(8×1+ld)) dig
+      lm ← 0=li
+      n‿ku ← { max < c_fix ?
+        "Numeric code ends early" ! ∧´ isdig
+        ⟨ {0 16⊸×⊸+˜´⌽𝕩}¨(¯1+`lm)⊔dig , 0¨ ⟩
+      ; # If variable-length escapes
+        k ← lm >○(⌈`(1+↕∘≠)⊸×)⟜¬ isdig
+        bm ← l/ic<c_fix
+        "Numeric code ends early" ! ∧´ bm≤k
+        "\x must be followed by at least one digit" ! ∧´ lm≤k
+        ⟨ (8×1+d){0𝕨⊸×⊸+˜´⌽𝕩}¨(1-˜k×+`lm)⊔dig , k≤ld<lm ⟩
+      }
+      keep ku⌾(ia⊸⊏)↩
+      o (@+n)⌾(f⊸/)↩
+    }
+    keep / o⌾(m⊸/) s
+  }
+}
 
 # UTF-8 conversions
 ToBytes ← ∾ (2⋆7)⊸(⊣+(2⋆6){𝕨 ≤◶⟨⥊⊢-2×-⟜𝕗 ⋄ 𝕗(|∾˜(2÷˜⌊⟜𝕨)𝕊⌊∘÷˜)⊢⟩ 𝕩}¨)⌾(-⟜@)
