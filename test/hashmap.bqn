@@ -7,6 +7,7 @@
   ! (m.Has¨ ≡ ∊⟜k) (¯π+¯1‿0‿1×1e¯15)∾"strike"∾3‿4
   ! (m.Get¨ ≡ k⊸⊐) 3‿1‿0‿2⊏k
   ! ∧´ 0∘m.Get⎊1¨ "k"‿'i'‿¯3
+  ! 4‿'q'‿1 ≡ "pqr" m.Get¨ 'j'‿"k"‿¯π
   ! m ≡ 3 m.Set "new"
   ! n ≡ m.Count@
   ! "new" ≡ m.Get 3
@@ -34,5 +35,11 @@
   ! 0 ≡ m.Count@
   ! ∧´ 0 = m.Has¨ k∾⟨≍⍟3 @,"thing"⟩
 }
+
+#v ← 1e6 •rand.Deal 1e9
+#•Show HashMap˜•_timed v
+#m ← HashMap˜ v
+#•Show m.Get¨•_timed •rand.Deal∘≠⊸⊏ v
+#•Show m.Has¨•_timed •rand.Deal∘≠⊸⊏ (↕5e5)»v
 
 •Out "All passed!"

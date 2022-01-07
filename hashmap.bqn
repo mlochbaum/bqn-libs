@@ -1,9 +1,9 @@
-# keys HashMap vals: return a mutable hash map h implmenting
-#   h.Count any:     return number of keys defined by h
-#   h.Has key:       return 1 if key is present and 0 otherwise
-#   h.Get key:       return corresponding value
-#   key h.Set val:   set value (may overwrite); return h
-#   h.Delete key:    remove corresponding value; return h
+# keys HashMap vals:     return a mutable hash map h implementing
+#   h.Count any:         return number of keys defined by h
+#   h.Has key:           return 1 if key is present and 0 otherwise
+#   [default] h.Get key: return corresponding value, default if not found
+#   key h.Set val:       set value (may overwrite); return h
+#   h.Delete key:        remove corresponding value; return h
 
 # 𝕗_hash is a function returning index in (2⋆n)-length table
 ⟨_hash⟩ ← {
@@ -36,7 +36,10 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
     T ← ("Not found!"!¯1⊸≠)⊸⊢ ⊑⟜table
     table ⊑˜ Next•_while_(key≢keys⊑˜T) Ind key
   }
-  Get ⇐ { 𝕊 key: vals ⊑˜ Find key }
+  Get ⇐ {
+      𝕊 key: vals ⊑˜ Find key ;
+    d 𝕊 key: Next•_while_(¯1⊸≠◶⟨0,⊢{d↩𝕨⋄𝕩}⍟(¬⊢)key≢⊑⟜keys⟩⊑⟜table) Ind key ⋄ d
+  }
   tombstone ← {⇐}
   Delete ⇐ { 𝕊 key:
     keys tombstone⌾((Find key)⊸⊑)↩
