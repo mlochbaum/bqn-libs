@@ -47,7 +47,7 @@ wlen ← ≠ wheel.primes
 primes ← wheel.primes
 Extend ← {
   E ← {
-    next ↩ ⌈ 𝕩 ⌊ ((2⋆22)⊸+ ⌊ ×˜) old←next
+    next ↩ ⌈ 𝕩 ⌊ ((2⋆24)⊸+ ⌊ ×˜) old←next
     primes ∾↩ old + / (wlen↓primes(⍋↑⊣)√next) Sieve old‿next
     𝕊⍟(next⊸<) 𝕩
   }
