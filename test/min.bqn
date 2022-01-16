@@ -24,3 +24,5 @@ CheckMin ← { tol 𝕊 opt:
 
 1e¯20 CheckMin powell
 1e¯6  CheckMin nelderMead
+
+•Out "All passed!"
