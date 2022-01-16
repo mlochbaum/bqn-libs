@@ -1,6 +1,6 @@
 ⟨
   MP, H, Trace, Determinant
-  Inverse, Solve, Eigenvalues
+  Inverse, Solve, Eigenvalues, CharPoly
   lTri, uTri, qr, lup, cholesky
 ⟩⇐
 
@@ -192,4 +192,12 @@ Eigenvalues ← {
   }_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
 
   { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (𝕊∘↓∾˜⊑) QRAlg 𝕩 } Hessenberg 𝕩
+}
+
+# Faddeev-LeVerrier algorithm
+CharPoly ← {
+  !2==𝕩 ⋄ !=´≢𝕩
+  id←=⌜˜↕n←≠𝕩
+  c←-Trace m←m0←𝕩
+  1‿c ∾ c { Trace m ↩ m0 MP m+𝕩×id }⊸÷` -2+↕n-1
 }
