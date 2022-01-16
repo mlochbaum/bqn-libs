@@ -148,7 +148,7 @@ cholesky ← {
 # Default implementations
 Inverse ← qr.Inverse qr.Decompose
 Solve ← qr.Decompose ⊸ qr.Solve
-Determinant ← 0⍟≠´∘≢◶⟨
+Determinant ← (⊢×=∧3⊸≥)´∘≢◶⟨
   lup.Determinant lup.Decompose
   ⊑                     # 1×1
   -´×⟜⌽˝                # 2×2
