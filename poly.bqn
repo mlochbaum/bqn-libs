@@ -62,3 +62,22 @@ _laguerre_ ← {poly _𝕣_ eps root:
   }@
   root
 }
+
+# Find all roots, with linear/quadratic formulas and Laguerre
+_rootsPolish ← {
+  eps ← 𝕨⊣1e¯16
+  M‿D‿Sqrt ← complex
+  Low ← !∘"Input must have degree at least 1"
+  Lin ← -∘D´
+  Quad ← { 𝕊 c‿b‿a:
+    b ÷↩ ¯2
+    0‿0⊸≢◶⟨⋈˜,c⊸D⋈D⟜a⟩ b(0≤+´∘×)◶⟨+,-⟩ Sqrt (M˜b) - a M c
+  }
+  High ← {
+    root ← 𝕩 _laguerre_ eps 0‿0
+    root <⊸∾ Solve M⟜root⊸+`⌾⌽ 1↓𝕩
+  }
+  Solve ← (4⌊≠)◶Low‿Low‿Lin‿Quad‿High
+  {𝕨 _laguerre_ eps¨⌾(1⊸↓) 𝕩}⍟(3<≠∘⊣)⍟𝕗⟜Solve CPoly 𝕩
+}
+Roots ← 1 _rootsPolish
