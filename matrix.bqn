@@ -113,13 +113,10 @@ qr ← {
     m‿n←≢a
     q←=⌜˜↕m
     Step ← {𝕊k:
-      i←k+↕m-k ⋄ ni←n×i ⋄ _col←{(𝕗+ni)⊏⥊} #{⟨i,<𝕗⟩⊸⊏}
-      Norm←+´∘|⌾(×˜)
-      nz←Norm z←k _col a
-      nv←Norm v←-(nz××)⊸+⌾⊏z
-      v÷↩nv
-      HH ← {-⟜(v × 2 × (+v) +´∘× ⊢)⌾(𝕨_col) 𝕩}´⟜⌽
-      nv≥2⋆¯52 ? a‿q HH⟜↕¨↩ n‿m ; @
+      nz ← +´∘|⌾(×˜) z ← ⟨k+↕m-k,<k⟩⊏a
+      v ← -(nz××)⊸+⌾⊏z
+      v2 ← 2 × (+v) ÷ nv←+´|×˜v
+      nv≥×˜2⋆¯52 ? a‿q -⟜((m-⊸↑v) ×⌜ v2 +˝∘× (-≠v)⊸↑)¨↩ ; @
     }
     Step¨ ↕n
     ⟨H q, a×m≤⌜○↕n⟩
