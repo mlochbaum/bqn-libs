@@ -7,10 +7,10 @@ complex ← {
   A ⇐ √A2
   Sqrt ⇐ { 0<m←A𝕩 ? s‿t←0>a‿b←𝕩 ⋄ -⍟t∘⌽⍟s (÷⟜2⋈b⊸÷) √2×m+|a ; 0‿0 }
   _poly ⇐ {+⟜(𝕩⊸M)´𝕗}
-  _polyd_ ⇐ {(𝕘‿2⥊0) (»+𝕩⊸M˘)´ 𝕗}
+  _polyd_ ⇐ {(𝕘‿2⥊0) (»+𝕩⊸M˘∘⊢)´ 𝕗}
   _polyd_ek_ ⇐ {
     ek←0 ⋄ ax←A𝕩
-    v ← <˘⍉> (2⥊<𝕘⥊0) {ek↩(A⊑¨𝕩)+ax×ek⋄𝕩}∘(»¨+𝕩⊸M)´ 𝕗
+    v ← <˘ (𝕘‿2⥊0) {ek↩(A⊏𝕩)+ax×ek⋄𝕩}∘(»+𝕩⊸M˘∘⊢)´ 𝕗
     v‿ek
   }
 }
@@ -19,25 +19,18 @@ CPoly ← ⋈⟜0⍟(0==)¨
 # Return all complex roots of little-endian polynomial 𝕩
 # 𝕨 gives the number of iterations
 # Result is a list of real‿imag pairs
-WeierstrassStep ← {
-  M‿D‿_poly ← complex
-  F ← (M¨⟜(D¨¯1⊸⊏)CPoly𝕩) _poly
-  -⟜(F D ·M˝·⍉0(⊢+1‿0×⌜∧˝∘=)·><⊸-¨)
-}
-AberthStep ← {
+_allRoots_ ← {
   M‿D‿_polyd_ ← complex
-  F ← (M¨⟜(D¨¯1⊸⊏)CPoly𝕩) _polyd_ 2
-  -⟜(D˝∘F (⊣D 1‿0+M) ¯1‿0+˝¨(⋈⟜0=⌜˜↕1-˜≠𝕩)D∘+-⌜˜¨)
+  step ← 𝔽 n ← 1-˜≠𝕩
+  Poly ← (M¨⟜(D¨¯1⊸⊏)CPoly𝕩) _polyd_ 𝕘
+  r0← <˘⍉> 1‿0 M⍟(↕n)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n
+  <˘⍉> Poly⊸Step⍟(𝕨⊣50) r0
 }
-_allRoots ← {
-  ⟨M⟩ ← complex
-  step ← 𝔽𝕩
-  n ← ≠𝕩
-  r0← <˘⍉> 1‿0 M⍟(↕n-1)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n-1
-  <˘⍉> Step⍟(𝕨⊣50) r0
+⟨WeierstrassRoots⇐WR, AberthRoots⇐AR⟩ ← {
+  M‿D ← complex
+  WR ⇐ { ⊢ - ⊏ ⊸  D       ⟜(M˝·⍉(1‿0×⌜=⟜<↕𝕩)+·><⊸-¨)  } _allRoots_ 1
+  AR ⇐ { ⊢ - D˝⊸(⊣D 1‿0+M)⟜(¯1‿0+˝¨(⋈⟜0=⌜˜↕𝕩)D∘+-⌜˜¨) } _allRoots_ 2
 }
-WeierstrassRoots ← WeierstrassStep _allRoots
-AberthRoots      ← AberthStep      _allRoots
 
 # Find a root of the given polynomial with Laguerre's method
 _laguerre_ ← {poly _𝕣_ eps root:
