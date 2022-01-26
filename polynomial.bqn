@@ -10,7 +10,7 @@ complex ← {
   _polyd_ ⇐ {(𝕘‿2⥊0) (»+𝕩⊸M˘∘⊢)´ 𝕗}
   _polyd_ek_ ⇐ {
     ek←0 ⋄ ax←A𝕩
-    v ← <˘ (𝕘‿2⥊0) {ek↩(A⊏𝕩)+ax×ek⋄𝕩}∘(»+𝕩⊸M˘∘⊢)´ 𝕗
+    v ← (𝕘‿2⥊0) {ek↩(A⊏𝕩)+ax×ek⋄𝕩}∘(»+𝕩⊸M˘∘⊢)´ 𝕗
     v‿ek
   }
 }
@@ -20,11 +20,20 @@ CPoly ← ⋈⟜0⍟(0==)¨
 # 𝕨 gives the number of iterations
 # Result is a list of real‿imag pairs
 _allRoots_ ← {
-  M‿D‿_polyd_ ← complex
+  M‿D‿A2‿_polyd_ek_ ← complex
+  eps  ← 𝕨⊣1e¯16
   step ← 𝔽 n ← 1-˜≠𝕩
-  Poly ← (M¨⟜(D¨¯1⊸⊏)CPoly𝕩) _polyd_ 𝕘
-  r0← <˘⍉> 1‿0 M⍟(↕n)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n
-  <˘⍉> Poly⊸Step⍟(𝕨⊣50) r0
+  Poly ← (M¨⟜(D¨¯1⊸⊏)CPoly𝕩) _polyd_ek_ 𝕘
+  r    ← <˘⍉> 1‿0 M⍟(↕n)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n
+  max_iter ← 100 ⋄ i ← 0
+  ⊢_while_ {𝕤
+    p‿ek ← Poly r
+    ∨´ (eps × ×˜ek) ≤ A2 ⊏p ?
+    r Step˜↩ p
+    "Failed to converge" ! max_iter > i+↩1
+    1;0
+  }@
+  <˘⍉> r
 }
 ⟨WeierstrassRoots⇐WR, AberthRoots⇐AR⟩ ← {
   M‿D ← complex
@@ -43,7 +52,7 @@ _laguerre_ ← {poly _𝕣_ eps root:
   i ← 0
   ⊢_while_ {𝕤
     i < max_iter ?
-    ⟨p‿dp‿d2p_h, ek⟩ ← F root
+    ⟨p‿dp‿d2p_h, ek⟩ ← <˘⌾⊑ F root
     0 < a2p ← A2 p ?
     crit ← eps × ×˜ek  # Square of stopping criterion
     stop ← { a2p ≥      crit ? 0   # keep going
