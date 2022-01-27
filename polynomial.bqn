@@ -1,3 +1,8 @@
+⟨
+  Eval, _fn
+  LaguerreRoots, AberthRoots, WeierstrassRoots
+⟩⇐
+
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 
 complex ← {
@@ -16,24 +21,44 @@ complex ← {
 }
 CPoly ← ⋈⟜0⍟(0==)¨
 
-# Return all complex roots of little-endian polynomial 𝕩
+# Evaluate polynomial
+_fn ← {(CPoly𝕗)complex._poly}
+Eval ← {𝕨_fn 𝕩}
+
+# Analytical solutions to low-order polynomials
+exact ← {
+  M‿D‿Sqrt ← complex
+  Low ← !∘"Input must have degree at least 1"
+  Lin ← -∘D´⊢
+  Quad ← { 𝕨 𝕊 c‿b‿a:
+    b ÷↩ ¯2
+    0‿0⊸≢◶⟨⋈˜,c⊸D⋈D⟜a⟩ b(0≤+´∘×)◶⟨+,-⟩ Sqrt (M˜b) - a M c
+  }
+  _with ⇐ {(4⌊≠∘⊢)◶Low‿Low‿Lin‿Quad‿𝔽}
+}
+
+# Return all complex roots of little-endian polynomial 𝕩, using
+# simultaneous root-finding methods
 # 𝕨 gives the number of iterations
 # Result is a list of real‿imag pairs
-_allRoots_ ← {
+_allRoots_ ← { GetStep _𝕣_ deriv:
   M‿D‿A2‿_polyd_ek_ ← complex
-  eps  ← 𝕨⊣1e¯16
-  step ← 𝔽 n ← 1-˜≠𝕩
-  Poly ← (M¨⟜(D¨¯1⊸⊏)CPoly𝕩) _polyd_ek_ 𝕘
-  r    ← <˘⍉> 1‿0 M⍟(↕n)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n
-  max_iter ← 100 ⋄ i ← 0
-  ⊢_while_ {𝕤
-    p‿ek ← Poly r
-    ∨´ (eps × ×˜ek) ≤ A2 ⊏p ?
-    r Step˜↩ p
-    "Failed to converge" ! max_iter > i+↩1
-    1;0
-  }@
-  <˘⍉> r
+  max_iter ← 100
+  {
+    eps  ← 𝕨⊣1e¯16
+    step ← GetStep n ← 1-˜≠𝕩
+    Poly ← (M¨⟜(D¨¯1⊸⊏)𝕩) _polyd_ek_ deriv
+    r    ← <˘⍉> 1‿0 M⍟(↕n)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n
+    i ← 0
+    ⊢_while_ {𝕤
+      p‿ek ← Poly r
+      ∨´ (eps × ×˜ek) ≤ A2 ⊏p ?
+      r Step˜↩ p
+      "Failed to converge" ! max_iter > i+↩1
+      1;0
+    }@
+    <˘⍉> r
+  }exact._with {𝕨𝔽CPoly𝕩}
 }
 ⟨WeierstrassRoots⇐WR, AberthRoots⇐AR⟩ ← {
   M‿D ← complex
@@ -77,20 +102,13 @@ _laguerre_ ← {poly _𝕣_ eps root:
 }
 
 # Find all roots, with linear/quadratic formulas and Laguerre
-_rootsPolish ← {
+_laguerreRootsPolish ← {
   eps ← 𝕨⊣1e¯16
-  M‿D‿Sqrt ← complex
-  Low ← !∘"Input must have degree at least 1"
-  Lin ← -∘D´
-  Quad ← { 𝕊 c‿b‿a:
-    b ÷↩ ¯2
-    0‿0⊸≢◶⟨⋈˜,c⊸D⋈D⟜a⟩ b(0≤+´∘×)◶⟨+,-⟩ Sqrt (M˜b) - a M c
-  }
-  High ← {
+  ⟨M⟩ ← complex
+  Solve ← {
     root ← 𝕩 _laguerre_ eps 0‿0
     root <⊸∾ Solve M⟜root⊸+`⌾⌽ 1↓𝕩
-  }
-  Solve ← (4⌊≠)◶Low‿Low‿Lin‿Quad‿High
-  {𝕨 _laguerre_ eps¨⌾(1⊸↓) 𝕩}⍟(3<≠∘⊣)⍟𝕗⟜Solve CPoly 𝕩
+  } exact._with
+  {𝕨 _laguerre_ eps¨⌾(1⊸↓) 𝕩}⍟𝕗⟜Solve exact._with CPoly 𝕩
 }
-Roots ← 1 _rootsPolish
+LaguerreRoots ← 1 _laguerreRootsPolish
