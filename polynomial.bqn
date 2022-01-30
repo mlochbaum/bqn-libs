@@ -1,7 +1,18 @@
 ⟨
+  Trim, Add, Sub, Mul
+  Derivative, Integral
   Eval, _fn
   LaguerreRoots, AberthRoots, WeierstrassRoots
 ⟩⇐
+
+# Arithmetic for real polynomials
+Trim ← (∨`⌾⌽0⊸≠)⊸/
+Add ← +´ ((⌈´≠¨)↑¨⊢)⊘(⌈○≠↑¨⋈)  # Like +´⊘+
+Sub ← -´ ⌈○≠ ↑¨ ⋈
+Mul ← +´¨ +⌜○(↕≠) ⊔ ×⌜
+
+Derivative ← 1 ↓ ↕∘≠⊸×
+Integral   ← {𝕊:(<𝕨⊣0)∾𝕩÷1+↕≠𝕩; 𝕊⁼:Derivative𝕩}
 
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 

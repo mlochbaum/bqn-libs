@@ -1,5 +1,17 @@
 p ← •Import "../polynomial.bqn"
-_fn‿LaguerreRoots‿AberthRoots‿WeierstrassRoots ← p
+Trim‿Add‿Sub‿Mul‿Derivative‿Integral‿_fn ← p
+LaguerreRoots‿AberthRoots‿WeierstrassRoots ← p
+
+! 3‿0‿2 ≡ 1‿¯1‿2 Add 2‿1
+! 4‿3‿2‿1 ≡ Add ↓4⥊1
+! (0¨ ≡ Sub˜) 1.1‿5‿0‿¯2
+! (1⊸↑ ≡ ·Trim ⊢ Sub 0⌾⊑) 1.1‿5‿0‿¯2
+! ¯3‿1‿1‿1 ≡ 3‿2‿1 Mul ¯1‿1
+
+! 5‿8 ≡ Derivative 6‿5‿4
+! ⟨⟩ ≡ Derivative ⟨⟩
+! ¯1 (⋈∘⊣ ≡ Integral) ⟨⟩
+! ⊢⌾Integral⊸≡ 3‿2‿¯1‿4
 
 ! 27‿0 ≡ 0‿0‿0‿1 _fn 3‿0
 
