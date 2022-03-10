@@ -7,7 +7,7 @@
 
 # 𝕗_hash is a function returning index in (2⋆n)-length table
 ⟨_hash⟩ ← {
-  base ← 2 ⋆ b←16
+  base ← 2 ⋆ b←32
   _hash ⇐ { bits _𝕣:
     ! 1≤bits
     d‿m←b(⌈∘÷˜⋈|)bits
