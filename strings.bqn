@@ -51,7 +51,8 @@ Split ← (0<≠∘⊢)◶⟨
 # Instances are non-overlapping, and earlier ones take precedence.
 ReplaceAll ← { ⟨old,new⟩ 𝕊 str:
   ! (≠new) ≡ l ← ≠old
-  match ← 1-˜ (l+1)|⌊´ (↕⊸-l) × old Locate¨ <str
+  "ReplaceAll: Can't replace empty" ! ∧´0<≠¨old
+  match ← 1-˜ (l+1)|⌊´ (↕⊸-l) × old (1<≠∘⊣)◶⟨⊑⊸=,≠∘⊢↑⍷⟩¨ <str
   cont ← (-⟜1⌈≤⟜1×⊢)` match ⊏ (≠¨old)∾0
   keep ← ⋈⟜(⊏⟜str) / 0=cont
   insert ← (new⊏˜⊏⟜match)⊸(≠¨⊸/⋈∾∘⊣) / (0⊸<∧»⊸≤) cont
