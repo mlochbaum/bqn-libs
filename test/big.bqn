@@ -3,7 +3,7 @@ i10 ← ⟨10⟩ •Import "../bigint.bqn"
 
 _fails ← {0∘𝔽⎊1}
 
-TestNat ← { 𝕊 ⟨Add,Sub,Mul,_compare⟩‿S:
+TestNat ← { 𝕊 ⟨Add,Sub,Mul,_compare,Signum⟩‿S:
   ! "41401" ≡ "41099" Add⌾S "302"
   ! "" (Add≡⊢)○S "9120"
 
@@ -22,9 +22,12 @@ TestNat ← { 𝕊 ⟨Add,Sub,Mul,_compare⟩‿S:
   !  0 CC "90"‿"90"
   !  0 CC ""‿""
   ! ¯1 CC "99"‿"100"
+
+  ! 0 = Signum S ""
+  ! 1 = Signum S "1"
 }
 
-TestInt ← { 𝕊 ⟨Add,Sub,Mul,_compare⟩‿S:
+TestInt ← { 𝕊 ⟨Add,Sub,Mul,_compare,Signum⟩‿S:
   ! "-215" S⊸≡ "-96" Add○S "-119"
   ! "23" S⊸≡ "-96" Add○S "119"
 
@@ -40,6 +43,10 @@ TestInt ← { 𝕊 ⟨Add,Sub,Mul,_compare⟩‿S:
   !  0 CC "-90"‿"-90"
   !  0 CC ""‿""
   ! ¯1 CC "-1010"‿""
+
+  ! ¯1 = Signum S "-1"
+  ! 0 = Signum S ""
+  ! 1 = Signum S "1"
 }
 
 Dig ← ⌽-'0'˙
