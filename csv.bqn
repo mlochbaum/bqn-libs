@@ -19,7 +19,7 @@ Split ← { 𝕊⁼𝕩: Join𝕩 ;
   e ← ≠`q       # Escaped characters
   s ← e<c∨n     # Split points
   d ← s∨q>»e<q  # Characters to be dropped
-  (0∾s/+`n) ⊔ (d(¬⊸×-⊣)+`s) ⊔ 𝕩
+  (0∾s/+`e<n) ⊔ (d(¬⊸×-⊣)+`s) ⊔ 𝕩
 }
 
 # Parse list of lines, e.g. from •file.Lines
