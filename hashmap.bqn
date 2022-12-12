@@ -53,9 +53,12 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
     Next•_while_(¯1⊸≠◶⟨0,"Duplicate key"!key≢⊑⟜keys⟩⊑⟜table) Ind key
   }
   Set ⇐ { key 𝕊 val:
-    New ← {len ST 𝕨 ⋄ keys∾↩<key ⋄ vals∾↩<val ⋄ IncLen 1 ⋄ 0}
-    Mod ← {vals val˙⌾((𝕨⊑table)⊸⊑)↩ ⋄ 0}
-    Next•_while_(¯1⊸≠◶⟨New,Mod⍟(¬⊢)⟜(key≢⊑⟜keys)⟩⟜(⊑⟜table)) Ind key
+    i ← Next•_while_(¯1⊸≠◶⟨0,key≢⊑⟜keys⟩ ⊑⟜table) Ind key
+    t ← i⊑table
+    {
+      ¯1≠t ? vals val˙⌾(t⊸⊑)↩ ; # Modify
+      len ST i ⋄ keys∾↩<key ⋄ vals∾↩<val ⋄ IncLen 1
+    }
     self
   }
 
