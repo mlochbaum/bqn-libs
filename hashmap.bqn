@@ -65,6 +65,7 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
     (↕𝕩) ST⟜DefKey¨ keys
   }
   ClearTombs ← {𝕊:
+    len ≡ ≠keys ? @ ;
     ! len ≡ +´ k ← tombstone⊸≢¨ keys
     keys‿vals k⊸/¨↩
     k
