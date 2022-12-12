@@ -77,7 +77,7 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
     len +↩ 𝕩
     hlen ≥ 2 × ≠keys ? @ ;
     k ← ClearTombs@
-    hlen ≥ 1.75 × len ? Renumber k ;
+    hlen ≥ 2.25 × len ? Renumber k ;
     Init len
   }
   DecLen ← {
