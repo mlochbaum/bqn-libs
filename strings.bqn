@@ -144,7 +144,7 @@ ToNums ← {
   T←⌈`× ⋄ I1T←(1+↕∘≠)⊸T
   cd←≠dig←('0'+↕10)∾"π∞" ⋄ val←(↕10)∾π‿1‿¯1 # ∞ as 1 to avoid ∞×0
   e‿d‿n‿p‿i←"e.¯π∞"=<𝕩 ⋄ e‿n∨↩"E-"=<𝕩
-  m←d∨cd>j←dig⊐𝕩
+  m←cd>j←dig⊐𝕩 ⋄ d‿e‿n∧↩(»(∨<⊸∾∧⋈⊢)«)n∨m∨d ⋄ m∨↩d
   s←d∨c←e∨z←(tr←∧`⌾⌽zz)<»⊸<zz←¬e∨n∨m
   "Negative sign in the middle of a number"! ∧´n≤1»zz∨c
   "Portion of a number is empty"! ∧´¬(1«s∨tr)∧n∨s
