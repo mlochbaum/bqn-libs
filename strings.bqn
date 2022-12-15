@@ -145,9 +145,9 @@ ToNums ← {
   cd←≠dig←('0'+↕10)∾"π∞" ⋄ val←(↕10)∾π‿1‿¯1 # ∞ as 1 to avoid ∞×0
   e‿d‿n‿p‿i←"e.¯π∞"=<𝕩 ⋄ e‿n∨↩"E-"=<𝕩
   m←d∨cd>j←dig⊐𝕩
-  s←d∨c←e∨z←(∧`⌾⌽<»⊸<)zz←¬e∨n∨m
+  s←d∨c←e∨z←(tr←∧`⌾⌽zz)<»⊸<zz←¬e∨n∨m
   "Negative sign in the middle of a number"! ∧´n≤1»zz∨c
-  "Portion of a number is empty"! ∧´¬(1«s)∧n∨s
+  "Portion of a number is empty"! ∧´¬(1«s∨tr)∧n∨s
   "Ill-formed decimal or exponent use"! ∧´(0⊸=∨»⊸<)s/d+2×e
   "π and ∞ must occur alone"! ∧´(p∨i)≤1(»∧(p∧«e)∨«)zz∨n>»e
   f←(17≥¬(⊢-T)+`)⊸∧g←(«≤(d<j≠0)>○I1T¬)⊸∧m   # No leading 0s; max 17 digits
