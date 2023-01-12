@@ -13,4 +13,5 @@ For usage, see export lists at the top of each file, and function descriptions i
 - big{nat,int}.bqn: utilities for arbitrary-precision numbers. In progress.
 - datetime.bqn: time and date, handling formats other than BQN's native `•UnixTime`
 - hashmap.bqn: mutable hash table, a prototype for planned `•HashMap`
+- json.bqn: JavaScript Object Notation
 - csv.bqn: comma-separated value file format

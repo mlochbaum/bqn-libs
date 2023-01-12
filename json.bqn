@@ -28,7 +28,8 @@ Tokenize←{
   s ← ≠`q ← e<'"'=𝕩
   "Unclosed quote" ! ¬¯1⊑s
   "Backslash outside string" ! ∧´s≥e
-  sg ← 1-˜(s>q∨eo)×+`s∧q            # Start at s∧q; exclude q and eo
+  ss ← s∧q                          # String start mask
+  sg ← (1-˜(s>q∨eo)×+`ss)∾+´ss      # Start at ss; exclude q and eo
   str ← sg ⊔ e UnEscape 𝕩           # Strings
 
   # Numbers and constants
@@ -45,6 +46,7 @@ Tokenize←{
 }
 
 Parse ← {
+  "Empty input" ! 0<≠𝕩
   t‿cns‿num‿strk ← Tokenize 𝕩
 
   # Validate (incomplete)
@@ -55,7 +57,7 @@ Parse ← {
   u ← g⊏t
   r ← +` s ← u∊"[{"
   o ← s/'{'=u                       # Container is object
-  "Improper , or : usage" ! (≢⥊0‿1˙)⊸≡ s∨u∊",:"
+  "Improper , or : usage" ! (1≠`¬»⊸∧s) ≡ s∨u∊",:"
   RunLen ← (1+↕∘≠)(⊣-⌈`∘×)¬
   p ← 4 | RunLen r ⊏ 0∾o            # Position within object
   "Improper : usage" ! (u=':') ≡ 3=p
@@ -64,14 +66,14 @@ Parse ← {
   # Keys
   l ← (⍋g) ⊏ r                      # Container index
   j ← +`⊸× o                        # Object index (start at 1; 0 if list)
-  keys ← (q/(«c)×l⊏0∾j) ⊔ strk
-  str ← ⊑1↑keys
+  keys ← ((q/(«c)×l⊏0∾j)∾1+´o) ⊔ strk
+  str ← ⊑keys
 
   # Build collections
   nv ← ≠ vals ← ∾cns‿num‿str        # Initial set of values
   f ← ¬(«⊸∨c)∨co∨','=t              # Filter for just values a0"]}
   vi← ⍋⍋(f/'0'=t)+(2×f/q)+3×f/cc    # Value indices
   i ← vi ⊏ (↕nv) ∾ nv+≠⊸-cc/»l      # Adjust for collection ordering
-  j {vals∾↩<𝕨⊑⟜keys⊸≍⍟(0<⊣)𝕩⊏vals⋄@}¨○⌽ (1-˜f/l)⊔i
+  j {vals∾↩<𝕨⊑⟜keys⊸≍⍟(0<⊣)𝕩⊏vals⋄@}¨○⌽ ((≠j)∾˜1-˜f/l)⊔i
   ¯1⊑vals
 }
