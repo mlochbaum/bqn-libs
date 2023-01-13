@@ -15,7 +15,29 @@
   in ← """\/bfrnt"
   out ← (3↑in)∾@+8‿12‿13‿10‿9
   diff ← (out-in) ∾ 0
-  UnEscape ⇐ { 𝕩 + 𝕨 × (in⊐𝕩) ⊏ diff }
+  Basic ← {
+    i ← in ⊐ 𝕩
+    "Unknown escape" ! ∧´𝕨≤i<≠in
+    𝕩 + 𝕨 × i ⊏ diff
+  }
+
+  hc ← "0Aa"
+  hb ← ⥊hc+0≍˘10‿6‿6   # Hex boundaries, start and after-end
+  ho ← 2/hc-0‿10‿10    # Corresponding offsets
+  Hex ← { u 𝕊 𝕩:
+    d ← 𝕩 /˜ m ← ≠` (4⥊0)⊸»⊸≠ »u
+    t ← hb ⍋ d
+    "String \u must be followed by 4 hex characters" ! ∧´1=2|t
+    # Now m can't run past the end or self-intersect,
+    # or it would have hit a closing quote or backslash
+    v ← 16⊸×⊸+˜˝⌽ ⍉∘‿4⥊ d-t⊏ho
+    ⟨(v+@-'u')⊸+⌾(u⊸/)𝕩, m⟩
+  }
+
+  UnEscape ⇐ { e 𝕊 𝕩:
+    u ← e ∧ 𝕩='u'
+    (u<e)⊸Basic⌾⊑ u Hex⟜⊑⍟(∨´u) 𝕩‿0
+  }
 }
 ws←@+9‿10‿13‿32 # whitespace
 
@@ -28,9 +50,9 @@ Tokenize←{
   s ← ≠`q ← e<'"'=𝕩
   "Unclosed quote" ! ¬¯1⊑s
   "Backslash outside string" ! ∧´s≥e
-  ss ← s∧q                          # String start mask
-  sg ← (1-˜(s>q∨eo)×+`ss)∾+´ss      # Start at ss; exclude q and eo
-  str ← sg ⊔ e UnEscape 𝕩           # Strings
+  xe‿dr ← e UnEscape 𝕩              # Escaped 𝕩; characters to drop
+  sg ← ((1-˜(s>q∨eo∨dr)×+`)∾+´)s∧q  # Start at s∧q; exclude q, eo, dr
+  str ← sg ⊔ xe                     # Strings
 
   # Numbers and constants
   w←»⊸<l←¬s∨𝕩∊"""{}[],:"∾ws         # Word chars l, start w
