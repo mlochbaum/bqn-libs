@@ -61,10 +61,14 @@ Tokenize ← {
   b ← s ∨ 𝕩∊@+9‿10‿13‿32            # Whitespace (blank)
   l ← ¬ b ∨ 𝕩∊"""{}[],:"            # Word characters
   w ← »⊸< l                         # Word starts
-  n ← l ∧ (+`w)⊏0∾(w/𝕩)∊'-'∾'0'+↕10 # Numbers
-  k ← n<w                           # Constant starts
-  cns ← Consts (1-˜(n<l)×+`k)⊔𝕩     # Constants
-  num ← •ParseFloat¨ (1-˜n×+`n∧w)⊔𝕩 # Numbers
+  neg ← '-' = 𝕩
+  dig ← ('0'≤𝕩) ∧ 𝕩≤'9'
+  m ← l ∧ (+`w)⊏0∾w/dig∨neg         # Numbers
+  n ← m∧w ⋄ k ← m<w                 # Number and constant starts
+  "Leading zero" ! ¬∨´(n≠»⊸∨n∧neg)∧('0'=𝕩)∧«dig
+  "Digits required on both sides of decimal" ! ∧´(m∧'.'=𝕩)≤(»∧«)dig
+  cns ← Consts (1-˜(m<l)×+`k)⊔𝕩     # Constants
+  num ← •ParseFloat¨ (1-˜m×+`n)⊔𝕩   # Numbers
 
   # Tokenize
   f ← ¬b∨w<l                        # First characters of tokens

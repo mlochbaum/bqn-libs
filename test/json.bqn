@@ -5,10 +5,11 @@ _fails ← {0∘𝔽⎊1}
 # Numbers
 ! 5.125 ≡ j.Parse "5.125"
 ! ¯2e3  ≡ j.Parse "-2e+3"
-! ¯2e3  ≡ j.Parse "-2e+3"
-#! j.Parse _fails "03"
+! 0     ≡ j.Parse "0e25"
+! j.Parse _fails "03"
+! j.Parse _fails "-001.2e-1"
 ! j.Parse _fails ".3"
-#! j.Parse _fails "3.e2"
+! j.Parse _fails "3.e2"
 
 # Strings
 Q ← '"'⊸(∾∾⊣)
