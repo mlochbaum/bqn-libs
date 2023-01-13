@@ -17,8 +17,10 @@ Q ← '"'⊸(∾∾⊣)
 ! ""             ≡ j.Parse Q""
 ! ((@+8)∾"b""c") ≡ j.Parse Q"\bb\""c"
 ! "y2Àgau"       ≡ j.Parse Q"y2\u00C0ga\u0075"
+! "𝕨×𝕩"          ≡ j.Parse Q"\ud835\uDd68×\uD835\udd69"
 ! j.Parse _fails Q"ab\cd"
 ! j.Parse _fails Q"\u12"
+! j.Parse _fails Q"\uDd68\ud835"
 
 # Constants
 ! ∧´ (< ≡ j.Parse)¨ "true"‿"false"‿"null"

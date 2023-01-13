@@ -35,7 +35,18 @@
     # Now m can't run past the end or self-intersect,
     # or it would have hit a closing quote or backslash
     v ← 16⊸×⊸+˜˝⌽ ⍉∘‿4⥊ d-t⊏ho
-    ⟨(v+@-'u')⊸+⌾(u⊸/)𝕩, m⟩
+    w‿e ← Surrogate v
+    ⟨(w+@-'u')⊸+⌾(u⊸/)𝕩, e⌾(u⊸/)m⟩
+  }
+  sr ← 2⋆10            # Surrogate base/radix
+  sb ← sr×52+2+↕3      # Surrogate character boundaries
+  Surrogate ← {
+    c ← (≠sb)|sb⍋𝕩     # 0 for non-surrogate, 1 then 2 for surrogate
+    h ← 1=c            # First half
+    "Unmatched surrogate pair" ! (0∾h) ≡ (2=c)∾0
+    r ← 𝕩 - c⊏0∾sb     # Numeric value of surrogates
+    v ← r + »h×sr×(2⋆6)+r
+    ⟨v, h⟩
   }
 
   UnEscape ⇐ { e 𝕊 𝕩:
