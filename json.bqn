@@ -3,6 +3,10 @@
   Parse  # JSON string to BQN
 ⟩⇐
 
+# JSON numbers, strings, and lists correspond directly to BQN
+# Objects are represented as keys≍values
+# true, false, null are represented as <"true", <"false", <"null"
+
 ⟨Consts⟩ ← {
   val ← <¨ name ← "true"‿"false"‿"null"
   Consts ⇐ {
@@ -39,12 +43,11 @@
     (u<e)⊸Basic⌾⊑ u Hex⟜⊑⍟(∨´u) 𝕩‿0
   }
 }
-ws←@+9‿10‿13‿32 # whitespace
 
 # JSON to ⟨tokens, constants, numbers, strings⟩
 # Tokens are characters {}[],: and a constant, 0 number, " string
 # Values correspond to a, 0, and " in order
-Tokenize←{
+Tokenize ← {
   # Strings
   e ← »eo ← <`'\'=𝕩
   s ← ≠`q ← e<'"'=𝕩
@@ -55,14 +58,16 @@ Tokenize←{
   str ← sg ⊔ xe                     # Strings
 
   # Numbers and constants
-  w←»⊸<l←¬s∨𝕩∊"""{}[],:"∾ws         # Word chars l, start w
-  n←l∧(+`w)⊏0∾('-'∾'0'+↕10)∊˜w/𝕩    # Number starts
-  k←n<w                             # Constant starts
+  b ← s ∨ 𝕩∊@+9‿10‿13‿32            # Whitespace (blank)
+  l ← ¬ b ∨ 𝕩∊"""{}[],:"            # Word characters
+  w ← »⊸< l                         # Word starts
+  n ← l ∧ (+`w)⊏0∾(w/𝕩)∊'-'∾'0'+↕10 # Numbers
+  k ← n<w                           # Constant starts
   cns ← Consts (1-˜(n<l)×+`k)⊔𝕩     # Constants
   num ← •ParseFloat¨ (1-˜n×+`n∧w)⊔𝕩 # Numbers
 
   # Tokenize
-  f ← ¬(𝕩∊ws)∨(w<l)∨s               # First characters of tokens
+  f ← ¬b∨w<l                        # First characters of tokens
   tok ← '0'¨⌾((f/n)⊸/) 'a'¨⌾((f/k)⊸/) f/𝕩
   ⟨tok, cns, num, str⟩
 }
