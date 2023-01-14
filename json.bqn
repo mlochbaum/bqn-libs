@@ -64,6 +64,7 @@ Tokenize ← {
   s ← ≠`q ← e<'"'=𝕩
   "Unclosed quote" ! ¬¯1⊑s
   "Backslash outside string" ! ∧´s≥e
+  "Un-escaped control character" ! ∧´s≤𝕩≥@+32
   xe‿dr ← e UnEscape 𝕩              # Escaped 𝕩; characters to drop
   sg ← ((1-˜(s>q∨eo∨dr)×+`)∾+´)s∧q  # Start at s∧q; exclude q, eo, dr
   str ← sg ⊔ xe                     # Strings
@@ -90,6 +91,7 @@ Tokenize ← {
 Parse ← {
   "Empty input" ! 0<≠𝕩
   t‿cns‿num‿strk ← Tokenize 𝕩
+  "Empty input" ! 0<≠t
 
   # Validate (incomplete)
   q ← '"'=t
@@ -99,11 +101,12 @@ Parse ← {
   u ← g⊏t
   r ← +` s ← u∊"[{"
   o ← s/'{'=u                       # Container is object
-  "Improper , or : usage" ! (1≠`¬»⊸∧s) ≡ s∨u∊",:"
+  "Mismatched brackets" ! o ≡ (u∊"]}")/'}'=u
+  "Improper , or : usage" ! (¯1⊸⊑ ¬⊸∧ (1≠`¬»⊸∧s) ≡ s⊸∨) u∊",:"
   RunLen ← (1+↕∘≠)(⊣-⌈`∘×)¬
   p ← 4 | RunLen r ⊏ 0∾o            # Position within object
   "Improper : usage" ! (u=':') ≡ 3=p
-  "Object ends cefore key-value pair completed" ! ¬∨´s∧»0≠p
+  "Object ends cefore key-value pair completed" ! ¬∨´((1≠¯1⊑p)«s)∧0≠p
 
   # Keys
   l ← (⍋g) ⊏ r                      # Container index

@@ -28,6 +28,9 @@ Q ← '"'⊸(∾∾⊣)
 
 # Collections
 ! j.Parse _fails ""
+! j.Parse _fails "{[}]"
+! j.Parse _fails "[1,]"
+! j.Parse _fails "{""key"":}"
 ! 3‿2‿1   ≡ j.Parse "[3,2.00,1e0]"
 ! ⟨⟩      ≡ j.Parse "[]"
 ! ⟨⟩‿1‿⟨⟩ ≡ j.Parse "[[],1,[]]"
