@@ -1,44 +1,70 @@
-j ← •Import "../json.bqn"
+⟨P⇐Parse⟩ ← •Import "../json.bqn"
 
 _fails ← {0∘𝔽⎊1}
 
 # Numbers
-! 5.125 ≡ j.Parse "5.125"
-! ¯2e3  ≡ j.Parse "-2e+3"
-! 0     ≡ j.Parse "0e25"
-! j.Parse _fails "03"
-! j.Parse _fails "-001.2e-1"
-! j.Parse _fails ".3"
-! j.Parse _fails "3.e2"
+! 5.125 ≡ P "5.125"
+! ¯2e3  ≡ P "-2e+3"
+! 0     ≡ P "0e25"
+! P _fails "03"
+! P _fails "-001.2e-1"
+! P _fails ".3"
+! P _fails "3.e2"
+! "0"       ≡ P⁼ 0
+! "-2.5e-9" ≡ P⁼ ¯2.5e¯9
+! P⁼_fails ¯∞
+! P⁼_fails ÷˜0
 
 # Strings
 Q ← '"'⊸(∾∾⊣)
-! ".?𝕩"          ≡ j.Parse Q".?𝕩"
-! ""             ≡ j.Parse Q""
-! ((@+8)∾"b""c") ≡ j.Parse Q"\bb\""c"
-! "y2Àgau"       ≡ j.Parse Q"y2\u00C0ga\u0075"
-! "𝕨×𝕩"          ≡ j.Parse Q"\ud835\uDd68×\uD835\udd69"
-! j.Parse _fails Q"ab\cd"
-! j.Parse _fails Q"\u12"
-! j.Parse _fails Q"\uDd68\ud835"
+! ".?𝕩"          ≡ P Q".?𝕩"
+! ""             ≡ P Q""
+! ((@+8)∾"b""c") ≡ P Q"\bb\""c"
+! "y2Àgau"       ≡ P Q"y2\u00C0ga\u0075"
+! "𝕨×𝕩"          ≡ P Q"\ud835\uDd68×\uD835\udd69"
+! P _fails Q"ab\cd"
+! P _fails Q"\u12"
+! P _fails Q"\uDd68\ud835"
+! "" Q⊸≡ P⁼ ""
+! "ab\\c\""" Q⊸≡ P⁼ "ab\c"""
+! "\u0006\u0007\b\t\n\u000B" Q⊸≡ P⁼ @+6+↕6
+! "\u001F !" Q⊸≡ P⁼ @+31‿32‿33
 
 # Constants
-! ∧´ (< ≡ j.Parse)¨ "true"‿"false"‿"null"
-! j.Parse _fails "test"
+! ∧´ (< ≡ P)¨ "true"‿"false"‿"null"
+! P _fails "test"
+! ∧´ (⊢ ≡ P⁼∘<)¨ "true"‿"false"‿"null"
+! P⁼_fails <"test"
 
 # Collections
-! j.Parse _fails ""
-! j.Parse _fails "{[}]"
-! j.Parse _fails "[1,]"
-! j.Parse _fails "{""key"":}"
-! 3‿2‿1   ≡ j.Parse "[3,2.00,1e0]"
-! ⟨⟩      ≡ j.Parse "[]"
-! ⟨⟩‿1‿⟨⟩ ≡ j.Parse "[[],1,[]]"
-! (↕2‿0)  ≡ j.Parse "{}"
-! ("ab\c"‿""≍⟨2,<"false"⟩) ≡ j.Parse "{""ab\\c"":2, """":false}"
+! P _fails ""
+! P _fails "{[}]"
+! P _fails "[1,]"
+! P _fails "{""key"":}"
+! 3‿2‿1   ≡ P "[3,2.00,1e0]"
+! ⟨⟩      ≡ P "[]"
+! ⟨⟩‿1‿⟨⟩ ≡ P "[[],1,[]]"
+! (↕2‿0)  ≡ P "{}"
+! ("ab\c"‿""≍⟨2,<"false"⟩) ≡ P "{""ab\\c"":2, """":false}"
+! "[]" ≡ P⁼ ⟨⟩
+! "[]" ≡ P⁼ ↕0
+! "[-1,""str"",false]" ≡ P⁼ ⟨¯1,"str",<"false"⟩
+! "{}" ≡ P⁼ 2‿0⥊⟨⟩
+! "{""key"":4}" ≡ P⁼ ≍˘"key"‿4
+
+! P⁼_fails 'c'
+! P⁼_fails 'c'‿0‿'d'‿2
+! P⁼_fails {⇐}
+! P⁼_fails {⌜}
+! P⁼_fails 1‿1‿1⥊@
+! P⁼_fails ≍"k0"‿"k1"≍2‿3
 
 # Combined
-! ≡⟜j.Parse´ ⟨
+! ≡⟜P´ ⟨
   ⟨<"null", "k0"‿"key1"≍⟨<"true",6.25e9‿2‿3⟩, ⟨"43",43⟩⟩
   "[null,{""k0"":true,""key1"":[6.25e+9,2,3]},[""43"",43]]"
+⟩
+! P⁼⊸≡´ ⟨
+  ⟨<"null", "k0"‿"key1"≍⟨<"true",6.25‿2‿3⟩, ⟨"43",43⟩⟩
+  "[null,{""k0"":true,""key1"":[6.25,2,3]},[""43"",43]]"
 ⟩

@@ -1,21 +1,30 @@
 # JSON: JavaScript Object Notation
 ⟨
-  Parse  # JSON string to BQN
+  Parse   # JSON string to BQN
+  Export  # BQN value to JSON (also Parse⁼)
 ⟩⇐
 
 # JSON numbers, strings, and lists correspond directly to BQN
 # Objects are represented as keys≍values
 # true, false, null are represented as <"true", <"false", <"null"
 
-⟨Consts⟩ ← {
+# An empty list exports as "" if its fill is a space and [] otherwise
+
+⟨Consts, ExportConst⟩ ← {
   val ← <¨ name ← "true"‿"false"‿"null"
   Consts ⇐ {
     i ← name ⊐ 𝕩
     "Unknown constant" ! ∧´ i<≠name
     i ⊏ val
   }
+  cm ← "Enclosed value must be JSON constant"∾∾' '⊸∾¨"or "⊸∾⌾(¯1⊸⊑)name
+  ExportConst ⇐ {
+    i ← val⊸⊐⌾< 𝕩
+    cm ! i<≠val
+    i ⊑ name
+  }
 }
-⟨UnEscape⟩ ← {
+⟨UnEscape, Escape⟩ ← {
   in ← """\/bfrnt"
   out ← (3↑in)∾@+8‿12‿13‿10‿9
   diff ← (out-in) ∾ 0
@@ -53,6 +62,25 @@
     u ← e ∧ 𝕩='u'
     (u<e)⊸Basic⌾⊑ u Hex⟜⊑⍟(∨´u) 𝕩‿0
   }
+
+  Hex32 ← {                # Convert 𝕩<32 to two hex digits
+    u‿l ← 16(⌊∘÷˜⋈|)𝕩      # Upper and lower digits; ∧´u<2
+    '0'+u≍˘l-(10+-´"0A")×10≤l
+  }
+  Escape ⇐ {
+    e ← (𝕩∊2↑in) ∨ 𝕩<@+32  # Quote, backslash, and control characters
+    j ← /e ⋄ k ← ¬e        # Their indices; characters to keep
+    c ← j ⊏ 𝕩              # Characters to be escaped
+    m ← c - (out⊐c)⊏diff   # Escape the basic ones
+    g ← 2 ∾˜ m<@+32        # Group 𝕨 to separate...
+    n‿u ← g ⊔ m            # Characters requiring basic, hex escapes
+    i ← ∾⟨/k⟩∾2‿6/¨g⊔j     # Target indices
+    i ⍋⊸⊏ ∾⟨               # Use them to reorder:
+      k/𝕩                  # Kept characters
+      ⥊'\'≍˘n              # Basic escapes
+      ⥊"\u00"⊸∾˘ Hex32 u-@ # Hex escapes
+    ⟩
+  }
 }
 
 # JSON to ⟨tokens, constants, numbers, strings⟩
@@ -89,6 +117,7 @@ Tokenize ← {
 }
 
 Parse ← {
+  𝕊⁼𝕩: Export 𝕩 ;
   "Empty input" ! 0<≠𝕩
   t‿cns‿num‿strk ← Tokenize 𝕩
   "Empty input" ! 0<≠t
@@ -122,3 +151,33 @@ Parse ← {
   j {vals∾↩<𝕨⊑⟜keys⊸≍⍟(0<⊣)𝕩⊏vals⋄@}¨○⌽ ((≠j)∾˜1-˜f/l)⊔i
   ¯1⊑vals
 }
+
+ExportNumber ← {
+  "NaN can't be represented in JSON" ! =˜𝕩
+  "Infinities can't be represented in JSON" ! ∞≠|𝕩
+  r ← •Repr 𝕩
+  r + (-´"-¯")×r='¯'
+}
+IsString ← {∧´2=•Type¨ 1⊸↑⍟(0=≠) 𝕩}
+ExportList ← {
+  IsString 𝕩 ? ExportString 𝕩 ;
+  ∾ ⟨"["⟩∾⟨"]"⟩∾˜ 1↓⥊(<",")≍˘Export¨ 𝕩
+}
+ExportString ← '"' (∾∾⊣) Escape
+ExportObject ← {
+  "Object must consist of keys≍values" ! 2=≠𝕩
+  [k,v] ← 𝕩
+  "Object keys must be strings" ! ∧´ IsString¨ k
+  kv ← ⥊ (ExportString¨ k) ≍˘ Export¨ v
+  ∾ ⟨"{"⟩∾⟨"}"⟩∾˜ ¯1↓⥊ kv ≍˘ (≠kv) ⥊ ⟨":",","⟩
+}
+Export ← (2⌊•Type)◶⟨ # Check type
+  (3⌊=)◶⟨            # Type 0, array: Check rank
+    ExportConst      #   0 constant (enclosed string)
+    ExportList       #   1 List or string
+    ExportObject     #   2 Object
+    !∘"Rank >2 cannot be exported to JSON"
+  ⟩
+  ExportNumber       # Type 1: number
+  !∘"Only numbers and arrays can be exported to JSON"
+⟩
