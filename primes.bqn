@@ -13,45 +13,33 @@
 # Wheel factorization
 MakeWheel ← {
   primes ⇐ (¬∘∊/⊣)⟜(⥊×⌜˜)2↓↕𝕩  # Primes <𝕩 form the wheel
-  len ⇐ ×´primes               # Wheel length
-  mask ⇐ ∧´(len⥊0<↕)¨primes
-  coprime ⇐ /mask
-  ms ← +`mask
+  wl ← ×´primes                # Wheel length
+  mask ← ∧´(wl⥊0<↕)¨primes     # Positions not divisible by a prime
+  em ← (wl + ⌈𝕨÷𝕩) ⥊ mask      # Extended mask (not much longer)
+  ms ← +`em                    # Indices into wheel
+  w ← /em                      # Extended wheel
 
   # Get prime mask on segment [start,end) with prime divisors pd
   # Assumes pd doesn't intersect primes, or [start,end)
   Sieve ⇐ {pd 𝕊 start‿end:
-    w←coprime ⋄ wl←len
     d ← ⌊(𝕩-1)÷⌜pd
-    bc ← d ⌊∘÷ wl
-    ep ← (d-bc×wl) ⊏ ms
-
-    # Do first partial wheels together
-    m ← ≠˝bc
-    U←{⟨r←𝕩-𝕨,↕∘≠⊸+r/𝕩-+`r⟩} #{⟨r←𝕩-𝕨,(⊒/r)+r/𝕨⟩}
-    fr‿fk ← U⟜((m×≠w)⊸⌈)˝ ep
-    j ← (fr/pd) × (fr/wl×⊏bc) + fk⊏w
-
-    # Then the remainder for each prime spanning multiple wheels
-    Rem ← {p‿s‿e‿o: # prime, start, end, overflow
-      pl←p×wl ⋄ pw←start-˜p×w
-      ⟨⥊(pl×s+↕e-s)+⌜pw, (pl×e)+o↑pw⟩
-    }
-    b ← Rem˘ ⍉>m⊸/¨⟨pd,1+⊏bc,1⊏bc,1⊏ep⟩
-
-    i ← ∾ ⟨j-start⟩∾⥊b
+    b ← wl × (⊏d) ⌊∘÷ wl
+    [e,f] ← (d -⎉1 b) ⊏ ms
+    r ← f-e
+    k ← ↕∘≠⊸+r/f-+`r
+    i ← (r/pd) × (r/b) + k⊏w
     l ← end-start
-    (l↑/⁼i∾l) < l⥊start⌽mask
+    (l↑/⁼(i-start)∾l) < l⥊start⌽mask
   }
 }
 
 # Prime state
-next ← 17
-⟨Sieve⟩ ← wheel ← MakeWheel next
+next ← 16
+maxExt ← 2⋆17
+⟨Sieve⟩ ← wheel ← maxExt MakeWheel next
 wlen ← ≠ wheel.primes
 primes ← wheel.primes
 Extend ← {
-  maxExt ← 2⋆17
   E ← {
     next ↩ 𝕩 ⌊ ×˜ old←next
     stops ← next « starts ← ↕∘⌈⌾((old+maxExt⊸×)⁼) next
