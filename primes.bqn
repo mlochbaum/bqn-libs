@@ -16,12 +16,15 @@ MakeWheel ← {
   len ⇐ ×´primes               # Wheel length
   mask ⇐ ∧´(len⥊0<↕)¨primes
   coprime ⇐ /mask
+  ms ← +`mask
 
   # Get prime mask on segment [start,end) with prime divisors pd
   # Assumes pd doesn't intersect primes, or [start,end)
   Sieve ⇐ {pd 𝕊 start‿end:
     w←coprime ⋄ wl←len
-    bc‿ep ← wl (⌊∘÷˜ ⋈ (+`mask)⊏˜|⟜⌊) (𝕩-1)÷⌜pd
+    d ← ⌊(𝕩-1)÷⌜pd
+    bc ← d ⌊∘÷ wl
+    ep ← (d-bc×wl) ⊏ ms
 
     # Do first partial wheels together
     m ← ≠˝bc
