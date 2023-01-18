@@ -12,20 +12,21 @@
 
 # Wheel factorization
 MakeWheel ← {
-  len ⇐ ×´primes ⇐ 𝕩     # Primes in wheel and wheel length
+  primes ⇐ (¬∘∊/⊣)⟜(⥊×⌜˜)2↓↕𝕩  # Primes <𝕩 form the wheel
+  len ⇐ ×´primes               # Wheel length
   mask ⇐ ∧´(len⥊0<↕)¨primes
-  numc ⇐ ≠ coprime ⇐ /mask
+  coprime ⇐ /mask
 
   # Get prime mask on segment [start,end) with prime divisors pd
   # Assumes pd doesn't intersect primes, or [start,end)
   Sieve ⇐ {pd 𝕊 start‿end:
-    w←coprime,wn←numc,wl←len
-    bc‿ep ← wl (⌊∘÷˜ ⋈ w⍋|) (𝕩-1)÷⌜pd
+    w←coprime ⋄ wl←len
+    bc‿ep ← wl (⌊∘÷˜ ⋈ (+`mask)⊏˜|⟜⌊) (𝕩-1)÷⌜pd
 
     # Do first partial wheels together
     m ← ≠˝bc
-    U←{⟨r←𝕩-𝕨,(⊒/r)+r/𝕨⟩} #{⟨r←𝕩-𝕨,((↕·⊑¯1⊸↑)+r/𝕨-»)+`r⟩}
-    fr‿fk ← U⟜((m×wn)⊸⌈)˝ ep
+    U←{⟨r←𝕩-𝕨,↕∘≠⊸+r/𝕩-+`r⟩} #{⟨r←𝕩-𝕨,(⊒/r)+r/𝕨⟩}
+    fr‿fk ← U⟜((m×≠w)⊸⌈)˝ ep
     j ← (fr/pd) × (fr/wl×⊏bc) + fk⊏w
 
     # Then the remainder for each prime spanning multiple wheels
@@ -36,22 +37,26 @@ MakeWheel ← {
     b ← Rem˘ ⍉>m⊸/¨⟨pd,1+⊏bc,1⊏bc,1⊏ep⟩
 
     i ← ∾ ⟨j-start⟩∾⥊b
-    0¨⌾(i⊸⊏) (end-start)⥊start⌽mask
+    l ← end-start
+    (l↑/⁼i∾l) < l⥊start⌽mask
   }
 }
 
 # Prime state
-next ← 11
-⟨Sieve⟩ ← wheel ← MakeWheel 2‿3‿5‿7
+next ← 17
+⟨Sieve⟩ ← wheel ← MakeWheel next
 wlen ← ≠ wheel.primes
 primes ← wheel.primes
 Extend ← {
+  maxExt ← 2⋆17
   E ← {
-    next ↩ ⌈ 𝕩 ⌊ ((2⋆24)⊸+ ⌊ ×˜) old←next
-    primes ∾↩ old + / (wlen↓primes(⍋↑⊣)√next) Sieve old‿next
+    next ↩ 𝕩 ⌊ ×˜ old←next
+    stops ← next « starts ← ↕∘⌈⌾((old+maxExt⊸×)⁼) next
+    lp ← primes ⍋ √stops
+    lp {primes ∾↩ (⊑𝕩) + / (wlen↓𝕨↑primes) Sieve 𝕩 ⋄ @}¨ starts⋈¨stops
     𝕊⍟(next⊸<) 𝕩
   }
-  next E∘(2⊸×⊸⌈)⍟< 𝕩
+  next E∘{𝕩⌈𝕨+maxExt⌊𝕨}⍟< ⌊𝕩
 }
 
 CheckNum  ← "Argument must be a non-negative number" ! (1=•Type)◶⟨0,0⊸≤⟩
