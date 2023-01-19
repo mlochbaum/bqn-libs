@@ -10,44 +10,51 @@
   Totient
 ⟩⇐
 
+# Prime state, updated as necessary
+next ← 16
+primes ← (¬∘∊/⊣)⟜(⥊×⌜˜)2↓↕next
+wlen ← ≠primes
+
 # Wheel factorization
-MakeWheel ← {
-  primes ⇐ (¬∘∊/⊣)⟜(⥊×⌜˜)2↓↕𝕩  # Primes <𝕩 form the wheel
+⟨Sieve, Extend⟩ ← {
+  seg ← 2⋆17                   # Maximum segment size
   wl ← ×´primes                # Wheel length
   mask ← ∧´(wl⥊0<↕)¨primes     # Positions not divisible by a prime
-  em ← (wl + ⌈𝕨÷𝕩) ⥊ mask      # Extended mask (not much longer)
+  wn ← +´mask
+  em ← (wl + ⌈seg÷next) ⥊ mask # Extended mask (not much longer)
   ms ← +`em                    # Indices into wheel
   w ← /em                      # Extended wheel
 
   # Get prime mask on segment [start,end) with prime divisors pd
   # Assumes pd doesn't intersect primes, or [start,end)
-  Sieve ⇐ {pd 𝕊 start‿end:
-    d ← ⌊(𝕩-1)÷⌜pd
-    b ← wl × (⊏d) ⌊∘÷ wl
-    [e,f] ← (d -⎉1 b) ⊏ ms
-    r ← f-e
-    k ← ↕∘≠⊸+r/f-+`r
+  bca ← eca ← ↕0 # cache
+  _sieveCache ⇐ {pd cache _𝕣 start‿end:
+    bc‿ec ← {cache? bca‿eca ; ⋈˜↕0}
+    da ← (start-1) ⌊∘÷ (≠bc)↓pd  # Smallest coefficients to mark off
+    b ← bc ∾ ba ← wl × da ⌊∘÷ wl # Wheel index for those
+    e ← ec ∾ (da-ba) ⊏ ms        # Start position in wheel
+    f ← (b -˜ (end-1)⌊∘÷pd) ⊏ ms # End position, may run past end of wheel
+    {cache? inc←wn≤f ⋄ bca↩b+wl×inc ⋄ eca↩f-wn×inc ; @} # Next b and e
+
+    r ← f-e                      # Number to mark off
+    k ← ↕∘≠⊸+r/f-+`r             # Wheel positions
     i ← (r/pd) × (r/b) + k⊏w
     l ← end-start
     (l↑/⁼(i-start)∾l) < l⥊start⌽mask
   }
-}
+  Sieve ⇐ 0 _sieveCache
+  SC ← 1 _sieveCache
 
-# Prime state
-next ← 16
-maxExt ← 2⋆17
-⟨Sieve⟩ ← wheel ← maxExt MakeWheel next
-wlen ← ≠ wheel.primes
-primes ← wheel.primes
-Extend ← {
-  E ← {
-    next ↩ 𝕩 ⌊ ×˜ old←next
-    stops ← next « starts ← ↕∘⌈⌾((old+maxExt⊸×)⁼) next
-    lp ← primes ⍋ √stops
-    lp {primes ∾↩ (⊑𝕩) + / (wlen↓𝕨↑primes) Sieve 𝕩 ⋄ @}¨ starts⋈¨stops
-    𝕊⍟(next⊸<) 𝕩
+  Extend ⇐ {
+    E ← {
+      next ↩ 𝕩 ⌊ ×˜ old←next
+      stops ← next « starts ← ↕∘⌈⌾((old+seg⊸×)⁼) next
+      lp ← primes ⍋ √stops
+      lp {primes ∾↩ (⊑𝕩) + / (wlen↓𝕨↑primes) SC 𝕩 ⋄ @}¨ starts⋈¨stops
+      𝕊⍟(next⊸<) 𝕩
+    }
+    next E∘{𝕩⌈𝕨+seg⌊𝕨}⍟< ⌊𝕩
   }
-  next E∘{𝕩⌈𝕨+maxExt⌊𝕨}⍟< ⌊𝕩
 }
 
 CheckNum  ← "Argument must be a non-negative number" ! (1=•Type)◶⟨0,0⊸≤⟩
@@ -82,7 +89,7 @@ PrevPrime ← { !2<𝕩 ⋄ (0<≠)◶⟨𝕊0⊑R,¯1⊑⊢⟩ PrimesIn r←1�
 
 IsPrime ← {
   CheckNat 𝕩
-  p ← wheel.primes
+  p ← 2‿3‿5‿7
   c ← 0=p|𝕩
   (∨´c)◶⟨(×˜¯1⊑p)⊸<◶⟨1⊸≠,MillerRabin⟩, c⊑∘/⟜p⊸=⊢ ⟩ 𝕩
 }⚇0
