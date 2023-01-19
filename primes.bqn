@@ -43,18 +43,16 @@ wlen ← ≠primes
     (l↑/⁼(i-start)∾l) < l⥊start⌽mask
   }
   Sieve ⇐ 0 _sieveCache
-  SC ← 1 _sieveCache
 
+  AddSeg ← {primes ∾↩ (⊑𝕩) + / (wlen↓𝕨↑primes) 1 _sieveCache 𝕩 ⋄ @}
   Extend ⇐ {
-    E ← {
-      next ↩ 𝕩 ⌊ ×˜ old←next
-      stops ← next « starts ← ↕∘⌈⌾((old+seg⊸×)⁼) next
-      lp ← primes ⍋ √stops
-      lp {primes ∾↩ (⊑𝕩) + / (wlen↓𝕨↑primes) SC 𝕩 ⋄ @}¨ starts⋈¨stops
-      𝕊⍟(next⊸<) 𝕩
-    }
-    next E∘{𝕩⌈𝕨+seg⌊𝕨}⍟< ⌊𝕩
-  }
+    𝕩 ≤ next ? @ ;
+    req ← 𝕩 ⌊ sq ← ×˜ next
+    stops ← sq ⌊ (1+↕∘⌈)⌾((next+seg⊸×)⁼) req
+    (primes ⍋ √stops) AddSeg¨ (next»stops)⋈¨stops
+    next ↩ ⊢´ stops
+    𝕊 𝕩
+  }∘⌊
 }
 
 CheckNum  ← "Argument must be a non-negative number" ! (1=•Type)◶⟨0,0⊸≤⟩
