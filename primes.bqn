@@ -225,7 +225,7 @@ Factor ← /˜˝∘FactorExponents⚇0
 
 # Numbers of prime factors (with multiplicity) for ↕𝕩
 FactorCounts ← {
-  ¯1⌾⊑ +´ 𝕩{𝕗⥊0(1+⌾⊑⊢⌜)⍟(⌊𝕩⋆⁼𝕗)˜↕𝕩}¨ PrimesTo 𝕩
+  ¯1⌾⊑ 0 𝕩{𝕗⥊0(1+⌾⊑⊢⌜)⍟(⌊𝕩⋆⁼𝕗)˜↕𝕩}⊸+´ PrimesTo 𝕩
 }
 
 # Euler's Totient function
