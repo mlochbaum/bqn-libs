@@ -61,7 +61,7 @@ CheckNat  ← "Argument must be a natural number" ! (1=•Type)◶⟨0,|∘⌊�
 PrimesTo ← {
   CheckNum 𝕩
   Extend 𝕩
-  primes (⍋↑⊣) 𝕩
+  primes (⍋↑⊣) ⌊𝕩
 }
 
 _getSegment ← {ind _𝕣:
@@ -70,7 +70,7 @@ _getSegment ← {ind _𝕣:
   pr ← {-˜´ ↑ ·/⁼𝕏-⊑}⍟(¬𝕗) prange
   S ← {pd 𝕊 s‿e:
     n ← next⌊e
-    (PR s‿n) ∾ <´◶⟨⟨⟩,primes⊸SN⟩ n‿e
+    (PR s‿n) ∾ <´◶⟨⟨⟩,pd⊸SN⟩ n‿e
   }
   # IsPrime¨⊸(𝕗◶⊣‿/) start(⊣+↕∘-˜)end
   {𝕊 start‿end:
