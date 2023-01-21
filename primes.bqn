@@ -40,7 +40,7 @@ wlen ← ≠primes
     k ← ↕∘≠⊸+r/f-+`r             # Wheel positions
     i ← (r/pd) × (r/b) + k⊏w
     l ← end-start
-    (l↑/⁼(i-start)∾l) < l⥊start⌽mask
+    (0<l↑/⁼(i-start)∾l) < l⥊start⌽mask
   }
   Sieve ⇐ 0 _sieveCache
 
