@@ -133,9 +133,9 @@ Parse ← {
   "Mismatched brackets" ! o ≡ (u∊"]}")/'}'=u
   "Improper , or : usage" ! (¯1⊸⊑ ¬⊸∧ (1≠`¬»⊸∧s) ≡ s⊸∨) u∊",:"
   RunLen ← (1+↕∘≠)(⊣-⌈`∘×)¬
-  p ← 4 | RunLen r ⊏ 0∾o            # Position within object
+  p ← 4 | RunLen r ⊏ 0∾(s/1«s)<o    # Position within object
   "Improper : usage" ! (u=':') ≡ 3=p
-  "Object ends cefore key-value pair completed" ! ¬∨´((1≠¯1⊑p)«s)∧0≠p
+  "Object ends before key-value pair completed" ! ¬∨´((1≠¯1⊑p)«s)∧0≠p
 
   # Keys
   l ← (⍋g) ⊏ r                      # Container index
