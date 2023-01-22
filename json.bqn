@@ -148,7 +148,7 @@ Parse ← {
   f ← ¬(«⊸∨c)∨co∨','=t              # Filter for just values a0"]}
   vi← ⍋⍋(f/'0'=t)+(2×f/q)+3×f/cc    # Value indices
   i ← vi ⊏ (↕nv) ∾ nv+≠⊸-cc/»l      # Adjust for collection ordering
-  j {vals∾↩<𝕨⊑⟜keys⊸≍⍟(0<⊣)𝕩⊏vals⋄@}¨○⌽ ((≠j)∾˜1-˜f/l)⊔i
+  j {vals∾↩⟨𝕨⊑⟜keys⊸≍⍟(0<⊣)𝕩⊏vals⟩⋄@}¨○⌽ ((≠j)∾˜1-˜f/l)⊔i
   ¯1⊑vals
 }
 
