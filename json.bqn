@@ -122,7 +122,7 @@ Parse ← {
   t‿cns‿num‿strk ← Tokenize 𝕩
   "Empty input" ! 0<≠t
 
-  # Validate (incomplete)
+  # Validate
   q ← '"'=t
   c ← ':'=t
   "Object keys must be strings" ! ∧´(»q)≥c
@@ -131,11 +131,17 @@ Parse ← {
   r ← +` s ← u∊"[{"
   o ← s/'{'=u                       # Container is object
   "Mismatched brackets" ! o ≡ (u∊"]}")/'}'=u
-  "Improper , or : usage" ! (¯1⊸⊑ ¬⊸∧ (1≠`¬»⊸∧s) ≡ s⊸∨) u∊",:"
-  RunLen ← (1+↕∘≠)(⊣-⌈`∘×)¬
-  p ← 4 | RunLen r ⊏ 0∾(s/1«s)<o    # Position within object
-  "Improper : usage" ! (u=':') ≡ 3=p
-  "Object ends before key-value pair completed" ! ¬∨´((1≠¯1⊑p)«s)∧0≠p
+  v ← («⊸∨¬s)/u                     # Remove empty lists/objects
+  vs← ∊⟜"[{,:" v                    # Must alternate 0101...10
+  "Improper , or : usage" ! ∧´ 1(∾≠∾˜) vs
+  v /˜↩ vs
+  # v should be composed of lists [,,, and objects {:,:,:
+  # Convert {: to { and ,: to : to get [,,, and {:::
+  v /˜↩ ¬((»v='{')⊸∧ ∨ (v=',')∧«)v=':'
+  # Or, every , follows list-like [, and every : follows object-like {:
+  d ← v∊",:"
+  "Top-level , or :" ! ¬0⊣´d
+  "Bad object structure" ! ∧´ d ≤ »⊸=v∊"{:"
 
   # Keys
   l ← (⍋g) ⊏ r                      # Container index
@@ -144,7 +150,7 @@ Parse ← {
   str ← ⊑keys
 
   # Build collections
-  nv ← ≠ vals ← ∾cns‿num‿str        # Initial set of values
+  nv← ≠ vals ← ∾cns‿num‿str         # Initial set of values
   f ← ¬(«⊸∨c)∨co∨','=t              # Filter for just values a0"]}
   vi← ⍋⍋(f/'0'=t)+(2×f/q)+3×f/cc    # Value indices
   i ← vi ⊏ (↕nv) ∾ nv+≠⊸-cc/»l      # Adjust for collection ordering

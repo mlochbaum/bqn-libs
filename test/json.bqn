@@ -38,9 +38,12 @@ Q ← '"'⊸(∾∾⊣)
 
 # Collections
 ! P _fails ""
+! ∧´ P _fails∘⥊¨ "[]{}"
 ! P _fails "{[}]"
 ! P _fails "[1,]"
+! P _fails "2,3"
 ! P _fails "{""key"":}"
+! P _fails "[""key"":4]"
 ! 3‿2‿1   ≡ P "[3,2.00,1e0]"
 ! ⟨⟩      ≡ P "[]"
 ! ⟨⟩‿1‿⟨⟩ ≡ P "[[],1,[]]"
