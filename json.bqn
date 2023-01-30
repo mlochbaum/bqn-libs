@@ -105,7 +105,7 @@ _fmtErr ← { msg src _𝕣 pos:
 # Tokens are characters {}[],: and a constant, 0 number, " string
 # Values correspond to a, 0, and " in order
 Tokenize ← {
-  FE ← 𝕩_fmtErr ⋄ _err ← {(! 𝕗 FE /)⍟(∨´⊣)}
+  FE ← 𝕩_fmtErr ⋄ _err ← {(! 𝕗 FE /)⍟(∨´)}
   # Strings
   e ← »eo ← <`'\'=𝕩
   s ← ≠`q ← e<'"'=𝕩
@@ -133,35 +133,39 @@ Tokenize ← {
   # Tokenize
   f ← ¬b∨w<l                        # First characters of tokens
   tok ← '0'¨⌾((f/n)⊸/) 'a'¨⌾((f/k)⊸/) f/𝕩
-  ⟨tok, cns, num, str⟩
+  ⟨tok, f, cns, num, str⟩
 }
 
 Parse ← {
   𝕊⁼𝕩: Export 𝕩 ;
   "Empty input" ! 0<≠𝕩
-  t‿cns‿num‿strk ← Tokenize 𝕩
+  t‿tf‿cns‿num‿strk ← Tokenize 𝕩
   "Empty input" ! 0<≠t
 
   # Validate
+  # _tr records persistent transformations
+  # Temporary transformations are passed to _err_ as 𝔽
+  trs ← ⟨tf,/⟩ ⋄ _tr ← {trs∾↩⟨𝕨⊸𝔽⟩⋄𝕨𝔽𝕩}
+  FE ← 𝕩_fmtErr ⋄ _err_ ← {𝕗{! 𝕗 FE 𝕩/𝔾{𝕎𝕩}´⌽trs}𝔾⍟(∨´)}
   q ← '"'=t
   c ← ':'=t
-  "Object keys must be strings" ! ∧´(»q)≥c
+  "Object keys must be strings"_err_⊢ (»q)<c
   g ← ⍋+`(co←t∊"[{")-cc←t∊"]}"      # Bracket depth ordering indices
-  u ← g⊏t
+  u ← g ⊏_tr t
   r ← +` s ← u∊"[{"
   o ← s/'{'=u                       # Container is object
-  "Mismatched brackets" ! o ≡ (u∊"]}")/'}'=u
-  v ← («⊸∨¬s)/u                     # Remove empty lists/objects
-  vs← ∊⟜"[{,:" v                    # Must alternate 0101...10
-  "Improper , or : usage" ! ∧´ 1(∾≠∾˜) vs
-  v /˜↩ vs
+  "Mismatched brackets"_err_{s/𝕩} o ≠ (u∊"]}")/'}'=u
+  v ← («⊸∨¬s) /_tr u                # Remove empty lists/objects
+  vs← v ∊ "[{,:"                    # Must alternate 0101...10
+  "Improper , or : usage"_err_⊢ 1(∾=∾˜) vs
+  v /_tr˜↩ vs
   # v should be composed of lists [,,, and objects {:,:,:
   # Convert {: to { and ,: to : to get [,,, and {::
-  v /˜↩ ¬((»v='{')⊸∧ ∨ (v=',')∧«)v=':'
+  v /_tr˜↩ ¬((»v='{')⊸∧ ∨ (v=',')∧«)v=':'
   # Or, every , follows list-like [, and every : follows object-like {:
   d ← v∊",:"
-  "Top-level , or :" ! ¬0⊣´d
-  "Bad object structure" ! ∧´ d ≤ »⊸=v∊"{:"
+  "Top-level , or :"_err_{1↑𝕩} 1↑d
+  "Bad object structure"_err_⊢ d > »⊸=v∊"{:"
 
   # Keys
   l ← (⍋g) ⊏ r                      # Container index
