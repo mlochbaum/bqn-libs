@@ -14,7 +14,7 @@
   val ← <¨ name ← "true"‿"false"‿"null"
   Consts ⇐ {
     i ← name ⊐ 𝕩
-    "Unknown constant" ! ∧´ i<≠name
+    "Unknown constant" 𝕎 i = ≠name  # 𝕎 formats errors
     i ⊏ val
   }
   cm ← "Enclosed value must be JSON constant"∾∾' '⊸∾¨"or "⊸∾⌾(¯1⊸⊑)name
@@ -83,16 +83,35 @@
   }
 }
 
+# Format error with message 𝕨 at locations 𝕩 in 𝕗
+_fmtErr ← { msg src _𝕣 pos:
+  lf ← @+10
+  s ← 0∾1+ b←/src=lf                # Line start and break positions
+  l ← (1↓s) ⍋ pos                   # Error line numbers
+  c ← pos - l⊏s                     # Error column numbers
+  d ← ⊑l                            # First line only
+  1↓∾lf⊸∾¨ ⟨
+    msg
+    (d⊑s)↓(d⊑b∾≠src)↑src            # Display first line
+    " ^" ⊏˜ /⁼ (d=l)/c              # And carets under errors
+  ⟩∾{
+    n ← ≠ a ← d⊸≠⊸/l                # 1-indexed numbers of other lines
+    0<n ? ⋈((-1=n)↓"Also lines")∾1↓∾⥊(<", ")≍˘•Repr¨1+a
+    ; ⟨⟩
+  } 
+}
+
 # JSON to ⟨tokens, constants, numbers, strings⟩
 # Tokens are characters {}[],: and a constant, 0 number, " string
 # Values correspond to a, 0, and " in order
 Tokenize ← {
+  FE ← 𝕩_fmtErr ⋄ _err ← {(! 𝕗 FE /)⍟(∨´⊣)}
   # Strings
   e ← »eo ← <`'\'=𝕩
   s ← ≠`q ← e<'"'=𝕩
   "Unclosed quote" ! ¬¯1⊑s
-  "Backslash outside string" ! ∧´s≥e
-  "Un-escaped control character" ! ∧´s≤𝕩≥@+32
+  "Backslash outside string"_err s<eo
+  "Un-escaped control character"_err s>𝕩≥@+32
   xe‿dr ← e UnEscape 𝕩              # Escaped 𝕩; characters to drop
   sg ← ((1-˜(s>q∨eo∨dr)×+`)∾+´)s∧q  # Start at s∧q; exclude q, eo, dr
   str ← sg ⊔ xe                     # Strings
@@ -105,9 +124,10 @@ Tokenize ← {
   dig ← ('0'≤𝕩) ∧ 𝕩≤'9'
   m ← l ∧ (+`w)⊏0∾w/dig∨neg         # Numbers
   n ← m∧w ⋄ k ← m<w                 # Number and constant starts
-  "Leading zero" ! ¬∨´(n≠»⊸∨n∧neg)∧('0'=𝕩)∧«dig
-  "Digits required on both sides of decimal" ! ∧´(m∧'.'=𝕩)≤(»∧«)dig
-  cns ← Consts (1-˜(m<l)×+`k)⊔𝕩     # Constants
+  "Leading zero"_err (n≠»⊸∨n∧neg)∧('0'=𝕩)∧«dig
+  "Digits required on both sides of decimal"_err (m∧'.'=𝕩)>(»∧«)dig
+  CE ← {(! 𝕨 FE /⟜(/k))⍟(∨´) 𝕩}
+  cns ← ce Consts (1-˜(m<l)×+`k)⊔𝕩  # Constants
   num ← •ParseFloat¨ (1-˜m×+`n)⊔𝕩   # Numbers
 
   # Tokenize
@@ -136,7 +156,7 @@ Parse ← {
   "Improper , or : usage" ! ∧´ 1(∾≠∾˜) vs
   v /˜↩ vs
   # v should be composed of lists [,,, and objects {:,:,:
-  # Convert {: to { and ,: to : to get [,,, and {:::
+  # Convert {: to { and ,: to : to get [,,, and {::
   v /˜↩ ¬((»v='{')⊸∧ ∨ (v=',')∧«)v=':'
   # Or, every , follows list-like [, and every : follows object-like {:
   d ← v∊",:"
