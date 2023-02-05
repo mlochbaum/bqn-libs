@@ -48,6 +48,17 @@ exact ← {
   _with ⇐ {(4⌊≠∘⊢)◶Low‿Low‿Lin‿Quad‿𝔽}
 }
 
+# Starting points based on Rouche's theorem, Bini 1996
+RoucheInit ← {
+  a ← complex.A¨ 𝕩
+  # Convex hull of points sorted by x
+  CH ← 0⊸↑{𝕨∾˜¯1⊸↓_while_((2<≠)◶⟨0,>´·×⟜⌽˝𝕨(«-⊢)¯2↑⊢⟩)𝕩}˝⌽
+  k ← ⊏˘ CH (↕∘≠≍˘⊢) ⋆⁼ a
+  e ← ((≠a)÷˜↕1-˜≠k) + ↕⊸÷¨1↓-⟜»k  # Angles
+  uk ← ¯1↓(«⊸-k)√÷⟜«k⊏a            # Magnitudes
+  (∾ uk⊸×)¨ (•math.Sin⋈•math.Cos) (2×π)×e
+}
+
 # Return all complex roots of little-endian polynomial 𝕩, using
 # simultaneous root-finding methods
 # 𝕨 gives the number of iterations
@@ -59,7 +70,7 @@ _allRoots_ ← { GetStep _𝕣_ deriv:
     eps  ← 𝕨⊣1e¯16
     step ← GetStep n ← 1-˜≠𝕩
     Poly ← (M¨⟜(D¨¯1⊸⊏)𝕩) _polyd_ek_ deriv
-    r    ← <˘⍉> 1‿0 M⍟(↕n)˜ 4‿9÷10  # Initial roots: 0.4i0.9⋆↕n
+    r ← RoucheInit 𝕩
     i ← 0
     ⊢_while_ {𝕤
       p‿ek ← Poly r
