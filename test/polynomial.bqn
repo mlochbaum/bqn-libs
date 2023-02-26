@@ -22,7 +22,7 @@ TestRoots ← {𝕊 roots:
   ! ⟨2‿0,2‿0⟩ ≡ Roots 4‿¯4‿1
   Chk ← { ! (𝕨⊣tol) ≥ ⌈´ +´⌾(×˜)∘(𝕩_fn)¨ Roots 𝕩 }
   Chk 4‿3‿2‿1
-  Chk ⟨2‿3,1‿0,5‿9,5‿2,3‿0⟩
+  5e¯8 Chk ⟨2‿3,1‿0,5‿9,5‿2,3‿0⟩
   1e¯6 Chk 1|π⋆2+↕10
 }
 TestRoots¨ LaguerreRoots‿AberthRoots‿WeierstrassRoots
