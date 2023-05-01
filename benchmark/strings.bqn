@@ -38,7 +38,7 @@ CE ← 3e3 str.CEscape _time ⊢
 •Out "CEscape, no escapes" L CE s4
 •Out "CEscape, 40% basic escapes" L CE s4 Ins˜ (2e3 RR ≠)⊸⊏'\'⋈¨"""'?\abefnrtv"
 
-•Out "ToBytes"   L 10 str.ToBytes _time @+1e4 RR 1e4
+•Out "ToBytes"   L 100 str.ToBytes _time @+1e4 RR 1e4
 •Out "FromBytes" L 100 str.FromBytes _time str.ToBytes @+1e4 RR 1e4
 
 •Out "ToBase64"   L 100 str.ToBase64 _time @+1e4 RR 256
