@@ -4,7 +4,7 @@
 # - ReplaceAll
 # - _template: should be same as split mostly
 
-⟨_line, NsGet⟩ ← •Import "util.bqn"
+⟨_line⟩ ← •Import "util.bqn"
 str ← •Import "../strings.bqn"
 L ← 36 _line
 RR ← •rand.Range

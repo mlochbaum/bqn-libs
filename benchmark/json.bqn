@@ -1,4 +1,4 @@
-⟨_line, NsGet⟩ ← •Import "util.bqn"
+⟨_line⟩ ← •Import "util.bqn"
 ⟨Parse⟩ ← •Import "../json.bqn"
 
 L ← 36 _line ⟜ ((1e6÷≠) × 1e3 Parse•_timed ⊢)

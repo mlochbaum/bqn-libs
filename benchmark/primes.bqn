@@ -1,4 +1,4 @@
-⟨_line, NsGet⟩ ← •Import "util.bqn"
+⟨_line⟩ ← •Import "util.bqn"
 pr ← •Import "../primes.bqn"
 
 atomic ← ⟨ "IsPrime", "Factor", "Totient", "PrevPrime", "NextPrime" ⟩
@@ -6,7 +6,7 @@ range  ← ⟨ "PrimesIn", "SieveSegment" ⟩
 
 L ← 28 _line
 •Out "(Result of PrimesTo 1e7 is saved for later operations)"
-{(∾⟜𝕨¨(1+·⌈´≠¨)⊸(↑¨)𝕩) •Out∘L⟜((•BQN𝕨) {𝕎•_timed𝕩}˜ pr⊸NsGet)¨𝕩}´¨ ⟨
+{(∾⟜𝕨¨(1+·⌈´≠¨)⊸(↑¨)𝕩) •Out∘L⟜((•BQN𝕨) {𝕎•_timed𝕩}˜ pr⊸•ns.Get)¨𝕩}´¨ ⟨
   ⟨"1e7", ⟨"PrimesTo"⟩⟩
   ⟨"1e6 +↕1e4", atomic⟩
   ⟨"1e6 +0‿1e5", range⟩

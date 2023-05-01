@@ -1,6 +1,6 @@
-⟨_lineErr, NsGet⟩ ← •Import "util.bqn"
+⟨_lineErr⟩ ← •Import "util.bqn"
 poly ← •Import "../polynomial.bqn"
-rfns ← poly NsGet⟜(∾⟜"Roots")¨ roots ← "Laguerre"‿"Aberth"‿"Weierstrass"
+rfns ← poly •ns.Get⟜(∾⟜"Roots")¨ roots ← "Laguerre"‿"Aberth"‿"Weierstrass"
 sizes ← 10‿20‿40‿100
 
 TimeErr ← { p 𝕊 root:
