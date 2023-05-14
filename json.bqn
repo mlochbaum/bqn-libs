@@ -173,12 +173,20 @@ Parse ← {
   keys ← ((q/(«c)×l⊏0∾j)∾1+´o) ⊔ strk
   str ← ⊑keys
 
+  # Purely numeric lists
+  l ⊏↩ ⍋⍋nm←0⌾⊑1(∾/∾˜)s(∨/⊣)u∊"]}""a"
+  nn ← +´¬nm
+  nl ← num⊔˜(1+´nm)∾˜0⊸<⊸×(1-nn)+(t='0')/l
+  jj‿jn ← 2↑(1↓nm)⊔j
+  Ob ← ⊑⟜keys⊸≍⍟(0<⊣)
+  n ← jn Ob¨ 1↓nl
+
   # Build collections
-  nv← ≠ vals ← ∾cns‿num‿str         # Initial set of values
-  f ← ¬(«⊸∨c)∨co∨','=t              # Filter for just values a0"]}
+  nv← n -˜○≠ vals←∾⟨cns,⊑nl,str,⌽n⟩ # Initial set of values
+  f ← (l<nn)∧¬(«⊸∨c)∨co∨','=t       # Filter for just values a0"]}
   vi← ⍋⍋(f/'0'=t)+(2×f/q)+3×f/cc    # Value indices
   i ← vi ⊏ (↕nv) ∾ nv+≠⊸-cc/»l      # Adjust for collection ordering
-  j {vals∾↩⟨𝕨⊑⟜keys⊸≍⍟(0<⊣)𝕩⊏vals⟩⋄@}¨○⌽ ((≠j)∾˜1-˜f/l)⊔i
+  jj {vals∾↩⟨𝕨 Ob 𝕩⊏vals⟩⋄@}¨○⌽ ((≠jj)∾˜1-˜f/l)⊔i
   ¯1⊑vals
 }
 
