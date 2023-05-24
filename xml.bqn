@@ -12,12 +12,16 @@
 # - (unless void) Contents: list of text and tags
 
 E ← +`⊸×⟜¬-⊢
+Se←≠(>/⊢)∾⟜≠{(⊏˜𝕨)𝕊⍟(≠○(¯1⊸⊑))𝕩∾𝕩⊏𝕨}⟨0⟩˙
+Trace←{𝕨(Se∘⍋⊏≍˘)○((⍋𝕨)⊸⊏)𝕩}○∾
+
 Parse ← {
   # Resolve special tags
+  Tr ← ≠`⊸>(≠𝕩)↑·/⁼·⥊Trace
   [sm,sn] ← (≠∘⊢↑⍷)⟜𝕩¨["<!--"‿"<![CDATA[","-->"‿"]]>"]
-  ss←∾/¨sm ⋄ sf←∾sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn
-  Se←≠(>/⊢)∾⟜≠{(⊏˜𝕨)𝕊⍟(≠○(¯1⊸⊑))𝕩∾𝕩⊏𝕨}⟨0⟩˙
-  excl←≠`⊸>(≠𝕩)↑/⁼⥊ss(Se∘⍋⊏≍˘)○((⍋ss)⊸⊏)sf
+  excl ← Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
+  # And quotes
+  excl∨↩ Tr˝ ¯1‿1↓⌜(/excl<𝕩⊸=)¨"'"""
   # Extract tags
   obj ← ((+⟜»E∨)˝excl⊸<˘"<>"=⌜𝕩)⊔𝕩
   tag ← (↕2)⥊˜≠obj
@@ -37,6 +41,7 @@ Parse ← {
   ⊑¯1⊑vals
 }
 ParseAttr ← {
-  name‿a ← (⊑⋈1⊸↓) (E˜' '⊸=>·≠`'"'⊸=)⊸⊔𝕩
-  ⟨name, 2↑⍉>(E˝·∨`"="""=⌜⊢)⊸⊔¨a⟩
+  q ← (≠𝕩)↑/⁼⥊Trace˝ ¯1‿1↓⌜(/𝕩⊸=)¨"'""" # Duplicates work from Parse
+  name‿a ← (⊑⋈1⊸↓) (g←E˜(≠`q)<' '=𝕩)⊸⊔ 𝕩
+  ⟨name, {0=≠a?2‿0⥊0;⍉>(1↓g⊔q)((E˝·∨`'='⊸=≍⊣)⊔⊢)¨a}⟩
 }

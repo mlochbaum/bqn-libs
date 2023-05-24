@@ -8,3 +8,5 @@ e ← ↕2‿0 # No attributes
 ! ⟨"tag"‿e‿⟨<"contents"⟩⟩ ≡ P "<tag>contents</tag>"
 ! ⟨"void"‿e⟩ ≡ P "<void/>"
 ! ⟨"void"‿["id"‿"attr","id"‿"val"]⟩ ≡ P "<void id=""id"" attr=""val""/>"
+
+! ⟨"void"‿["a"‿"b",">'> "‿"; "">"]⟩ ≡ P "<void a="">'> "" b='; "">'/>"
