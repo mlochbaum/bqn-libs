@@ -3,6 +3,9 @@
 _fails ← {0∘𝔽⎊1}
 e ← ↕2‿0 # No attributes
 
+! P _fails "<"
+! P _fails "<tag>></tag>"
+
 ! ⟨"tag"‿e‿⟨⟩⟩ ≡ P "<tag></tag>"
 ! ⟨"tag"‿[⋈"attr",⋈"val"]‿⟨⟩⟩ ≡ P "<tag attr=""val""></tag>"
 ! ⟨"tag"‿e‿⟨<"contents"⟩⟩ ≡ P "<tag>contents</tag>"
