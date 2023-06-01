@@ -28,34 +28,34 @@ Trace←{𝕨(Se∘⍋⊏≍˘)○((⍋𝕨)⊸⊏)𝕩}○∾
 
 Parse ← {
   # Resolve special tags not closed by plain >
-  Tr ← ≠`⊸>(≠𝕩)↑·/⁼·⥊Trace
-  [sm,sn] ← (≠∘⊢↑⍷)⟜𝕩¨["<!--"‿"<![CDATA[","-->"‿"]]>"]
-  excl ← Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
+  Tr ← (≠𝕩)↑·/⁼·⥊Trace
+  [sm,sn] ← 1‿¯1(×⟜(≠𝕩)↑⊢⍷𝕩˙)¨["<!--"‿"<![CDATA[","-->"‿"]]>"]
+  excl ← ≠`sb←Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
   # And quotes
-  excl∨↩ Tr˝ ¯1‿1↓⌜(/excl<𝕩⊸=)¨"'"""
+  excl∨↩ ≠`qb←Tr˝ ¯1‿1↓⌜(/excl<𝕩⊸=)¨"'"""
   # Extract tags
-  tl ← +`-´tm←(excl<𝕩⊸=)¨"<>"
-  "Ill-formed tag" ! (∧´tl∊0‿1) ∧ 0=⊢´tl
-  os←∨⟜»´tm
+  tl ← ≠`∨´tm←((sb<excl)<𝕩⊸=)¨"<>"
+  "Ill-formed tag" ! (tm≡»⊸(<⋈>)tl) ∧ 0=⊢´tl
+  os ← ∨⟜»´tm
+  tw ← excl<𝕩∊ws∾"=" ⋄ ts ← 𝕩='/'
+  rg ← (rb←os∨(ts<tl)∧»⊸>tw) E (»⊸∨excl<tl)∧qb∨tw∨ts∨∨´tm
+  tts← (sb∨«𝕩∊"!?")<⊑tm
+  tte← (1⊑tm)∧tts⊏˜⌈`(⊑tm)×↕≠𝕩
+  pd ← (0∾rb/(≠`tts∨tte)×+`tts) ⊔ rg⊔𝕩
+  pt ← (2×'/'=tts»⊸/𝕩)-˜¬'/'=tte«⊸/𝕩
   tag ← os/tsm←⊑tm
   obj ← ((»«os)E∨´tm)⊔𝕩
   st← "!?"∊˜tsc←tsm»⊸/𝕩
-  gt← (2×'/'=tsc)-˜¬st∨'/'=𝕩/˜«1⊑tm
+  gt← (2×'/'=tsc)-˜¬st∨'/'=𝕩/˜«1⊑tm  # TODO migrate to pt
   d ← +`tt←gt⌾(tag⊸/) tag            # Tag type: ¯1 close, 0 void, 1 open
   [c,n,o]←¯1‿0‿1=⌜tt
-  tp← (⍋⊏⟜d)⊸⊏∘/˘ o≍c                # Tag pairs
-  ! (∧`' '⊸≠)⊸/¨⊸≡⟜(1⊸↓¨)˝tp⊏obj     # Tag matching
+  ! ∧´≡○⊑¨˝ pd ⊏˜ 1+(⍋⊏⟜(+`pt))⊸⊏∘/˘ ¯1‿1=⌜pt     # Tag matching
   to← c<(¬st)⌾(tag⊸/) tag            # Tag objects, open or void
-  op‿v ← (to/n) ∾⟜2⊸⊔ ParseAttr¨ (-to/n)↓¨ to/obj
+  op‿v ← ((0≤pt)/0=pt) ∾⟜2⊸⊔ (⊑⋈·⍉∘‿2⥊1↓⊢)¨ (0≤pt)/1↓pd
   l ← +`⌾((⍋d)⊸⊏) o                  # Parent index
   nv← ≠vals ← (<¨obj/˜to<n) ∾ v      # Initial set of values
   vi← ⍋⍋(f←¬o)/c                     # Value indices
   i ← vi ⊏ (⍋⍋n/to) ∾ nv+≠⊸-c/»l     # Adjust for collection ordering
   (⟨⟩⋈⊸∾op) {vals∾↩⟨𝕨∾⟨𝕩⊏vals⟩⟩⋄@}¨○⌽ ((1+´c)∾˜f/l)⊔i
   ⊑¯1⊑vals
-}
-ParseAttr ← {
-  q ← (≠𝕩)↑/⁼⥊Trace˝ ¯1‿1↓⌜(/𝕩⊸=)¨"'""" # Duplicates work from Parse
-  name‿a ← (⊑⋈1⊸↓) (g←E˜(≠`q)<' '=𝕩)⊸⊔ 𝕩
-  ⟨name, {0=≠a?2‿0⥊0;⍉>(1↓g⊔q)((E˝·∨`'='⊸=≍⊣)⊔⊢)¨a}⟩
 }
