@@ -30,24 +30,26 @@ Parse ← {
   # Resolve special tags not closed by plain >
   Tr ← (≠𝕩)↑·/⁼·⥊Trace
   [sm,sn] ← 1‿¯1(×⟜(≠𝕩)↑⊢⍷𝕩˙)¨["<!--"‿"<![CDATA[","-->"‿"]]>"]
-  excl ← ≠`sb←Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
+  ex ← ≠`⊸>sb←Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
   # And quotes
-  excl∨↩ ≠`qb←Tr˝ ¯1‿1↓⌜(/excl<𝕩⊸=)¨"'"""
-  # Extract tags
-  tl ← ≠`∨´tm←((sb<excl)<𝕩⊸=)¨"<>"
-  "Ill-formed tag" ! (tm≡»⊸(<⋈>)tl) ∧ 0=⊢´tl
-  tw ← excl<𝕩∊ws∾"=" ⋄ sl ← 𝕩='/'
-  ts ← (sb∨«𝕩∊"!?")<⊑tm
-  te ← (1⊑tm)∧ts⊏˜⌈`(⊑tm)×↕≠𝕩
-  os ← ts ∨ »te ⋄ tse ← ts ∨ te
-  rg ← (rb←os∨(sl<tl)∧»⊸>tw) E (»⊸∨excl<tl)∧qb∨tw∨sl∨tse
-  pd ← (0∾rb/(≠`tse)×+`ts) ⊔ rg⊔𝕩
+  eq ← ≠`qb←Tr˝ ¯1‿1↓⌜(/ex<𝕩⊸=)¨"'"""
+  # Extract strings and group into tags
+  es‿ee ← ((ex∨eq)<𝕩⊸=)¨"<>"         # Tag start and end including special
+  "Ill-formed tag" ! {((es/𝕩)∧○(∧´)¬ee/𝕩) ∧ 0=⊢´𝕩} ≠`es∨ee
+  ts ← (sb∨«𝕩∊"!?")<es               # Tag start < (non-special)
+  te ← ee∧ts⊏˜⌈`es×↕≠𝕩               # Tag end   >
+  os ← ts∨»te
+  td ← (»⊸∧eq) < ≠` tb ← ts∨te
+  tw ← td∧𝕩∊ws∾"=" ⋄ sl ← td∧𝕩='/'
+  rg ← (rb←os∨td∧sl<»⊸>tw) E qb∨tb∨tw∨sl
+  pd ← (0∾rb/td×+`ts) ⊔ rg⊔𝕩
   pt ← (2×ts»⊸/sl)-˜¬te«⊸/sl         # Tag type: ¯1 close, 0 void, 1 open
   ! ∧´≡○⊑¨˝ pd ⊏˜ 1+(⍋⊏⟜(+`pt))⊸⊏∘/˘ ¯1‿1=⌜pt  # Tag matching
+  op‿v ← (⊑⋈·⍉∘‿2⥊1↓⊢)¨¨ ⌽ (pt∾2) ⊔ 1↓pd  # Build tag data
+  # Build result
   tag ← os/ts
   tt ← pt⌾(tag⊸/) tag
   [c,n,o]←¯1‿0‿1=⌜tt
-  op‿v ← ((0≤pt)/0=pt) ∾⟜2⊸⊔ (⊑⋈·⍉∘‿2⥊1↓⊢)¨ (0≤pt)/1↓pd
   l ← +`⌾((⍋+`tt)⊸⊏) o               # Parent index
   nv← ≠vals ← (<¨1↓⊑pd) ∾ v          # Initial set of values
   vi← ⍋⍋(f←¬o)/c                     # Value indices
