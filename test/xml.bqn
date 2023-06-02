@@ -13,3 +13,10 @@ e ← ↕2‿0 # No attributes
 ! ⟨"void"‿["id"‿"attr","id"‿"val"]⟩ ≡ P "<void id=""id"" attr=""val""/>"
 
 ! ⟨"void"‿["a"‿"b",">'> "‿"; "">"]⟩ ≡ P "<void a="">'> "" b='; "">'/>"
+
+! ⟨"tag"‿e‿⟨<"text"⟩⟩ ≡ P "<tag>text</tag>"
+
+# Special tags
+! (⋈∘< ≡ P) "<?xml version=""1.1""?>"
+! (⋈∘< ≡ P) "<!--<?comment<![CDATA[?>comment]]>-->"
+! ⟨"tag"‿e‿⟨<"<![CDATA[<not>not tag</not>]]>"⟩⟩ ≡ P "<tag><![CDATA[<not>not tag</not>]]></tag>"
