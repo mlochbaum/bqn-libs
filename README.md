@@ -14,6 +14,7 @@ Here's what there is. For usage, see export lists at the top of each file.
 - datetime.bqn: time and date, handling formats other than BQN's native `•UnixTime`
 - hashmap.bqn: mutable hash table, a prototype for planned `•HashMap`
 - json.bqn: JavaScript Object Notation
-- csv.bqn: comma-separated value file format
+- csv.bqn: Comma-Separated Value file format
+- xml.bqn: eXtensible Markup Language
 
 Run all tests with `bqn test/main.bqn`, or any individual test with the same name as the file in the main folder. Similarly, files in the `benchmark/` folder run and report on performance measurements for the script of the same name.

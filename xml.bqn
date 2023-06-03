@@ -22,7 +22,6 @@ ws ← @+9‿10‿13‿32                       # Tab, LF, CR, space
 namestart ← ∧(⥊"Aa"+⌜↕26)∾"_:"
 namechar  ← ∧namestart∾('0'+↕10)∾".-"   # (ASCII only)
 
-E ← +`⊸×⟜¬-⊢
 Se←≠(>/⊢)∾⟜≠{(⊏˜𝕨)𝕊⍟(≠○(¯1⊸⊑))𝕩∾𝕩⊏𝕨}⟨0⟩˙
 Trace←{𝕨(Se∘⍋⊏≍˘)○((⍋𝕨)⊸⊏)𝕩}○∾
 
@@ -30,9 +29,9 @@ Parse ← {
   # Resolve special tags not closed by plain >
   Tr ← (≠𝕩)↑·/⁼·⥊Trace
   [sm,sn] ← 1‿¯1(×⟜(≠𝕩)↑⊢⍷𝕩˙)¨["<!--"‿"<![CDATA[","-->"‿"]]>"]
-  ex ← ≠`⊸>sb←Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
+  ex ← ≠`⊸> sb ← Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
   # And quotes
-  eq ← ≠`qb←Tr˝ ¯1‿1↓⌜(/ex<𝕩⊸=)¨"'"""
+  eq ← ≠` qb ← Tr˝ ¯1‿1↓⌜(/ex<𝕩⊸=)¨"'"""
   # Extract strings and group into tags
   es‿ee ← ((ex∨eq)<𝕩⊸=)¨"<>"         # Tag start and end including special
   os ← 1⌾⊑es∨»ee                     # Start of any object
@@ -41,17 +40,18 @@ Parse ← {
   te ← ee∧ts⊏˜⌈`es×↕≠𝕩               # Tag end   >
   td ← (»⊸∧eq) < ≠` tb ← ts∨te       # Non-quote tag interior
   tw ← td∧𝕩∊ws∾"=" ⋄ sl ← 𝕩='/'
-  rg ← (0⌾⊑rb←os∨td∧sl<»⊸>tw) E tb∨td∧qb∨tw∨sl
-  pd ← (rb/td×+`ts) ⊔ rg⊔𝕩           # Group attributes into their tags
+  rb ← os∨td∧sl<»⊸>tw                # String boundaries (starts with 1)
+  rs ← 𝕩 ⊔˜ 1-˜(+`rb)×¬tb∨td∧qb∨tw∨sl# Extracted strings
+  fr‿ta ← (⊑⋈1⊸↓) (rb/td×+`ts) ⊔ rs  # Group attributes into their tags
   pt ← (2×ts»⊸/sl)-˜¬te«⊸/sl         # Tag type: ¯1 close, 0 void, 1 open
-  ! ∧´≡○⊑¨˝ pd ⊏˜ 1+(⍋⊏⟜(+`pt))⊸⊏∘/˘ ¯1‿1=⌜pt  # Tag matching
-  op‿v ← (⊑⋈·⍉∘‿2⥊1↓⊢)¨¨ ⌽ (pt∾2) ⊔ 1↓pd  # Build tag data
+  ! ∧´≡○⊑¨˝ ta ⊏˜ (⍋⊏⟜(+`pt))⊸⊏∘/˘ ¯1‿1=⌜pt  # Tag matching
+  op‿v ← (⊑⋈·⍉∘‿2⥊1↓⊢)¨¨ ⌽ (pt∾2)⊔ta # Build tag data
   # Build result
   tag ← os/ts
   tt ← pt⌾(tag⊸/) tag
-  [c,n,o]←¯1‿0‿1=⌜tt
+  [c,n,o]←¯1‿0‿1=⌜tt                 # Close, neither, open
   l ← +`⌾((⍋+`tt)⊸⊏) o               # Parent index
-  nv← ≠vals ← (<¨⊑pd) ∾ v            # Initial set of values
+  nv← ≠vals ← (<¨fr) ∾ v             # Initial set of values
   vi← ⍋⍋(f←¬o)/c                     # Value indices
   i ← vi ⊏ (⍋⍋n/tag) ∾ nv+≠⊸-c/»l    # Adjust for collection ordering
   (⟨⟩⋈⊸∾op) {vals∾↩⟨𝕨∾⟨𝕩⊏vals⟩⟩⋄@}¨○⌽ ((1+´c)∾˜f/l)⊔i
