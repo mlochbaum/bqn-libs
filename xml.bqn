@@ -37,7 +37,7 @@ Parse ← {
   qa ← Tr˝ (¯1‿1↓⌜/¨qs‿qd) ∾˘ ⟨/ee, ee Match es⟩
   eq ← ≠` qb ← qa ∧ qs∨qd
   # Extract strings and group into tags
-  es‿ee eq⊸<¨↩                       # Tag start and end including special
+  es‿ee (≠`⊸>qa)⊸<¨↩                 # Tag start and end including special
   os ← 1⌾⊑es∨»ee                     # Start of any object
   "Ill-formed tag" ! {((es/𝕩)∧○(∧´)¬ee/𝕩) ∧ 0=⊢´𝕩} ≠`es∨ee
   ts ← (sb∨«𝕩∊"!?")<es               # Tag start < (non-special)

@@ -4,7 +4,7 @@ _fails ← {0∘𝔽⎊1}
 e ← ↕2‿0 # No attributes
 
 ! P _fails "<"
-! P _fails "<tag>></tag>"
+! P _fails "<tag><</tag>"
 
 ! ⟨"tag"‿e‿⟨⟩⟩ ≡ P "<tag></tag>"
 ! ⟨"tag"‿[⋈"attr",⋈"val"]‿⟨⟩⟩ ≡ P "<tag attr=""val""></tag>"
@@ -16,6 +16,10 @@ e ← ↕2‿0 # No attributes
 
 ! ⟨"tag"‿e‿⟨<"text"⟩⟩ ≡ P "<tag>text</tag>"
 ! (⋈˜"tag"‿e‿⟨<"qu'ote"⟩) ≡ P ∾˜"<tag>qu'ote</tag>"
+! ⟨"tag"‿e‿⟨<">>>"⟩⟩ ≡ P "<tag>>>></tag>"
+
+# Character references
+#! ⟨"tag"‿e‿⟨<"<>&'"""⟩⟩ ≡ P "<tag>&lt;&gt;&amp;&apos;&quot;</tag>"
 
 # Special tags
 ! (⋈∘< ≡ P) "<?xml version=""1.1""?>"
