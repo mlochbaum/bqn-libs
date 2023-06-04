@@ -15,6 +15,7 @@ e ← ↕2‿0 # No attributes
 ! ⟨"void"‿["a"‿"b",">'> "‿"; "">"]⟩ ≡ P "<void a="">'> "" b='; "">'/>"
 
 ! ⟨"tag"‿e‿⟨<"text"⟩⟩ ≡ P "<tag>text</tag>"
+! (⋈˜"tag"‿e‿⟨<"qu'ote"⟩) ≡ P ∾˜"<tag>qu'ote</tag>"
 
 # Special tags
 ! (⋈∘< ≡ P) "<?xml version=""1.1""?>"

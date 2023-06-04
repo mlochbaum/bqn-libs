@@ -28,12 +28,16 @@ Trace←{𝕨(Se∘⍋⊏≍˘)○((⍋𝕨)⊸⊏)𝕩}○∾
 Parse ← {
   # Resolve special tags not closed by plain >
   Tr ← (≠𝕩)↑·/⁼·⥊Trace
+  Match ← (0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾≠)
   [sm,sn] ← 1‿¯1(×⟜(≠𝕩)↑⊢⍷𝕩˙)¨["<!--"‿"<![CDATA[","-->"‿"]]>"]
-  ex ← ≠`⊸> sb ← Tr´ ⟨/¨sm, sm(0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾⟜1)¨sn⟩
-  # And quotes
-  eq ← ≠` qb ← Tr˝ ¯1‿1↓⌜(/ex<𝕩⊸=)¨"'"""
+  ex ← ≠`⊸> sb ← Tr´ ⟨/¨sm, sm Match¨ sn⟩
+  # And quotes/brackets
+  # Treat >< as a kind of quote since quotes inside are just text
+  qs‿qd‿ee‿es ← (ex<𝕩⊸=)¨"'""><"
+  qa ← Tr˝ (¯1‿1↓⌜/¨qs‿qd) ∾˘ ⟨/ee, ee Match es⟩
+  eq ← ≠` qb ← qa ∧ qs∨qd
   # Extract strings and group into tags
-  es‿ee ← ((ex∨eq)<𝕩⊸=)¨"<>"         # Tag start and end including special
+  es‿ee eq⊸<¨↩                       # Tag start and end including special
   os ← 1⌾⊑es∨»ee                     # Start of any object
   "Ill-formed tag" ! {((es/𝕩)∧○(∧´)¬ee/𝕩) ∧ 0=⊢´𝕩} ≠`es∨ee
   ts ← (sb∨«𝕩∊"!?")<es               # Tag start < (non-special)
