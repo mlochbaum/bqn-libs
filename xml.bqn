@@ -38,8 +38,8 @@ Parse ← {
   eq ← ≠` qb ← qa ∧ qs∨qd
   # Extract strings and group into tags
   es‿ee (≠`⊸>qa)⊸<¨↩                 # Tag start and end including special
+  "Unclosed tag bracket" ! ¬∨´es>(∨`⌾⌽∧qa≥∨`)ee
   os ← 1⌾⊑es∨»ee                     # Start of any object
-  "Ill-formed tag" ! {((es/𝕩)∧○(∧´)¬ee/𝕩) ∧ 0=⊢´𝕩} ≠`es∨ee
   ts ← (sb∨«𝕩∊"!?")<es               # Tag start < (non-special)
   te ← ee∧ts⊏˜⌈`es×↕≠𝕩               # Tag end   >
   td ← (»⊸∧eq) < ≠` tb ← ts∨te       # Non-quote tag interior
