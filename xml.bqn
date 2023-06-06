@@ -25,7 +25,26 @@ namechar  ← ∧namestart∾('0'+↕10)∾".-"   # (ASCII only)
 Se←≠(>/⊢)∾⟜≠{(⊏˜𝕨)𝕊⍟(≠○(¯1⊸⊑))𝕩∾𝕩⊏𝕨}⟨0⟩˙
 Trace←{𝕨(Se∘⍋⊏≍˘)○((⍋𝕨)⊸⊏)𝕩}○∾
 
+# Format error with message 𝕨 at locations 𝕩 in 𝕗
+_fmtErr ← { msg src _𝕣 pos:
+  lf ← @+10
+  s ← 0∾1+ b←/src=lf                # Line start and break positions
+  l ← (1↓s) ⍋ pos                   # Error line numbers
+  c ← pos - l⊏s                     # Error column numbers
+  d ← ⊑l                            # First line only
+  1↓∾lf⊸∾¨ ⟨
+    msg
+    (d⊑s)↓(d⊑b∾≠src)↑src            # Display first line
+    " ^" ⊏˜ /⁼ (d=l)/c              # And carets under errors
+  ⟩∾{
+    n ← ≠ a ← d⊸≠⊸/l                # 1-indexed numbers of other lines
+    0<n ? ⋈((-1=n)↓"Also lines")∾1↓∾⥊(<", ")≍˘•Repr¨1+a
+    ; ⟨⟩
+  }
+}
+
 Parse ← {
+  FE ← 𝕩_fmtErr ⋄ _err ← {(! 𝕗 FE /)⍟(∨´)}
   # Resolve special tags not closed by plain >
   Tr ← (≠𝕩)↑·/⁼·⥊Trace
   Match ← (0∾+`)⊸(-⟜»∘⊏˜/⊢)⟜(/∾≠)
@@ -38,7 +57,7 @@ Parse ← {
   eq ← ≠` qb ← qa ∧ qs∨qd
   # Extract strings and group into tags
   es‿ee (≠`⊸>qa)⊸<¨↩                 # Tag start and end including special
-  "Unclosed tag bracket" ! ¬∨´es>(∨`⌾⌽∧qa≥∨`)ee
+  "Unclosed tag bracket"_err es>(∨`⌾⌽∧qa≥∨`)ee
   os ← 1⌾⊑es∨»ee                     # Start of any object
   ts ← (sb∨«𝕩∊"!?")<es               # Tag start < (non-special)
   te ← ee∧ts⊏˜⌈`es×↕≠𝕩               # Tag end   >

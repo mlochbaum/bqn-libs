@@ -98,7 +98,7 @@ _fmtErr ← { msg src _𝕣 pos:
     n ← ≠ a ← d⊸≠⊸/l                # 1-indexed numbers of other lines
     0<n ? ⋈((-1=n)↓"Also lines")∾1↓∾⥊(<", ")≍˘•Repr¨1+a
     ; ⟨⟩
-  } 
+  }
 }
 
 # JSON to ⟨tokens, constants, numbers, strings⟩
