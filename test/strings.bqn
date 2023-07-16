@@ -43,6 +43,7 @@ _fails ← {0∘𝔽⎊1}
 
 ! "latin" ≡ ToBytes "latin"
 ! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"
+! (ToBytes ≡ FromBytes⁼) "(+´÷≢)𝕩"
 ! FromBytes _fails "(+´÷≢)𝕩"
 
 ! (@+5‿171‿30‿235) ≡ FromBase64 "Base64"
