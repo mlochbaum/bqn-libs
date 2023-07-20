@@ -7,6 +7,10 @@ c ← "',/" •Import "../csv.bqn"  # Easier characters to write
 ! "  ,;""" ≡ c.Join ⋈"  "‿";"""
 ! ",B,BQ/BQN,BQNc,BQNcs" ≡ c.Join 2‿3⥊↑"BQNcs"
 
+# Empty trailing
+! ⟨"ab"‿""‿"bc"‿""⟩ ≡ c.Split "ab,,bc,"
+! ⟨"ab"‿""‿"bc"‿"",⟨""⟩,⟨""⟩⟩ ≡ c.Split "ab,,bc,//"
+
 # Line-based versions
 ! ("ab"⊸+⚇0⟨0,1⟩‿⟨2⟩) ≡ c.SplitL "ab,bc"‿"cd"
 ! ""‿"a"‿"," ≡ c.JoinL ⟨⟩‿⟨"a"⟩‿⟨"",""⟩
