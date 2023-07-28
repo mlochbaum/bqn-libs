@@ -38,7 +38,7 @@ HashMap ⇐ {𝕩.Self𝕩}∘{ keys 𝕊 vals: Self⇐{self↩𝕩}
   }
   Get ⇐ {
       𝕊 key: vals ⊑˜ Find key ;
-    d 𝕊 key: Next•_while_(¯1⊸≠◶⟨0,⊢{d↩𝕨⋄𝕩}⍟(¬⊢)key≢⊑⟜keys⟩⊑⟜table) Ind key ⋄ d
+    d 𝕊 key: Next•_while_(¯1⊸≠◶⟨0,⊢{d↩𝕨⊑vals⋄𝕩}⍟(¬⊢)key≢⊑⟜keys⟩⊑⟜table) Ind key ⋄ d
   }
   tombstone ← {⇐}
   Delete ⇐ { 𝕊 key:
