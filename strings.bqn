@@ -160,12 +160,18 @@ ToNums ← {
   "Portion of a number is empty"! ∧´¬(1«s∨tr)∧n∨s
   "Ill-formed decimal or exponent use"! ∧´(0⊸=∨»⊸<)s/d+2×e
   "π and ∞ must occur alone"! ∧´(p∨i)≤1(»∧(p∧«e)∨«)zz∨n>»e
-  f←(17≥¬(⊢-T)+`)⊸∧g←(«≤(d<j≠0)>○I1T¬)⊸∧m   # No leading 0s; max 17 digits
-  vs←1‿¯1⊏˜(r←>⟜»m)/»n                      # Negate if ¯
-  v←vs×NN val⊏˜(¬d)/(cd×¬f)⌈j               # Numeric values—mantissas and exponents
+  l←(¬(⊢-T)·+`d⊸<)g←(«≤(d<j≠0)>○I1T¬)⊸∧m    # No leading 0s
+  k‿dp←d¬⊸(/⋈1⊸»⊸/)○((d∨>⟜«g)⊸/)l           # Length, decimal position
+  PN←NN val⊏˜(«⊸>∨d⊸<)/j⌈cd×¬
+  va←{                                      # Numeric values—mantissas and exponents
+    ¬∨´k>15?PN g;                           # If >15 digits anywhere:
+    g∧↩20≥l⋄k⌊↩20                           # Cap at 20 digits
+    g>↩f←g∧l≤(+`»⊸<g)⊏0∾te←0⌈k-15           # Handle trailing ≤15 normally
+    (1e15×PN f)⊸+⌾((te>0)⊸/) PN g           # Leading part
+  }
+  v←va×1‿¯1⊏˜(r←>⟜»m)/»n                    # Negate if ¯
   vm←c/○(1⌾⊑)z                              # Mask of mantissas in v
-  dp←vm/f(--»⊸-(<×⊢)⊏⟜(I1T«d)⊸-)○(/>⟜«)g    # Decimal position
-  q←10⋆|ee←dp-˜vm/«v×¬vm                    # Power of 10
+  q←10⋆|ee←vm/(k-dp)-˜«v×¬vm                # Power of 10
   q÷˜⌾((0>ee)⊸/)q×⌾((0<ee)⊸/)vm/v×(r/i)⊏1‿∞ # Correct ∞ then ×10⋆ee
 }
 
