@@ -16,7 +16,7 @@ LUTri ← {𝕊 l:
     ! 2==𝕩
     ! ∧´⥊ (𝕩=0) ≥ 𝔽⌜´↕¨≢𝕩
   }
-  Determinant ⇐ ×´Di
+  Determinant ⇐ (∧´0⊸≠)◶⟨0,×´⟩Di  # Might contain ∞ or NaN
   # Inverse by recursive blocking
   p‿c ← {𝕏˜}¨⍟l ⋈‿≍
   Inverse ⇐ {
@@ -60,7 +60,7 @@ lup ← {
     s × uTri.Determinant u
   }
 
-  # Recursive method
+  # Recursive method, can return NaN for singular matrices
   Decompose ⇐ (0<≠)◶{ ⟨↕¯1⊑≢𝕩 , 0‿0⥊0 , 𝕩⟩ }‿{ LU:
     1<m ⊣ m‿n ← ≢𝕩 ?
     m2 ← ⌈m÷2 ⋄ S ← m2(↑⋈↓)⊢
