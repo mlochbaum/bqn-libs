@@ -53,15 +53,27 @@ lup ← {
     lTri.Verify l
     ! ∧´ 1 = Di l
   }
-  Inverse ⇐ { 𝕊 p‿l‿u: (⍋p) ⊏ (uTri.Inverse u) MP lTri.Inverse l }
-  Solve ⇐ { p‿l‿u 𝕊 𝕩: (⍋p) ⊏ u uTri.Solve l lTri.Solve 𝕩 }
+  Inverse ⇐ { 𝕊 p‿l‿u: p ⊏ u uTri.Solve lTri.Inverse l }
+  Solve ⇐ { p‿l‿u 𝕊 𝕩: p ⊏ u uTri.Solve l lTri.Solve 𝕩 }
   Determinant ⇐ { 𝕊 p‿l‿u:
     s ← ¯1⋆+´∾(≠↑↑)⊸>p  # Sign of permutation
     s × uTri.Determinant u
   }
 
+  Decompose ⇐ ⍋⌾⊑ { LU:
+    1 < n ← ≠𝕩 ?
+    i ← ⊑⊐⟜(⌈´)|r0←⊏𝕩  # Pivot
+    d ← ⟨i-¯1⊑≢𝕩,i+1⟩  # Drop amounts to cut out i
+    a00‿a10 ← (⊑⋈1⊸↓) i⊏˘𝕩
+    a01 ← ∾↓⟜r0¨d
+    p‿l‿u ← LU (∾˘´(1⊸⋈↓𝕩˙)¨d) - (cn←a10÷0⊸=⊸+a00)×⌜a01
+    ⟨i∾i⊸≤⊸+p, (n↑1) ∾ cn∾˘l, (a00∾p⊏a01) ∾ 0∾˘u⟩
+  ;
+    ⟨↕¯1⊑≢𝕩, 1⥊˜⋈˜≠𝕩, 𝕩⟩
+  }
+
   # Recursive method, can return NaN for singular matrices
-  Decompose ⇐ (0<≠)◶{ ⟨↕¯1⊑≢𝕩 , 0‿0⥊0 , 𝕩⟩ }‿{ LU:
+  DecomposeNonSingular ⇐ (0<≠)◶{ ⟨↕¯1⊑≢𝕩 , 0‿0⥊0 , 𝕩⟩ }‿{ LU:
     1<m ⊣ m‿n ← ≢𝕩 ?
     m2 ← ⌈m÷2 ⋄ S ← m2(↑⋈↓)⊢
     a1‿a2 ← S𝕩
