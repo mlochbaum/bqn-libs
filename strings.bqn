@@ -160,8 +160,9 @@ ToNums ← {
   "Portion of a number is empty"! ∧´¬(1«s∨tr)∧n∨s
   "Ill-formed decimal or exponent use"! ∧´(0⊸=∨»⊸<)s/d+2×e
   "π and ∞ must occur alone"! ∧´(p∨i)≤1(»∧(p∧«e)∨«)zz∨n>»e
-  l←(¬(⊢-T)·+`d⊸<)g←(«≤(d<j≠0)>○I1T¬)⊸∧m    # No leading 0s
-  k‿dp←d¬⊸(/⋈1⊸»⊸/)○((d∨>⟜«g)⊸/)l           # Length, decimal position
+  l←(¬(⊢-T)·+`d⊸<)g←(«≤(d<jz←j≠0)>○I1T¬)⊸∧m # No leading 0s
+  la←d×(»¬(⊢-T)+`)⌾⌽¬g∨jz                   # Adjust dp for dropped 0s after decimal
+  k‿dp←d¬⊸(/⋈1⊸»⊸/)○((d∨>⟜«g)⊸/)l-la        # Length, decimal position
   PN←NN val⊏˜(«⊸>∨d⊸<)/j⌈cd×¬
   va←{                                      # Numeric values—mantissas and exponents
     ¬∨´k>15?PN g;                           # If >15 digits anywhere:
