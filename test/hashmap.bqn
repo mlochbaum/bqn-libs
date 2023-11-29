@@ -37,10 +37,4 @@
   ! ∧´ 0 = m.Has¨ k∾⟨≍⍟3 @,"thing"⟩
 }
 
-#v ← 1e6 •rand.Deal 1e9
-#•Show HashMap˜•_timed v
-#m ← HashMap˜ v
-#•Show m.Get¨•_timed •rand.Deal∘≠⊸⊏ v
-#•Show m.Has¨•_timed •rand.Deal∘≠⊸⊏ (↕5e5)»v
-
 •Out "All passed!"
