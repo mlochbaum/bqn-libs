@@ -40,6 +40,7 @@ _fails ← {0∘𝔽⎊1}
 !  ((@+7)∾"b""c") ≡ CEscape "\ab\""c"
 !  "Ày2À{3þga"    ≡ CEscape "\xC0y2\u00C0\1733\xfega"
 !  "y2Àga!"       ≡ CEscape "y2\u00C0ga\x21"
+!  ("!"∾@+10)     ≡ CEscape "\x21\n"
 
 ! "latin" ≡ ToBytes "latin"
 ! FromBytes∘ToBytes⊸≡ "(+´÷≢)𝕩"

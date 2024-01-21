@@ -95,7 +95,7 @@ _template ← { ∾ 1 (↑∾·⥊𝕩≍˘↓) 𝕗 Split 𝕨 }
         bm ← l/ic<c_fix
         "Numeric code ends early" ! ∧´ bm≤k
         "\x must be followed by at least one digit" ! ∧´ lm≤k
-        ⟨ (8×1+d){0𝕨⊸×⊸+˜´⌽𝕩}¨(1-˜k×+`lm)⊔dig , k≤ld<lm ⟩
+        ⟨ (8×1+d){0𝕨⊸×⊸+˜´⌽𝕩}¨(1-˜k×+`lm)⊔dig , (k≤ld<lm)⊸∧ ⟩
       }
       keep ku⌾(ia⊸⊏)↩
       o (@+n)⌾(f⊸/)↩
