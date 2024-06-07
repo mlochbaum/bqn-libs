@@ -154,13 +154,16 @@ Parse ← {
   u ← g ⊏_tr t
   r ← +` s ← u∊"[{"
   o ← s/'{'=u                       # Container is object
-  "Mismatched brackets"_err_{s/𝕩} o ≠ (u∊"]}")/'}'=u
+  uc← (u∊"]}")/'}'=u
+  "Unmatched brackets" ! o=○≠uc
+  "Mismatched brackets"_err_{s/𝕩} o ≠ uc
   v ← («⊸∨¬s) /_tr u                # Remove empty lists/objects
   vs← v ∊ "[{,:"                    # Must alternate 0101...10
-  "Improper , or : usage"_err_⊢ 1(∾=∾˜) vs
+  "Improper , or : usage"_err_(⊢∾⊢´) 1(∾=∾˜) vs
   v /_tr˜↩ vs
   # v should be composed of lists [,,, and objects {:,:,:
   # Convert {: to { and ,: to : to get [,,, and {::
+  "Multiple keys for one value"_err_⊢ »⊸∧v=':'
   v /_tr˜↩ ¬((»v='{')⊸∧ ∨ (v=',')∧«)v=':'
   # Or, every , follows list-like [, and every : follows object-like {:
   d ← v∊",:"
