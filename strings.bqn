@@ -49,9 +49,11 @@ Split ← (0<≠∘⊢)◶⟨
 # Replace each instance of a string in old with the corresponding
 # string in new.
 # Instances are non-overlapping, and earlier ones take precedence.
-ReplaceAll ← { ⟨old,new⟩ 𝕊 str:
-  ! (≠new) ≡ l ← ≠old
+ReplaceAll ← {
+  ⟨old,new⟩ 𝕊 str: [old,new] 𝕊 str ; # Support nested or two-row 𝕨
+  [old,new] 𝕊 str:
   "ReplaceAll: Can't replace empty" ! ∧´0<≠¨old
+  l ← ≠old
   match ← 1-˜ (l+1)|⌊´ (↕⊸-l) × old (1<≠∘⊣)◶⟨⊑⊸=,≠∘⊢↑⍷⟩¨ <str
   cont ← (-⟜1⌈≤⟜1×⊢)` match ⊏ (≠¨old)∾0
   keep ← ⋈⟜(⊏⟜str) / 0=cont
