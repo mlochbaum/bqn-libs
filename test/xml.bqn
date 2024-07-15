@@ -25,3 +25,4 @@ e ← ↕2‿0 # No attributes
 ! (⋈∘< ≡ P) "<?xml version=""1.1""?>"
 ! (⋈∘< ≡ P) "<!--<?comment<![CDATA[?>comment]]>-->"
 ! ⟨"tag"‿e‿⟨<"<![CDATA[<not>not tag</not>]]>"⟩⟩ ≡ P "<tag><![CDATA[<not>not tag</not>]]></tag>"
+•Out "All passed!"
