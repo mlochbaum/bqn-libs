@@ -1,4 +1,6 @@
-c ← "',/" •Import "../csv.bqn"  # Easier characters to write
+# No •args defaults to double-quote, comma, newline, which fits most CSVs
+# These tests configure to "',/" since they look nicer in BQN strings
+c ← "',/" •Import "../csv.bqn"
 
 # No escapes
 ! ("ab"⊸+⚇0⟨0,1⟩‿⟨2⟩) ≡ c.Split "ab,bc/cd"
