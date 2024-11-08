@@ -1,4 +1,5 @@
 # Perlin noise generators in 1 and n dimensions
+⟨ Noise1, NoiseN, MakeData ⟩⇐
 
 S ← ×˜ × 3-2⊸×
 
