@@ -197,7 +197,7 @@ ExportNumber ← {
   "NaN can't be represented in JSON" ! =˜𝕩
   "Infinities can't be represented in JSON" ! ∞≠|𝕩
   r ← •Repr 𝕩
-  r + (-´"-¯")×r='¯'
+  '-'¨⌾(('¯'=r)⊸/) r
 }
 IsString ← {∧´2=•Type¨ 1⊸↑⍟(0=≠) 𝕩}
 ExportList ← {
