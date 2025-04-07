@@ -77,6 +77,6 @@ Parse ← {
   nv← ≠vals ← (<¨fr) ∾ v             # Initial set of values
   vi← ⍋⍋(f←¬o)/c                     # Value indices
   i ← vi ⊏ (⍋⍋n/tag) ∾ nv+≠⊸-c/»l    # Adjust for collection ordering
-  (⟨⟩⋈⊸∾op) {vals∾↩⟨𝕨∾⟨𝕩⊏vals⟩⟩⋄@}¨○⌽ ((1+´c)∾˜f/l)⊔i
+  (⟨⟩⋈⊸∾(⍋o/l)⊏op) {vals∾↩⟨𝕨∾⟨𝕩⊏vals⟩⟩⋄@}¨○⌽ ((1+´c)∾˜f/l)⊔i
   ⊑¯1⊑vals
 }
