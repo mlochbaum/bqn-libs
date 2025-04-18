@@ -1,12 +1,13 @@
 ⟨
   MP, H, Trace, Determinant
   Inverse, Solve, Eigenvalues, CharPoly
-  lTri, uTri, qr, lup, cholesky
+  lTri, uTri, qr, lup, cholesky, symmetric_eigen
 ⟩⇐
 
 MP ← +˝∘×⎉1‿∞  # matrix product
 H  ← +⍉        # conjugate transpose
 Di ← 0‿0⍉⊢     # diagonal
+_while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 
 Trace ← +´Di
 
@@ -159,6 +160,50 @@ cholesky ← {
   }
 }
 
+# Eigendecomposition of symmetric matrix: eigenvalues, eigenvectors as rows
+symmetric_eigen ← {
+  Compose ⇐ { 𝕊 d‿q: q H⊸MP d × q }
+  Verify ⇐ { 𝕊 d‿q:
+    !2==q ⋄ !=´≢q
+    !1==d ⋄ ! d =○≠ q
+    ! ∧´ ⥊ 5e¯14≥| (=⌜´↕¨∘≢)⊸- H⊸MP q  # Unitary
+  }
+  Inverse ⇐ Compose ÷⌾⊑
+  Solve ⇐ { d‿q 𝕊 b: q H⊸MP d ÷˜ q MP b }
+  Determinant ⇐ { 𝕊 d‿·: ×´d }
+  # Parallel Jacobi method
+  Decompose ⇐ { 𝕊 m:
+    q ← =⌜˜↕n←≠m  # Eigenvectors
+    # Diagonalize each pair j, j⊑i by two-sided rotation
+    # Does all the arithmetic twice but it vectorizes well
+    Layer ← { 𝕊 i:
+      # Required rotation is determined by the ratio u÷p
+      d ← ×i-↕n
+      p ← (2 × d≠0) × i ⊏˘ m
+      u ← (d × i⊸⊏⊸- Di m) ⋆ p≠0  # Must be nonzero if p=0
+      t ← 2 × v ← p +⌾(×˜) u
+      cos ← √(v+|u)÷t
+      sin ← (d×¯1⋆u<0) × p÷t×cos
+      Rot ← cos⊸× - sin×i⊸⊏
+      m (Rot Rot⌾⍉)↩
+      q Rot↩
+      @
+    }
+    # A sweep hits each (unordered) pair of distinct indices once
+    r ← ⌽↕p ← n-¬2|n
+    Sweep ← {𝕊:
+      2|n? (Layer⌽⟜r)¨ r;
+      (p|(n÷2)×↕p) {Layer 𝕨∾˜p⌾(𝕨⊸⊑) 𝕩⌽r}¨ r
+    }
+    # Norm +´×˜⥊m stays constant; stop when off-diagonal part is small
+    end ← (×˜1e¯14) × +´×˜⥊m
+    Sweep _while_ {𝕊: end < +´×˜ (<⌜˜↕n)/○⥊m} @
+    # Sort eigenvalues descending
+    i ← ⍒d ← Di m
+    ⟨i⊏d, i⊏q⟩
+  }
+}
+
 # Default implementations
 Inverse ← qr.Inverse qr.Decompose
 Solve ← qr.Decompose ⊸ qr.Solve
@@ -199,7 +244,6 @@ Eigenvalues ← {
   }
 
   # Get one eigenvalue with QR
-  _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
   QRAlg ← {
     mu ← WilkinsonShift ⥊¯2‿¯2↑𝕩
     QRev⌾(-⟜(mu×=⌜˜↕≠𝕩)) 𝕩

@@ -1,7 +1,10 @@
 ⟨_line⟩ ← •Import "util.bqn"
 mat ← •Import "../matrix.bqn"
 
-decomps ← ⟨"LUp"‿mat.lup, "QR"‿mat.qr, "Cholesky"‿mat.cholesky⟩
+decomps ← ⟨
+  "LUp "‿mat.lup, "QR "‿mat.qr
+  "Cholesky "‿mat.cholesky, "Sym eigen"‿mat.symmetric_eigen
+⟩
 ops ← ⟨
   "Trace of"                    ‿mat.Trace
   "Determinant of"              ‿mat.Determinant
@@ -9,12 +12,13 @@ ops ← ⟨
   "Characteristic polynomial of"‿mat.CharPoly
   "Eigenvalues of"              ‿mat.Eigenvalues
 ⟩
-ops ∾↩ (⟨∾⟜" decomposition of",{𝕩.Decompose}⟩{𝕎𝕩}¨⊢)¨ decomps
+ops ∾↩ (⟨∾⟜"decomposition of",{𝕩.Decompose}⟩{𝕎𝕩}¨⊢)¨ decomps
 opid ← (+⟜(32×1="A["⊸⍋)3↑⊑)¨ ops
 [mid,mats] ← ⍉[
   "r100"‿⟨"random 100×100",   -⟜¬ 100 ⋈˜⊸•rand.Range 0⟩
   "s100"‿⟨"100×100", ⍉⊸mat.MP -⟜¬ 100 ⋈˜⊸•rand.Range 0⟩
   "r50" ‿⟨"random 50×50",     -⟜¬  50 ⋈˜⊸•rand.Range 0⟩
+  "s50" ‿⟨"50×50",   ⍉⊸mat.MP -⟜¬  50 ⋈˜⊸•rand.Range 0⟩
   "e50" ‿⟨"diagonal-ish 50×50", {((2⊸+×=⌜˜)↕𝕩)+2+⥊⟜(↕×´)⋈˜𝕩} 50⟩
 ]
 
@@ -29,4 +33,5 @@ Bench´∘I¨ (ops‿mats⊏˜¨opid‿mid⊐¨⊢)⌾I ⟨
   "lup"‿"r100"
   "qr "‿"r100"
   "cho"‿"s100"
+  "sym"‿"s50"
 ⟩
