@@ -141,6 +141,16 @@ qr ← {
   }
 }
 
+# Default implementations
+Inverse ← qr.Inverse qr.Decompose
+Solve ← qr.Decompose ⊸ qr.Solve
+Determinant ← (⊢×=∧3⊸≥)´∘≢◶⟨
+  lup.Determinant lup.Decompose
+  ⊑                     # 1×1
+  -´×⟜⌽˝                # 2×2
+  +´(↕3)(×˝⌽˘){𝔽--⊸𝔽}⊢  # 3×3
+⟩
+
 # Cholesky decomposition
 cholesky ← {
   Verify ⇐ lTri.Verify
@@ -158,6 +168,14 @@ cholesky ← {
     ! 0<⊑𝕩
     √𝕩
   }
+}
+
+# Faddeev-LeVerrier algorithm
+CharPoly ← {
+  !2==𝕩 ⋄ !=´≢𝕩
+  id←=⌜˜↕n←≠𝕩
+  c←-Trace m←m0←𝕩
+  1‿c ∾ c { Trace m ↩ m0 MP m+𝕩×id }⊸÷` -2+↕n-1
 }
 
 # Eigendecomposition of symmetric matrix: eigenvalues, eigenvectors as rows
@@ -204,16 +222,6 @@ symmetric_eigen ← {
   }
 }
 
-# Default implementations
-Inverse ← qr.Inverse qr.Decompose
-Solve ← qr.Decompose ⊸ qr.Solve
-Determinant ← (⊢×=∧3⊸≥)´∘≢◶⟨
-  lup.Determinant lup.Decompose
-  ⊑                     # 1×1
-  -´×⟜⌽˝                # 2×2
-  +´(↕3)(×˝⌽˘){𝔽--⊸𝔽}⊢  # 3×3
-⟩
-
 # List of eigenvalues of 𝕩
 # QR algorithm with Hessenberg reduction and Wilkinson shifts
 # Returns NaNs or fails to converge if there are complex eigenvalues
@@ -250,12 +258,4 @@ Eigenvalues ← {
   }_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
 
   { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (𝕊∘↓∾˜⊑) QRAlg 𝕩 } Hessenberg 𝕩
-}
-
-# Faddeev-LeVerrier algorithm
-CharPoly ← {
-  !2==𝕩 ⋄ !=´≢𝕩
-  id←=⌜˜↕n←≠𝕩
-  c←-Trace m←m0←𝕩
-  1‿c ∾ c { Trace m ↩ m0 MP m+𝕩×id }⊸÷` -2+↕n-1
 }
