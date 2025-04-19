@@ -1,7 +1,7 @@
 ⟨
   MP, H, Trace, Determinant
   Inverse, Solve, Eigenvalues, CharPoly
-  lTri, uTri, qr, lup, cholesky, symmetric_eigen
+  lTri, uTri, qr, lup, cholesky, symmetric_eigen, svd
 ⟩⇐
 
 MP ← +˝∘×⎉1‿∞  # matrix product
@@ -178,6 +178,30 @@ CharPoly ← {
   1‿c ∾ c { Trace m ↩ m0 MP m+𝕩×id }⊸÷` -2+↕n-1
 }
 
+# Shared code for one-sided or two-sided parallel Jacobi method
+_JacobiSweep ← { n‿GetSubmats‿_applyRot _𝕣:
+  # Diagonalize each pair j, j⊑i with a rotation
+  # Duplicates the arithmetic for sin and cos but it vectorizes well
+  Layer ← { 𝕊 i:
+    off‿diag ← GetSubmats i  # ⟨𝕩⊏˘m, Di m⟩ to diagonalize symmetric m
+    # Required rotation is determined by the ratio u÷p
+    d ← ×i-↕n
+    p ← (2 × d≠0) × off         # Force to 0 for non-pairs d=0
+    u ← (d × i⊸⊏⊸- diag) ⋆ p≠0  # Must be nonzero if p=0
+    t ← 2 × v ← p +⌾(×˜) u
+    cos ← √(v+|u)÷t
+    sin ← (d×¯1⋆u<0) × p÷t×cos
+    (cos⊸× - sin×i⊸⊏)_applyRot
+    @
+  }
+  # A sweep hits each (unordered) pair of distinct indices once
+  r ← ⌽↕p ← n-¬2|n
+  {𝕊:
+    2|n? (Layer⌽⟜r)¨ r;
+    (p|(n÷2)×↕p) {Layer 𝕨∾˜p⌾(𝕨⊸⊑) 𝕩⌽r}¨ r
+  }
+}
+
 # Eigendecomposition of symmetric matrix: eigenvalues, eigenvectors as rows
 symmetric_eigen ← {
   Compose ⇐ { 𝕊 d‿q: q H⊸MP d × q }
@@ -191,34 +215,52 @@ symmetric_eigen ← {
   Determinant ⇐ { 𝕊 d‿·: ×´d }
   # Parallel Jacobi method
   Decompose ⇐ { 𝕊 m:
+    !2==m ⋄ !=´≢m
+    # Diagonalize with two-sided rotations
     q ← =⌜˜↕n←≠m  # Eigenvectors
-    # Diagonalize each pair j, j⊑i by two-sided rotation
-    # Does all the arithmetic twice but it vectorizes well
-    Layer ← { 𝕊 i:
-      # Required rotation is determined by the ratio u÷p
-      d ← ×i-↕n
-      p ← (2 × d≠0) × i ⊏˘ m
-      u ← (d × i⊸⊏⊸- Di m) ⋆ p≠0  # Must be nonzero if p=0
-      t ← 2 × v ← p +⌾(×˜) u
-      cos ← √(v+|u)÷t
-      sin ← (d×¯1⋆u<0) × p÷t×cos
-      Rot ← cos⊸× - sin×i⊸⊏
-      m (Rot Rot⌾⍉)↩
-      q Rot↩
-      @
-    }
-    # A sweep hits each (unordered) pair of distinct indices once
-    r ← ⌽↕p ← n-¬2|n
-    Sweep ← {𝕊:
-      2|n? (Layer⌽⟜r)¨ r;
-      (p|(n÷2)×↕p) {Layer 𝕨∾˜p⌾(𝕨⊸⊑) 𝕩⌽r}¨ r
-    }
+    GetSubmats ← { ⟨𝕩⊏˘m, Di m⟩ }
+    _applyRot ← { m (𝔽 𝔽⌾⍉)↩ ⋄ q 𝔽↩ }
+    Sweep ← n‿GetSubmats‿_applyRot _JacobiSweep
     # Norm +´×˜⥊m stays constant; stop when off-diagonal part is small
     end ← (×˜1e¯14) × +´×˜⥊m
     Sweep _while_ {𝕊: end < +´×˜ (<⌜˜↕n)/○⥊m} @
     # Sort eigenvalues descending
     i ← ⍒d ← Di m
     ⟨i⊏d, i⊏q⟩
+  }
+}
+
+# Singular Value Decomposition (compact shapes)
+svd ← {
+  Compose ⇐ { 𝕊 u‿d‿v: {u≥○≠v?  u MP  d  ×  v ;
+                               (u ×⎉1 d) MP v } }
+  Verify ⇐ { 𝕊 u‿d‿v:
+    !1==d
+    {
+      !2==𝕩 ⋄ !≤´≢𝕩 ⋄ !d=○≠𝕩
+      ! ∧´ ⥊ 5e¯14≥| (=⌜´↕¨∘≢)⊸- MP⟜⍉ 𝕩
+    }¨ ⟨⍉u, v⟩
+  }
+  Inverse ⇐ Compose H‿÷‿H {𝕎𝕩}¨ ⌽
+  Solve ⇐ { u‿d‿v 𝕊 b: v H⊸MP d ÷˜ u H⊸MP b }
+  AbsDeterminant ⇐ { 𝕊 ·‿d‿·: ×´d }
+  # Parallel Jacobi method
+  Decompose ⇐ {
+    !2==𝕩
+    # Arrange the rows to be longer for faster computation
+    tr ← >´≢𝕩
+    m ← ⍉⍟tr 𝕩
+    # Symmetric eigendecomposition of MP⟜⍉ m
+    # We maintain m throughout with one-sided rotations
+    q ← =⌜˜↕n←≠m  # Left-singular vectors (as rows)
+    GetSubmats ← { ⟨+˝˘m×𝕩⊏m, +˝˘×˜m⟩ }
+    _applyRot ← { m 𝔽↩ ⋄ q 𝔽↩ }
+    Sweep ← n‿GetSubmats‿_applyRot _JacobiSweep
+    # Stopping criterion from Demmel and Veselić 1992
+    Sweep _while_ {𝕊: a←MP⟜⍉m ⋄ ∨´⥊ (<⌜˜↕n) ∧ (|a) > ×⌜˜√1e¯14×Di a} @
+    # Arrange as decomposition
+    d ← +˝˘⌾(×˜) m  # Singular values
+    ⍉⌾⊑ ⌽⍟tr (⍒d)⊸⊏¨ ⟨q, d, m÷d⟩
   }
 }
 
