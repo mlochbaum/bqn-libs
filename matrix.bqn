@@ -201,6 +201,20 @@ _JacobiSweep ← { n‿GetSubmats‿_applyRot _𝕣:
     (p|(n÷2)×↕p) {Layer 𝕨∾˜p⌾(𝕨⊸⊑) 𝕩⌽r}¨ r
   }
 }
+# Diagonalize symmetric m with two-sided rotations
+_Jacobi2 ← { rotQ _𝕣 m:
+  n ← ≠m
+  GetSubmats ← { ⟨𝕩⊏˘m, Di m⟩ }
+  _applyRot ← { m (𝔽 𝔽⌾⍉)↩ ⋄ 𝔽 _rotQ }
+  Sweep ← n‿GetSubmats‿_applyRot _JacobiSweep
+  # Norm +´×˜⥊m stays constant; stop when off-diagonal part is small
+  end ← (×˜1e¯14) × +´×˜⥊m
+  Sweep _while_ {𝕊: end < +´×˜ (<⌜˜↕n)/○⥊m} @
+  # Return eigenvalues
+  Di m
+}
+# No eigenvectors, slightly faster than symmetric_eigen.Decompose
+# Eigenvalues_Symmetric ← { !2==𝕩 ⋄ !=´≢𝕩 ⋄ ∨ {˙}_Jacobi2 𝕩 }
 
 # Eigendecomposition of symmetric matrix: eigenvalues, eigenvectors as rows
 symmetric_eigen ← {
@@ -214,19 +228,11 @@ symmetric_eigen ← {
   Solve ⇐ { d‿q 𝕊 b: q H⊸MP d ÷˜ q MP b }
   Determinant ⇐ { 𝕊 d‿·: ×´d }
   # Parallel Jacobi method
-  Decompose ⇐ { 𝕊 m:
-    !2==m ⋄ !=´≢m
-    # Diagonalize with two-sided rotations
-    q ← =⌜˜↕n←≠m  # Eigenvectors
-    GetSubmats ← { ⟨𝕩⊏˘m, Di m⟩ }
-    _applyRot ← { m (𝔽 𝔽⌾⍉)↩ ⋄ q 𝔽↩ }
-    Sweep ← n‿GetSubmats‿_applyRot _JacobiSweep
-    # Norm +´×˜⥊m stays constant; stop when off-diagonal part is small
-    end ← (×˜1e¯14) × +´×˜⥊m
-    Sweep _while_ {𝕊: end < +´×˜ (<⌜˜↕n)/○⥊m} @
-    # Sort eigenvalues descending
-    i ← ⍒d ← Di m
-    ⟨i⊏d, i⊏q⟩
+  Decompose ⇐ {
+    !2==𝕩 ⋄ !=´≢𝕩
+    q ← =⌜˜↕≠𝕩               # Eigenvectors
+    d ← {{q 𝔽↩}} _Jacobi2 𝕩  # Eigenvalues
+    (⍒d)⊸⊏¨ d‿q
   }
 }
 
