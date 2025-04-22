@@ -270,40 +270,53 @@ svd ← {
   }
 }
 
-# List of eigenvalues of 𝕩
-# QR algorithm with Hessenberg reduction and Wilkinson shifts
-# Returns NaNs or fails to converge if there are complex eigenvalues
+# List of eigenvalues of 𝕩; each complex one is returned as real‿imag
+# Implicit QR algorithm with double shifts
 Eigenvalues ← {
-  Norm ← +´⌾(×˜)
-  # Return a Hessenberg matrix (0⊸≠<1≥-⌜˜∘↕∘≠) similar to 𝕩
+  !2==𝕩 ⋄ !=´≢𝕩 ⋄ !1≤≠𝕩
+  # 2×2 trace + determinant, and eigenvalues
+  TrDet ← Trace ⋈ ·-´×⟜⌽˝
+  Eig2 ← { b‿c←TrDet 𝕩 ⋄ b÷↩2 ⋄ b (0≤s)◶⟨⋈¨,+⟩ -⊸⋈√|s←(×˜b)-c }
+
+  # Householder reflection HH𝕩 sends 𝕩 to a multiple of 𝕩≠⊸↑1
+  HH ← {
+    S ← (+´×˜1↓𝕩)+×˜
+    vd ← (2÷·0⊸=⊸+S∘⊑)⊸× v ← (√∘S×¯1⋆<⟜0)⊸+⌾⊑ 𝕩
+    ⟨⊢-vd×⌜v+˝∘×⊢, ⊢-vd×⌜˜+˝∘×⟜v˘⟩  # Left and right applications
+  }
+
+  # Return a Hessenberg matrix (satisfies 0⊸≠<1≥-⌜˜∘↕∘≠) similar to 𝕩
   Hessenberg ← {
-    v ← (-≠𝕩) ↑ {((Norm𝕩)×¯1⋆<⟜0)⊸+⌾⊑ 𝕩} (1+𝕨)↓𝕨⊏˘𝕩
-    # Multiply on both sides by symmetric orthogonal matrix id-2×u×⌜u
-    # where u ← v÷Norm v
-    v2 ← 2 × v ÷ 0⊸=⊸+ +´×˜v
-    (⊢-v×⌜v2+˝∘×⊢) (⊢-v×⌜˜+˝∘×⟜v2˘) 𝕩
+    # Reflect to zero out column 𝕨⊏˘𝕩 below row 1+𝕨
+    Dr ← (1+𝕨)⊸↓
+    HL‿HR ← HH 𝕨⊏˘Dr 𝕩 ⋄ HL⌾Dr HR⌾(Dr˘) 𝕩
   }´⟜(⌽∘↕0⌈≠-2˙)
 
-  # Shift based on eigenvalues of a symmetric matrix
-  WilkinsonShift ← { 𝕊a‿·‿b‿c:
-    d ← 2÷˜a-c ⋄ b2 ← ×˜b
-    c - b2 0⊸≠◶0‿÷ d + (×d) × b2⊸+⌾(×˜)d
+  # Double QR step with eigenvalues of ¯2‿¯2↑𝕩 as shifts
+  Step ← {𝕊a:
+    # First column determines the result, use c to construct it
+    s‿t ← TrDet ¯2‿¯2↑a
+    l ← 1‿0 ⊑ h ← 2‿2↑a
+    c ← ⟨t + +´⟨s-˜⊑h,l⟩×⊏h⟩ ∾ l × ⟨s-˜Trace h, 2‿1⊑a⟩
+    # After reflecting by c we do the same reduction as Hessenberg,
+    # but entries more than 2 below the diagonal will always be 0
+    n ← ≠a  # ≥3
+    j ← 3↑˘ i ← ⥊⟜(↕×´)3‿n
+    Refl ← { HL‿HR ← HH 𝕩 ⋄ a (HL⌾(i⊏⥊) HR⌾(j⊏⥊))↩ }
+    ReflJ ← { j∾↩n+j↑˜-n>≠j ⋄ Refl 𝕩 } # Extend j first
+    ReflJ c
+    { i+↩n⋄j+↩1 ⋄ ReflJ 𝕩 ⊏˘ 3↑(𝕩+1)↓a ⋄ i↓˘˜↩1 }¨ ↕n-3
+    i↓˜↩1⋄j↓˘˜↩1 ⋄ Refl (n-3) ⊏˘ ¯2↑a
+    a
   }
 
-  # Obtain r MP q, where 𝕩≡q MP r is a QR decomposition
-  QRev ← {𝕊a:
-    Giv ← { ≍⟜(-⌾⊑⌽) ÷⟜Norm ⟨𝕨+↕2,<𝕨⟩⊏𝕩 }  # Givens rotation matrix, transposed
-    n ← ≠𝕩
-    i←⥊⟜(↕×´)2‿n  # First two rows
-    gs ← { g←𝕩 Giv a ⋄ a g⊸MP⌾(i⊏⥊)↩ ⋄ i↓˜↩0‿1⋄i+↩n ⋄ g }¨ ↕n-1
-    i↩≍¯1‿0 ⋄ a { i+↩1⋄i∾↩n+¯1↑i ⋄ MP⟜(⍉𝕨)⌾(i⊏⥊)𝕩 }´ ⌽gs
+  # Split into irreducible components; implicit QR requires these
+  Break ← {
+    sd ← ((1-˜1⊸+×1↓↕)≠𝕩)⊏⥊𝕩             # Subdiagonal
+    z ← (|sd) ≤ 1e¯14 × 1 (↓+-⊸↓)| Di 𝕩  # Mask of near-zero
+    (⋈˜⊏𝕩˙)¨ ⊔ +`0∾z
   }
 
-  # Get one eigenvalue with QR
-  QRAlg ← {
-    mu ← WilkinsonShift ⥊¯2‿¯2↑𝕩
-    QRev⌾(-⟜(mu×=⌜˜↕≠𝕩)) 𝕩
-  }_while_(1e¯10 < ·|¯1‿¯2⊸⊑)
-
-  { 1≥≠𝕩 ? 1⥊𝕩 ; ¯1‿¯1 (𝕊∘↓∾˜⊑) QRAlg 𝕩 } Hessenberg 𝕩
+  Decompose ← {∾𝕊⍟(2<≠∘⊑)∘⋈¨ Break∘Step∘⊑_while_(1=≠) 𝕩}
+  ∾ (1<≠)◶⊏‿Eig2¨ Decompose⍟(2<≠𝕩) Break Hessenberg 𝕩
 }
