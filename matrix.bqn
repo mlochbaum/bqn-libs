@@ -204,7 +204,7 @@ _JacobiSweep ← { n‿GetSubmats‿_applyRot _𝕣:
 # Diagonalize symmetric m with two-sided rotations
 _Jacobi2 ← { rotQ _𝕣 m:
   n ← ≠m
-  GetSubmats ← { ⟨𝕩⊏˘m, Di m⟩ }
+  GetSubmats ← { ⟨(↕∘≠⊸⌊𝕩)⊏𝕩⊏˘m, Di m⟩ }
   _applyRot ← { m (𝔽 𝔽⌾⍉)↩ ⋄ 𝔽 _rotQ }
   Sweep ← n‿GetSubmats‿_applyRot _JacobiSweep
   # Norm +´×˜⥊m stays constant; stop when off-diagonal part is small
