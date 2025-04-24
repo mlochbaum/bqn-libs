@@ -2,7 +2,7 @@
 mat ← •Import "../matrix.bqn"
 
 decomps ← ⟨
-  "LUp "‿mat.lup, "QR "‿mat.qr, "SVD"‿mat.svd
+  "LUp "‿mat.lup, "QR "‿mat.qr, "SVD"‿mat.svd, "Real Schur "‿mat.real_schur
   "Cholesky "‿mat.cholesky, "Symmetric eigen"‿mat.symmetric_eigen
 ⟩
 ops ← ⟨
@@ -33,5 +33,6 @@ Bench´∘I¨ (ops‿mats⊏˜¨opid‿mid⊐¨⊢)⌾I ⟨
   "svd"‿"r50"
   "cha"‿"r50"
   "eig"‿"r50"
+  "rea"‿"r50"
   "sym"‿"s50"
 ⟩

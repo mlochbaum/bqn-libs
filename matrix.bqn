@@ -1,7 +1,7 @@
 ⟨
   MP, H, Trace, Determinant
   Inverse, Solve, Eigenvalues, CharPoly
-  lTri, uTri, qr, lup, cholesky, symmetric_eigen, svd
+  lTri, uTri, qr, lup, cholesky, symmetric_eigen, svd, real_schur
 ⟩⇐
 
 MP ← +˝∘×⎉1‿∞  # matrix product
@@ -270,10 +270,8 @@ svd ← {
   }
 }
 
-# List of eigenvalues of 𝕩; each complex one is returned as real‿imag
 # Implicit QR algorithm with double shifts
-Eigenvalues ← {
-  !2==𝕩 ⋄ !=´≢𝕩 ⋄ !1≤≠𝕩
+qr_alg ← {
   # 2×2 trace + determinant, and eigenvalues
   TrDet ← Trace ⋈ ·-´×⟜⌽˝
   Eig2 ← { b‿c←TrDet 𝕩 ⋄ b÷↩2 ⋄ b (0≤s)◶⟨⋈¨,+⟩ -⊸⋈√|s←(×˜b)-c }
@@ -284,16 +282,21 @@ Eigenvalues ← {
     vd ← (2÷·0⊸=⊸+S∘⊑)⊸× v ← (√∘S×¯1⋆<⟜0)⊸+⌾⊑ 𝕩
     ⟨⊢-vd×⌜v+˝∘×⊢, ⊢-vd×⌜˜+˝∘×⟜v˘⟩  # Left and right applications
   }
-
-  # Return a Hessenberg matrix (satisfies 0⊸≠<1≥-⌜˜∘↕∘≠) similar to 𝕩
-  Hessenberg ← {
-    # Reflect to zero out column 𝕨⊏˘𝕩 below row 1+𝕨
-    Dr ← (1+𝕨)⊸↓
-    HL‿HR ← HH 𝕨⊏˘Dr 𝕩 ⋄ HL⌾Dr HR⌾(Dr˘) 𝕩
-  }´⟜(⌽∘↕0⌈≠-2˙)
+  # Get a Hessenberg matrix (satisfies 0⊸≠≤1≥-⌜˜∘↕∘≠) similar to 𝕩
+  _hess ← { onQ _𝕣 a:
+    {
+      # Reflect to zero out column 𝕩⊏˘a below row 1+𝕩
+      Dr ← (1+𝕩)⊸↓
+      HL‿HR ← HH 𝕩⊏˘Dr a
+      a (HL⌾Dr HR⌾(Dr˘))↩ ⋄ HL⌾Dr _onQ
+    }¨ ↕0⌈2-˜≠a
+    a
+  }
+  Hessenberg ← {˙}_hess
+  HessDecomp ← { q ← =⌜˜↕≠𝕩 ⋄ a ← {{q 𝔽↩}}_hess 𝕩 ⋄ a‿q }
 
   # Double QR step with eigenvalues of ¯2‿¯2↑𝕩 as shifts
-  Step ← {𝕊a:
+  _step ← {onQ _𝕣 a:
     # First column determines the result, use c to construct it
     s‿t ← TrDet ¯2‿¯2↑a
     l ← 1‿0 ⊑ h ← 2‿2↑a
@@ -302,21 +305,80 @@ Eigenvalues ← {
     # but entries more than 2 below the diagonal will always be 0
     n ← ≠a  # ≥3
     j ← 3↑˘ i ← ⥊⟜(↕×´)3‿n
-    Refl ← { HL‿HR ← HH 𝕩 ⋄ a (HL⌾(i⊏⥊) HR⌾(j⊏⥊))↩ }
+    Refl ← { HL‿HR ← HH 𝕩 ⋄ a (HL⌾(i⊏⥊) HR⌾(j⊏⥊))↩ ⋄ HL⌾((n⌊∘÷˜⊏˘i)⊸⊏)_onQ }
     ReflJ ← { j∾↩n+j↑˜-n>≠j ⋄ Refl 𝕩 } # Extend j first
     ReflJ c
     { i+↩n⋄j+↩1 ⋄ ReflJ 𝕩 ⊏˘ 3↑(𝕩+1)↓a ⋄ i↓˘˜↩1 }¨ ↕n-3
     i↓˜↩1⋄j↓˘˜↩1 ⋄ Refl (n-3) ⊏˘ ¯2↑a
     a
   }
+  EStep ← {˙}_step
 
   # Split into irreducible components; implicit QR requires these
-  Break ← {
-    sd ← ((1-˜1⊸+×1↓↕)≠𝕩)⊏⥊𝕩             # Subdiagonal
-    z ← (|sd) ≤ 1e¯14 × 1 (↓+-⊸↓)| Di 𝕩  # Mask of near-zero
-    (⋈˜⊏𝕩˙)¨ ⊔ +`0∾z
+  Breaks ← {
+    sd ← ((1-˜1⊸+×1↓↕)≠𝕩)⊏⥊𝕩         # Subdiagonal
+    (|sd) ≤ 1e¯14 × 1 (↓+-⊸↓)| Di 𝕩  # Mask of near-zero
   }
 
-  Decompose ← {∾𝕊⍟(2<≠∘⊑)∘⋈¨ Break∘Step∘⊑_while_(1=≠) 𝕩}
-  ∾ (1<≠)◶⊏‿Eig2¨ Decompose⍟(2<≠𝕩) Break Hessenberg 𝕩
+  Eigenvalues ⇐ {
+    !2==𝕩 ⋄ !=´≢𝕩 ⋄ 1≥≠𝕩?⥊𝕩 ;
+    Break ← { (⋈˜⊏𝕩˙)¨ ⊔ +`0∾Breaks 𝕩 }
+    Decompose ← { ∾𝕊⍟(2<≠∘⊑)∘⋈¨ Break∘EStep∘⊑_while_(1=≠) 𝕩 }
+    ∾ (1<≠)◶⊏‿Eig2¨ Decompose⍟(2<≠𝕩) Break Hessenberg 𝕩
+  }
+
+  SchurDecomp ⇐ {
+    !2==𝕩 ⋄ !=´≢𝕩
+    SchurFromHess HessDecomp 𝕩
+  }
+  SchurFromHess ← {1=≠⊑𝕩? 𝕩; [a‿b,c‿d]‿q:
+    p ← a-d
+    z ← (×˜h←p÷2) + b×c
+    cos‿sin ← {
+      z≥0? ÷⟜(+´⌾(×˜)) ⟨h (⊣+×⊸×) √z, c⟩ ;
+      # Complex eigenvalues: place in standard form with a=d
+      # Like Jacobi with diagonal and anti-diagonal exchanged
+      u ← (b+c) ⋆ p≠0
+      t ← 2 × v ← p +⌾(×˜) u
+      ⟨cos ← √(v+|u)÷t, (-¯1⋆u<0) × p÷t×cos⟩
+    }
+    Rot ← cos⊸× + (⋈⟜-sin)×⌽
+    ⟨Rot⌾⍉ Rot ⊑𝕩, Rot q⟩
+  ; 𝕊 m‿q: # Main QR
+    z←@ ⋄ m {{q 𝔽↩}}_step _while_ {¬∨´z↩Breaks 𝕩}↩
+    g←+`0∾z ⋄ n←≠m
+    # Each block in g⋈˜⊸⊔m on or above the diagonal will be transformed
+    # first by manipulating rows, then by manipulating columns.
+    # First happens as part of mq in Sub, and the second as part of p.
+    # t stores the transpose in between.
+    t ← ⟨⟩
+    Sub ← { s 𝕊 mq:
+      r←n-d←s+k←≠mq
+      p ← {0<c←≠t? ∾≍c⊑¨t ; k‿s⥊0} # Column above md, transposed to row
+      md‿qe ← SchurFromHess d((s↓˘↑˘)⋈p∾˘↓˘)mq
+      qr‿e  ← (n-k)(↓˘⋈↑˘)qe
+      mc‿mr ← s(↑⋈↓)⍉e  # Un-transpose mc for output, transpose mr for manipulation
+      t ∾↩< (d↓g) ⊔ mr
+      ⟨n↑mc∾md, qr⟩
+    }
+    ∾¨≍⌾⊑ <˘⍉> (/1∾z) Sub¨ g⊔m∾˘q
+  }
+}
+
+# List of eigenvalues of 𝕩; each complex one is returned as real‿imag
+Eigenvalues ← qr_alg.Eigenvalues
+
+# Real Schur decomposition
+real_schur ← {
+  Compose ⇐ { 𝕊 a‿q: q ⍉⊸MP a MP q }
+  Verify ⇐ { 𝕊 a‿q:
+    ! ∧´2==¨𝕩 ⋄ ! ⊣`⊸≡ ∾≢¨𝕩
+    ! ∧´⥊ 5e¯14≥| (=⌜´↕¨∘≢)⊸- ⍉⊸MP q
+    ! ∧´⥊ (0≠a) ≤ 1≥-⌜˜↕n←≠a               # Hessenberg
+    ! ¬∨´ »⊸∧ nz ← 0 ≠ ((1-˜1⊸+×1↓↕)n)⊏⥊a  # Quasi-triangular
+    # 2×2 diagonal blocks have uniform diagonal and complex eigenvalues
+    Chk ← {[a‿b,c‿d]:!1e¯14≥|a-d ⋄ !0>b×c}⍟(1e¯14<·|1‿0⊸⊑)
+    (Chk +⟜(↕2)⋈˜⊸⊏a˙)¨ /nz
+  }
+  Decompose ⇐ qr_alg.SchurDecomp
 }

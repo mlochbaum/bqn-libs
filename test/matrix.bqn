@@ -1,5 +1,5 @@
 m ← •Import "../matrix.bqn"
-MP‿qr‿lup‿cholesky‿symmetric_eigen‿svd‿Determinant‿Eigenvalues‿CharPoly ← m
+MP‿qr‿lup‿cholesky‿symmetric_eigen‿svd‿real_schur‿Determinant‿Eigenvalues‿CharPoly ← m
 
 TestDecomp ← {⟨Decompose,Verify,Compose,Inverse,Solve⟩ 𝕊 m:
   tol ← 1e¯12
@@ -13,6 +13,12 @@ lup TestDecomp 6‿6⥊4‿1‿2‿5‿0‿3‿6
 cholesky TestDecomp [4‿12‿¯16,12‿37‿¯43,¯16‿¯43‿98]
 symmetric_eigen TestDecomp ⍉⊸+ 6‿6⥊4‿1‿2‿5‿0‿3‿6
 svd TestDecomp 6‿6⥊4‿1‿2‿5‿0‿3‿6
+
+TestNoInv ← {⟨Decompose,Verify,Compose⟩ 𝕊 m:
+  Verify d ← Decompose m
+  ! 1e¯12 ≥ ⌈´⥊ | m - Compose d
+}
+real_schur TestNoInv 6‿6⥊4‿1‿2‿5‿0‿3‿6
 
 ! 0 ≡ Determinant ⥊⟜(↕×´)9‿9
 ! ∧´ 1e¯10 > | 1‿2‿3 - ∧ Eigenvalues [¯149‿¯50‿¯154,537‿180‿546,¯27‿¯9‿¯25]
