@@ -343,7 +343,7 @@ qr_alg ← {
       ⟨cos ← √(v+|u)÷t, (-¯1⋆u<0) × p÷t×cos⟩
     }
     Rot ← cos⊸× + (⋈⟜-sin)×⌽
-    ⟨Rot⌾⍉ Rot ⊑𝕩, Rot q⟩
+    ⟨0⌾(1‿0⊸⊑)⍟(z≥0) Rot⌾⍉ Rot ⊑𝕩, Rot q⟩
   ; 𝕊 m‿q: # Main QR
     z←@ ⋄ m {{q 𝔽↩}}_step _while_ {¬∨´z↩Breaks 𝕩}↩
     g←+`0∾z ⋄ n←≠m
@@ -371,14 +371,20 @@ Eigenvalues ← qr_alg.Eigenvalues
 # Real Schur decomposition
 real_schur ← {
   Compose ⇐ { 𝕊 a‿q: q ⍉⊸MP a MP q }
+  SubDi ← (1-˜1⊸+×1↓↕)∘≠ ⊏ ⥊
   Verify ⇐ { 𝕊 a‿q:
     ! ∧´2==¨𝕩 ⋄ ! ⊣`⊸≡ ∾≢¨𝕩
     ! ∧´⥊ 5e¯14≥| (=⌜´↕¨∘≢)⊸- ⍉⊸MP q
-    ! ∧´⥊ (0≠a) ≤ 1≥-⌜˜↕n←≠a               # Hessenberg
-    ! ¬∨´ »⊸∧ nz ← 0 ≠ ((1-˜1⊸+×1↓↕)n)⊏⥊a  # Quasi-triangular
+    ! ∧´⥊ (0≠a) ≤ 1≥-⌜˜↕n←≠a         # Hessenberg
+    ! ¬∨´ »⊸∧ nz ← 0 ≠ SubDi a       # Quasi-triangular
     # 2×2 diagonal blocks have uniform diagonal and complex eigenvalues
-    Chk ← {[a‿b,c‿d]:!1e¯14≥|a-d ⋄ !0>b×c}⍟(1e¯14<·|1‿0⊸⊑)
+    Chk ← {[a‿b,c‿d]: !1e¯14≥|a-d ⋄ !0>b×c}
     (Chk +⟜(↕2)⋈˜⊸⊏a˙)¨ /nz
   }
   Decompose ⇐ qr_alg.SchurDecomp
+  Eigenvalues ⇐ { 𝕊 a‿q:
+    f ← 0 ≠ s ← SubDi a
+    im ← √0⌈-(f/s)×((/f)+<0‿1)⊑a
+    ⋈¨⟜(⥊≍˘˜⟜-im)⌾((0(∾∨∾˜)f)⊸/) Di a
+  }
 }
