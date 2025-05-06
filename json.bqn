@@ -220,5 +220,9 @@ Export ← (2⌊•Type)◶⟨ # Check type
     !∘"Rank >2 cannot be exported to JSON"
   ⟩
   ExportNumber       # Type 1: number
-  !∘"Only numbers and arrays can be exported to JSON"
+  ! "Non-numeric atoms can't be exported to JSON" ∾ {
+    𝕊@: " (use <""null"" for null)" ;
+    6=•Type𝕩? " (objects are represented as keys≍values)" ;
+    ""
+  }
 ⟩
