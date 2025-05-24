@@ -17,7 +17,7 @@ wlen ← ≠primes
 
 # Wheel factorization
 ⟨Sieve, Extend⟩ ← {
-  seg ← 2⋆17                   # Maximum segment size
+  seg ← 2⋆18                   # Maximum segment size
   wl ← ×´primes                # Wheel length
   mask ← ∧´(wl⥊0<↕)¨primes     # Positions not divisible by a prime
   wn ← +´mask
@@ -39,8 +39,7 @@ wlen ← ≠primes
     r ← f-e                      # Number to mark off
     k ← ↕∘≠⊸+r/f-+`r             # Wheel positions
     i ← (r/pd) × (r/b) + k⊏w
-    l ← end-start
-    (0<l↑/⁼(i-start)∾l) < l⥊start⌽mask
+    0¨⌾((i-start)⊸⊏) (end-start)⥊start⌽mask
   }
   Sieve ⇐ 0 _sieveCache
 
