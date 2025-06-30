@@ -8,14 +8,23 @@ _extend ← { 𝕨 𝔽○((𝕨⌈○≠𝕩)⊸↑) 𝕩 }
 
 Trim ← { 𝕩 ↑˜ -⟜1 _while_ (≥◶⟨0,0=-⊑𝕩˙⟩⟜1) ≠𝕩 }
 
+Carry1 ← {
+  g ← 𝕩 ≥ base        # Generate
+  p ← 𝕩 = base-1      # Propagate
+  i ← ⌈`∘×⟜(1+↕∘≠)¬p  # Start index of propagation chain
+  a ← i ⊏ gs←0∾g      # Active propagations
+  c ← g ∨ p ∧ a       # Carry from these positions
+  r ← (𝕩 + »c) - c×base
+  ⟨r, ⊢´gs⟩
+}
 Carry ← {
-  c ← 0
-  r ← {𝕩+↩c⋄c↩⌊𝕩÷base⋄base|𝕩}¨ 𝕩
-  r‿c
+  ∧´ (0≤𝕩) ∧ (base+base-1)>𝕩 ? Carry1 𝕩 ;
+  c ← ⌊𝕩÷base
+  (⊑¯1↑c)⊸+⌾(1⊸⊑) 𝕊 (»c) + 𝕩-base×c
 }
 
 Add ⇐ {
-  0⊸<◶⊣‿∾´ Carry 𝕨 +_extend 𝕩
+  0⊸<◶⊣‿∾´ Carry1 𝕨 +_extend 𝕩
 }
 
 Sub ⇐ {
