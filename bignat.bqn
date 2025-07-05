@@ -71,3 +71,11 @@ _compare ⇐ {
 Neg ⇐ (!0=≠)⊸⊢
 Signum ⇐ ×∘≠
 Abs ⇐ Conj ⇐ ⊢
+
+Fact ⇐ { 𝕩≤1? ⟨1⟩; 𝕨𝕊n:
+  Prod ← {2≤l←≠𝕩 ? (⌊l÷2)(↑Mul○𝕊↓)𝕩 ; From ×´𝕩} # Recurse to keep intermediates small
+  Pri ← {/(2≤↕𝕩){𝕩>0⌾(𝕨⊸⊑)𝕩≠⊸⥊𝕨↑1}⍟⊑´⌽↕⌈√𝕩}     # Primes <𝕩
+  p ← 𝕨 Pri⊘(≤/⊣) n+1                           # (save them in 𝕨)
+  s ← Prod 1⊸<⊸/ {𝕊p:p⋆+´2|{𝕊0:↕0;𝕊⊸∾⌊𝕩÷p}n}¨ p # Swinging factorial
+  s Mul Mul˜ p 𝕊 ⌊n÷2
+}∘⊢
