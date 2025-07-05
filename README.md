@@ -16,7 +16,7 @@ Math:
 - polynomial.bqn: complex polynomial tools and solvers
 - min.bqn: optimization/minimization methods
 - roots.bqn: find zeros of real-valued functions
-- big{nat,int}.bqn: utilities for arbitrary-precision numbers. In progress.
+- big{nat,int}.bqn: utilities for arbitrary-precision numbers
 
 Other:
 - datetime.bqn: time and date, handling formats other than BQN's native `•UnixTime`

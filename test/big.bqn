@@ -3,7 +3,11 @@ i10 ← ⟨10⟩ •Import "../bigint.bqn"
 
 _fails ← {0∘𝔽⎊1}
 
-TestNat ← { 𝕊 ⟨Add,Sub,Mul,_compare,Signum⟩‿S:
+TestNat ← { 𝕊 ⟨From,ToNum,Add,Sub,Mul,_compare,Signum⟩‿S:
+  ! ⊢⌾From⊸≡ 1234
+  ! 98675 ≡ From⁼ S "98675"
+  ! "980" ≡ From∘ToNum⌾S "000980"
+
   ! "41401" ≡ "41099" Add⌾S "302"
   ! "" (Add≡⊢)○S "9120"
 

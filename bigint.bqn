@@ -2,7 +2,13 @@
 
 nat ← •args •Import "bignat.bqn"
 
-Canon ← 0⌾⊑⍟(0=·≠1⊸⊑)
+Canon ← 0⌾⊑⍟(¬ ·nat.Signum 1⊸⊑)
+
+From ⇐ {
+  𝕊𝕩: (0⊸> ⋈ nat.From∘|) 𝕩 ;
+  𝕊⁼s‿m: (¬⊸-s) × nat.From⁼ m
+}
+ToNum‿NearestNum ⇐ {-∘⊢⍟⊣⟜𝕏´}¨ nat.ToNum‿nat.NearestNum
 
 SubLE ← nat.Sub˜⌾(1⊸⊑)
 SubAbs← ≤nat._compare○(1⊸⊑)◶⟨SubLE˜,SubLE⟩
