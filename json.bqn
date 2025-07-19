@@ -69,7 +69,7 @@
   }
   Escape ⇐ {
     e ← (𝕩∊2↑in) ∨ 𝕩<@+32  # Quote, backslash, and control characters
-    j ← /e ⋄ k ← ¬e        # Their indices; characters to keep
+    0<≠ j ← /e ? k ← ¬e    # Their indices (exit if none); characters to keep
     c ← j ⊏ 𝕩              # Characters to be escaped
     m ← c - (out⊐c)⊏diff   # Escape the basic ones
     g ← 2 ∾˜ m<@+32        # Group 𝕨 to separate...
@@ -80,6 +80,7 @@
       ⥊'\'≍˘n              # Basic escapes
       ⥊"\u00"⊸∾˘ Hex32 u-@ # Hex escapes
     ⟩
+    ; 𝕩
   }
 }
 
