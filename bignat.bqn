@@ -20,9 +20,9 @@ From ⇐ {
   ! ⌊⊸=𝕩
   {0:↕0; m∾𝕊base÷˜𝕩-m←base|𝕩} 𝕩
 }
-ToNum ⇐ { r←𝕨+base×𝕩 ⋄ "inexact"!𝕨=base|r ⋄ r }´
+ToNum ⇐ 0 { r←𝕨+base×𝕩 ⋄ "inexact"!𝕨=base|r ⋄ r }´ ⊢
 NearestNum ⇐ {
-  base = 2⋆l←2⋆⁼base? d←0⌈(≠𝕩)-⌈53÷l ⋄ (2⋆l×d) × +⟜(base⊸×)´ d↓𝕩 ;
+  base = 2⋆l←2⋆⁼base? d←0⌈(≠𝕩)-⌈53÷l ⋄ (2⋆l×d) × 0 +⟜(base⊸×)´ d↓𝕩 ;
   ! "Non-powers of 2 not yet implemented"
 }
 
