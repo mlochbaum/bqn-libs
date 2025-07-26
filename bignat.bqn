@@ -38,6 +38,7 @@ Carry ← {
 }
 _extend ← { 𝕨 𝔽○((𝕨⌈○≠𝕩)⊸↑) 𝕩 }
 Add ⇐ {
+  𝕨𝕊⁼𝕩: 𝕩Sub𝕨; 𝕨𝕊˜⁼𝕩: 𝕩Sub𝕨;
   0⊸<◶⊣‿∾´ Carry 𝕨 +_extend 𝕩
 }
 Sub ⇐ {
@@ -71,6 +72,28 @@ _compare ⇐ {
 Neg ⇐ (!0=≠)⊸⊢
 Signum ⇐ ×∘≠
 Abs ⇐ Conj ⇐ ⊢
+
+DivMod ⇐ {
+  𝕨 <_compare 𝕩 ? ⟨↕0, 𝕨⟩ ;
+  "Non-powers of 2 not yet implemented" ! base = 2⋆l←2⋆⁼base
+  Mu ← (From 2⋆l|⊣)⊸Mul
+  M2 ← (⌊∘÷⟜l⥊0˙) ∾ Mu                 #  𝕩×2⋆𝕨
+  D2 ← ⌈∘÷⟜l (↑⟨1⟩⊸Add⍟(∨´≠⟜0)↓) -⊸Mu  # ⌊𝕩÷2⋆𝕨
+  Recip ← { # approximate (2⋆𝕨-b)÷m given b‿m←𝕩, (2⋆b-1)≤m<2⋆b
+    𝕨≤2 ? From ⌊3×2⋆𝕨-1 ;
+    z ← (h←1+⌊𝕨÷2) 𝕊 𝕩
+    xp ← -⟜(𝕨+2)⊸D2´ 𝕩
+    (z M2˜ 𝕨¬h) Sub (h+h+2) D2 xp Mul z Mul z  # Newton
+  }
+  Log ← (⌊2⋆⁼⊢´) + l×≠-1˙              # ⌊2⋆⁼𝕩
+  n‿m ← 1+Log¨ 𝕨‿𝕩
+  p ← (n¬m) Recip m‿𝕩
+  r ← 𝕩 Mul q ← (n+1) D2 p Mul 𝕨       # Approximate quotient
+  o ← 𝕨 ≥_compare⟜r{𝔽◶⟨¯1, 𝔽 Sub⟩} 𝕩   # Required correction
+  C ← Add⍟o
+  ⟨(⋈1) C q, 𝕨 Sub 𝕩 C r⟩
+}
+Div ⇐ ⊑ DivMod
 
 Fact ⇐ { 𝕩≤1? ⟨1⟩; 𝕨𝕊n:
   Prod ← {2≤l←≠𝕩 ? (⌊l÷2)(↑Mul○𝕊↓)𝕩 ; From ×´𝕩} # Recurse to keep intermediates small
