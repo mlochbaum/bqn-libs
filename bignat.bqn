@@ -13,12 +13,20 @@ Valid ← {
 }
 Trim ← { 𝕩 ↑˜ -⟜1 _while_ (≥◶⟨0,0=-⊑𝕩˙⟩⟜1) ≠𝕩 }
 
+FromSmall ← {𝕩<base? ⟨𝕩⟩; d∾𝕊base÷˜𝕩-d←base|𝕩}
 From ⇐ {
   𝕊⁼𝕩: ! Valid 𝕩 ⋄ ToNum 𝕩 ;
   ! 1 = •Type 𝕩
   ! (0≤𝕩) ∧ 𝕩<∞
   ! ⌊⊸=𝕩
-  {0:↕0; m∾𝕊base÷˜𝕩-m←base|𝕩} 𝕩
+  𝕩>𝕩-1 ? 0⊸<◶↕‿FromSmall 𝕩 ;  # any a<𝕩 is an exact float
+  # 𝕩 = mf×2⋆p, where ⌽e is the binary expansion of p
+  e‿mf ← 2 {⌊⊸=𝕩÷𝕨? e‿m←(×˜𝕨)𝕊𝕩 ⋄ a←⌊⊸=r←m÷𝕨 ⋄ ⟨e∾a,r⍟a m⟩; ⟨↕0,𝕩⟩} 𝕩
+  m ← FromSmall mf
+  {
+    base = 2⋆l←2⋆⁼base ? p←+˜⊸+˜´⌽e ⋄ (0⥊˜p⌊∘÷l) ∾ ⟨2⋆l|p⟩ Mul m ;
+    m Mul´ Mul˜⍟(/⌾⌽e) ⟨2⟩  # do smaller multiplies first
+  }
 }
 ToNum ⇐ 0 { r←𝕨+base×𝕩 ⋄ "inexact"!𝕨=base|r ⋄ r }´ ⊢
 NearestNum ⇐ {
