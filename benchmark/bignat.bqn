@@ -2,7 +2,7 @@
 bn ← •Import "../bignat.bqn"
 L ← 40 _line
 
-R ← •rand.Range⟜(2⋆24)
+R ← •rand.Range⟜(2⋆52)
 
 •Out "Add      1e5-part numbers" L 100 bn.Add´•_timed R¨1e5‿1e5
 •Out "Subtract 1e5-part numbers" L 100 bn.Sub´•_timed R¨1e5-↕2

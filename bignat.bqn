@@ -1,9 +1,9 @@
 # Arithmetic on large natural numbers.
 
-base ← ⊑ •args ∾ 2⋆24
+base ← ⊑ •args ∾ 2⋆52
 ! 1=•Type base ⋄ ! (⌊⊸=∧2⊸≤) base
-! base ≤ 2⋆53
 l2b ← (base=2⊸⋆)⊸× 2⋆⁼base  # 0 if not a power of two
+! (⌈∘√⊸×⍟(0=l2b) base) ≤ 2⋆53
 
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 
@@ -65,12 +65,25 @@ Mul ⇐ {
     Add⟜((k⥊0)⊸∾)´ ⟨l, a Sub l Add h, h⟩
   ;
   0 = 𝕨⌊○≠𝕩 ? ↕0 ;
-  q ← ×˜base                           # Maintain ∧´s<q
-  s←o ← 0¨𝕩                            # Sum, overflow
-  p ← {c←q≤a←𝕩+«s ⋄ s↩a-c×q ⋄ o↩c+«o ⋄ ⊑¨s‿o}∘×⟜𝕩¨ 𝕨
-  s‿o ∾˜¨↩ <˘⍉¯1↓>p                    # Restore passed sums
-  Sp ← {t←⌊𝕩÷base ⋄ ⟨𝕩-base×t, t⟩}     # Split into top and bottom
-  Trim Add⟜(0⊸∾)´ (Sp s) ∾ {∧´𝕩<base?⋈𝕩; <⊸∾⟜𝕊´Sp𝕩} o
+  _mso ← { q←𝕗
+    s←o ← 0¨𝕩                          # Sum, overflow (maintain ∧´s<q)
+    p ← {c←q≤a←𝕩+«s ⋄ s↩a-c×q ⋄ o↩c+«o ⋄ ⊑¨s‿o}∘×⟜𝕩¨ 𝕨
+    (<˘⍉¯1↓>p) ∾¨ s‿o                  # Restore passed sums
+  }
+  Bb ← Add⟜(0⊸∾)´
+  _sp ← {t←⌊𝕩÷𝕗 ⋄ ⟨𝕩-𝕗×t, t⟩}          # Split into top and bottom
+  Sb ← base _sp
+  M ← {
+    (q ← ×˜base) ≤ 2⋆53 ?
+    s‿o ← 𝕨 q _mso 𝕩
+    Bb (Sb s) ∾ {∧´𝕩<base?⋈𝕩; <⊸∾⟜𝕊´Sb𝕩} o
+  ;
+    s ← ⌈√base  # Can represent one limb with two base s, but b>×˜s-1
+    m ← 𝕨 (Bb base _mso)⌜○(s _sp) 𝕩    # Result is +´⥊(×⌜˜1‿s)×m
+    p ← { 0<l2b ? Add¨⟜(0⊸∾⌾⊑⌽)˝m ; Add´¨(+⌜˜↕2)⊔m }
+    Add⟜{Bb Sb s×𝕩}´ p
+  }
+  Trim 𝕨M𝕩
 }
 
 _compare ⇐ {
