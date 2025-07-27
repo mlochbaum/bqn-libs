@@ -1,8 +1,9 @@
 # Arithmetic on large natural numbers.
 
 base ← ⊑ •args ∾ 2⋆24
-! 1=•Type base ⋄ ! (⌊⊸=∧0⊸≤) base
-! (×˜base) ≤ 2⋆53
+! 1=•Type base ⋄ ! (⌊⊸=∧2⊸≤) base
+! base ≤ 2⋆53
+l2b ← (base=2⊸⋆)⊸× 2⋆⁼base  # 0 if not a power of two
 
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 
@@ -24,14 +25,14 @@ From ⇐ {
   e‿mf ← 2 {⌊⊸=𝕩÷𝕨? e‿m←(×˜𝕨)𝕊𝕩 ⋄ a←⌊⊸=r←m÷𝕨 ⋄ ⟨e∾a,r⍟a m⟩; ⟨↕0,𝕩⟩} 𝕩
   m ← FromSmall mf
   {
-    base = 2⋆l←2⋆⁼base ? p←+˜⊸+˜´⌽e ⋄ (0⥊˜p⌊∘÷l) ∾ ⟨2⋆l|p⟩ Mul m ;
+    0≠l←l2b ? p←+˜⊸+˜´⌽e ⋄ (0⥊˜p⌊∘÷l) ∾ ⟨2⋆l|p⟩ Mul m ;
     m Mul´ Mul˜⍟(/⌾⌽e) ⟨2⟩  # do smaller multiplies first
   }
 }
 ToNum ⇐ 0 { r←𝕨+base×𝕩 ⋄ "inexact"!𝕨=base|r ⋄ r }´ ⊢
 NearestNum ⇐ {
-  base = 2⋆l←2⋆⁼base? d←0⌈(≠𝕩)-⌈53÷l ⋄ (2⋆l×d) × 0 +⟜(base⊸×)´ d↓𝕩 ;
-  ! "Non-powers of 2 not yet implemented"
+  0≠l←l2b ? d←0⌈(≠𝕩)-⌈53÷l ⋄ (2⋆l×d) × 0 +⟜(base⊸×)´ d↓𝕩 ;
+  ! "Non power-of-2 bases not yet implemented"
 }
 
 Carry ← {
@@ -83,7 +84,7 @@ Abs ⇐ Conj ⇐ ⊢
 
 DivMod ⇐ {
   𝕨 <_compare 𝕩 ? ⟨↕0, 𝕨⟩ ;
-  "Non-powers of 2 not yet implemented" ! base = 2⋆l←2⋆⁼base
+  "Non power-of-2 bases not yet implemented" ! 0≠l←l2b
   Mu ← (From 2⋆l|⊣)⊸Mul
   M2 ← (⌊∘÷⟜l⥊0˙) ∾ Mu                 #  𝕩×2⋆𝕨
   D2 ← ⌈∘÷⟜l (↑⟨1⟩⊸Add⍟(∨´≠⟜0)↓) -⊸Mu  # ⌊𝕩÷2⋆𝕨
