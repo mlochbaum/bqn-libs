@@ -22,7 +22,7 @@ From ⇐ {
   ! ⌊⊸=𝕩
   𝕩>𝕩-1 ? 0⊸<◶↕‿FromSmall 𝕩 ;  # any a<𝕩 is an exact float
   # 𝕩 = mf×2⋆p, where ⌽e is the binary expansion of p
-  e‿mf ← 2 {⌊⊸=𝕩÷𝕨? e‿m←(×˜𝕨)𝕊𝕩 ⋄ a←⌊⊸=r←m÷𝕨 ⋄ ⟨e∾a,r⍟a m⟩; ⟨↕0,𝕩⟩} 𝕩
+  e‿mf ← 2 {(1⌈⌊)⊸=𝕩÷𝕨? e‿m←(×˜𝕨)𝕊𝕩 ⋄ a←⌊⊸=r←m÷𝕨 ⋄ ⟨e∾a,r⍟a m⟩; ⟨↕0,𝕩⟩} 𝕩
   m ← FromSmall mf
   {
     0≠l←l2b ? p←+˜⊸+˜´⌽e ⋄ (0⥊˜p⌊∘÷l) ∾ ⟨2⋆l|p⟩ Mul m ;
