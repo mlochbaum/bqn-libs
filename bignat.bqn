@@ -30,9 +30,14 @@ From ⇐ {
   }
 }
 ToNum ⇐ 0 { r←𝕨+base×𝕩 ⋄ "inexact"!𝕨=base|r ⋄ r }´ ⊢
+Log2f ← {-⟜(𝕩<2⋆⊢)⌊0.5+2⋆⁼𝕩} # Exact ⌊2⋆⁼𝕩
 NearestNum ⇐ {
-  0≠l←l2b ? d←0⌈(≠𝕩)-⌈53÷l ⋄ (2⋆l×d) × 0 +⟜(base⊸×)´ d↓𝕩 ;
-  ! "Non power-of-2 bases not yet implemented"
+  (base⋆≠𝕩) ≤ 2⋆53 ? 0 +⟜(base⊸×)´ 𝕩 ;
+  0≠l←l2b ?
+  b ← ¯53 + Log2f ⊢´𝕩
+  r ← 2⋆l|b ⋄ d ← (≠𝕩) + 1-˜⌊b÷l
+  (2⋆l×d) × +⟜(base⊸×)´ (0¨⊸≢d↑𝕩˙)⊸+⌾⊑⍟(r=(2×r)|⊑) d↓𝕩
+; ! "Non power-of-2 bases not yet implemented"
 }
 
 Carry ← {
@@ -107,7 +112,7 @@ DivMod ⇐ {
     xp ← -⟜(𝕨+2)⊸D2´ 𝕩
     (z M2˜ 𝕨¬h) Sub (h+h+2) D2 xp Mul z Mul z  # Newton
   }
-  Log ← (⌊2⋆⁼⊢´) + l×≠-1˙              # ⌊2⋆⁼𝕩
+  Log ← (Log2f⊢´) + l×≠-1˙             # ⌊2⋆⁼𝕩
   n‿m ← 1+Log¨ 𝕨‿𝕩
   p ← (n¬m) Recip m‿𝕩
   r ← 𝕩 Mul q ← (n+1) D2 p Mul 𝕨       # Approximate quotient
