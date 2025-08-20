@@ -122,6 +122,12 @@ DivMod ⇐ {
 }
 Div ⇐ ⊑ DivMod
 
+Pow ⇐ Mul {F _𝕣: {
+  ⟨i⟩𝕊𝕩:i≤1? 𝕨 ;
+  r←⟨1⟩⋄U←{U↩F⋄𝕨}  # Skip first multiply, where 𝕩 will be ⟨1⟩
+  𝕨 {r𝕨⊸U⍟(2|𝕩)↩⋄𝕩>1?𝕨F˜⊸𝕊⌊𝕩÷2;r} ToNum⍟= 𝕩
+}}
+
 Fact ⇐ { 𝕩≤1? ⟨1⟩; 𝕨𝕊n:
   Prod ← {2≤l←≠𝕩 ? (⌊l÷2)(↑Mul○𝕊↓)𝕩 ; From ×´𝕩} # Recurse to keep intermediates small
   Pri ← {/(2≤↕𝕩){𝕩>0⌾(𝕨⊸⊑)𝕩≠⊸⥊𝕨↑1}⍟⊑´⌽↕⌈√𝕩}     # Primes <𝕩
