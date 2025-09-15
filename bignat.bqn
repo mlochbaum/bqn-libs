@@ -7,7 +7,7 @@ l2b ← (base=2⊸⋆)⊸× 2⋆⁼base  # 0 if not a power of two
 
 _while_ ← {𝔽⍟𝔾∘𝔽_𝕣_𝔾∘𝔽⍟𝔾𝕩}
 
-Valid ← {
+Valid ⇐ {
   1==𝕩? ∧´1=•Type¨𝕩? ∧´(⌊⊸=∧0⊸≤∧<⟜base)𝕩? # List of integers in [0,base)
   (0<≠)◶⟨1,0≠⊢´⟩𝕩? 1 ;                    # Highest-order one isn't 0
   0
