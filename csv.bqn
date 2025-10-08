@@ -14,6 +14,7 @@ control ← {
 J ← ∾1↓·⥊<⊸(≍˘)
 
 # CSV text to list of list of strings
+# Ideas explained at https://tony-zorman.com/posts/bqn-csv.html
 Split ← { 𝕊⁼𝕩: Join𝕩 ;
   [q,c,n] ← control=⌜𝕩
   e ← ≠`q       # Escaped characters

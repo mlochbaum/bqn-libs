@@ -10,6 +10,10 @@
 
 # An empty list exports as "" if its fill is a space and [] otherwise
 
+# For explanations of many parsing ideas, see:
+# https://saltysylvi.github.io/blog/parsing-nested-lists-in-bqn.html
+# https://tony-zorman.com/posts/bqn-json.html
+
 ⟨Consts, ExportConst⟩ ← {
   val ← <¨ name ← "true"‿"false"‿"null"
   Consts ⇐ {
