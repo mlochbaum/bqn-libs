@@ -22,6 +22,7 @@ complex ← {
   A2⇐ +´∘×˜
   A ⇐ √A2
   Sqrt ⇐ { 0<m←A𝕩 ? s‿t←0>a‿b←𝕩 ⋄ -⍟t∘⌽⍟s (÷⟜2⋈b⊸÷) √2×m+|a ; 0‿0 }
+  ExpI ⇐ •math.Sin⋈•math.Cos
   _poly ⇐ {+⟜(𝕩⊸M)´𝕗}
   _polyd_ ⇐ {(𝕘‿2⥊0) (»+𝕩⊸M˘∘⊢)´ 𝕗}
   _polyd_ek_ ⇐ {
@@ -38,14 +39,24 @@ Eval ← {𝕨_fn 𝕩}
 
 # Analytical solutions to low-order polynomials
 exact ← {
-  M‿D‿Sqrt ← complex
+  M‿D‿Sqrt‿ExpI ← complex
   Low ← !∘"Input must have degree at least 1"
   Lin ← -∘D´⊢
   Quad ← { 𝕨 𝕊 c‿b‿a:
     b ÷↩ ¯2
     0‿0⊸≢◶⟨⋈˜,c⊸D⋈D⟜a⟩ b(0≤+´∘×)◶⟨+,-⟩ Sqrt (M˜b) - a M c
   }
-  _with ⇐ {(4⌊≠∘⊢)◶Low‿Low‿Lin‿Quad‿𝔽}
+  cru ← [2‿¯1‿¯1, 0‿1‿¯1×√3]÷2     # cube roots of unity
+  RealCub ← {
+    r‿q‿p ← ÷⟜3⌾(1⊸↓) ¯1 (↓÷⊑) 𝕩
+    a ← q-×˜p ⋄ b ← (r-p×q+2×a)÷2  # depressed coefficients
+    d ← (×˜b) + ×˜⊸×a              # discriminant
+    {
+      d>0 ? -⟜p⊸(⋈¨)˝ cru × (+⋈-)´ •math.Cbrt (-b)(+⋈-)√d ;
+      ⋈⟜0¨ p-˜ cru +˝∘× (2×√-a) × ExpI 3 ÷˜ (√-d) •math.Atan2 b
+    }
+  }
+  _with ⇐ {(5⌊≠∘⊢)◶Low‿Low‿Lin‿Quad‿((∨´0≠⊢´¨)◶(RealCub⊑¨)‿𝔽)‿𝔽}
 }
 
 # Starting points based on Rouche's theorem, Bini 1996
@@ -56,7 +67,7 @@ RoucheInit ← {
   k ← ⊏˘ CH (↕∘≠≍˘⊢) ⋆⁼ a
   e ← ((≠a)÷˜↕1-˜≠k) + ↕⊸÷¨1↓-⟜»k  # Angles
   uk ← ¯1↓(«⊸-k)√÷⟜«k⊏a            # Magnitudes
-  (∾ uk⊸×)¨ (•math.Sin⋈•math.Cos) (2×π)×e
+  (∾ uk⊸×)¨ complex.ExpI (2×π)×e
 }
 
 # Return all complex roots of little-endian polynomial 𝕩, using
@@ -90,7 +101,7 @@ _allRoots_ ← { GetStep _𝕣_ deriv:
 
 # Find a root of the given polynomial with Laguerre's method
 _laguerre_ ← {poly _𝕣_ eps root:
-  M‿D‿A‿A2‿Sqrt‿_polyd_ek_ ← complex
+  M‿D‿A‿A2‿Sqrt‿ExpI‿_polyd_ek_ ← complex
   Jump ← (•MakeRand 1).Range∘0 ⋄ jump_i ← 10
 
   nk2 ← 2 ÷ nrn ← ¬ rn ← ÷ 1-˜≠poly
@@ -108,7 +119,7 @@ _laguerre_ ← {poly _𝕣_ eps root:
     2 > stop ?
     dx ← {
       # Division by zero: jump in random direction
-      0‿0 ≡ dp ? (1 + A root) × (•math.Sin⋈•math.Cos) (2×π) × Jump i ;
+      0‿0 ≡ dp ? (1 + A root) × ExpI (2×π) × Jump i ;
       # Otherwise, Laguerre step
       fac ← p‿d2p_h M¨ <D dp
       (⊑fac) D rn‿0 + nrn × -⍟(0>⊑) Sqrt 1‿0 - nk2 × M´ fac
