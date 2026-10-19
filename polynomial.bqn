@@ -41,7 +41,7 @@ Eval ← {𝕨_fn 𝕩}
 exact ← {
   M‿D‿Sqrt‿ExpI ← complex
   Low ← !∘"Input must have degree at least 1"
-  Lin ← -∘D´⊢
+  Lin ← ⋈·-∘D´⊢
   Quad ← { 𝕨 𝕊 c‿b‿a:
     b ÷↩ ¯2
     0‿0⊸≢◶⟨⋈˜,c⊸D⋈D⟜a⟩ b(0≤+´∘×)◶⟨+,-⟩ Sqrt (M˜b) - a M c
