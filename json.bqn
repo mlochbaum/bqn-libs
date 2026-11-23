@@ -142,7 +142,7 @@ Tokenize ← {
 }
 
 Parse ← {
-  𝕊⁼𝕩: Export 𝕩 ;
+  𝕨𝕊⁼𝕩: 𝕨 Export 𝕩 ;
   "Empty input" ! 0<≠𝕩
   t‿tf‿cns‿num‿strk ← Tokenize 𝕩
   "Empty input" ! 0<≠t
@@ -205,29 +205,44 @@ ExportNumber ← {
   '-'¨⌾(('¯'=r)⊸/) r
 }
 IsString ← {∧´2=•Type¨ 1⊸↑⎊⋈⍟(0=≠) 𝕩}⎊0
-ExportList ← {
-  IsString 𝕩 ? ExportString 𝕩 ;
-  ∾ ⟨"["⟩∾⟨"]"⟩∾˜ 1↓⥊(<",")≍˘Export¨ 𝕩
-}
 ExportString ← '"' (∾∾⊣) Escape
-ExportObject ← {
-  "Object must consist of keys≍values" ! 2=≠𝕩
-  [k,v] ← 𝕩
-  "Object keys must be strings" ! ∧´ IsString¨ k
-  kv ← ⥊ (ExportString¨ k) ≍˘ Export¨ v
-  ∾ ⟨"{"⟩∾⟨"}"⟩∾˜ ¯1↓⥊ kv ≍˘ (≠kv) ⥊ ⟨":",","⟩
+
+MakeExporter ← { 𝕊⟨indentStr, br, itemSep, keySep⟩:
+    ExportList ← {
+      IsString 𝕩 ? ExportString 𝕩 ;
+      level𝕊obj:
+        separatedItems ← 1↓⥊(<itemSep∾br)≍˘(((level/indentStr)∾(level+1)⊸Export)¨ obj)
+        ∾ ⟨"[", br⟩∾separatedItems∾⟨br, (level-1)/indentStr, "]"⟩
+    }
+    ExportObject ← { level𝕊obj:
+      "Object must consist of keys≍values" ! 2=≠obj
+      [k, v] ← obj
+      "Object keys must be strings" ! ∧´ IsString¨ k
+      kv ← ⥊ (((level/indentStr)∾ExportString)¨ k) ≍˘ (level+1)⊸Export¨ v
+      separatedItems ← ¯1↓⥊ kv ≍˘ (≠kv) ⥊ ⟨keySep, itemSep∾br⟩
+      ∾ ⟨"{", br⟩∾separatedItems∾⟨br, (level-1)/indentStr, "}"⟩
+    }
+    Export ⇐ (2⌊•Type∘⊢)◶⟨ # Check type
+      (3⌊·=⊢)◶⟨            # Type 0, array: Check rank
+        ExportConst        #   0 constant (enclosed string)
+        ExportList         #   1 List or string
+        ExportObject       #   2 Object
+        !∘"Rank >2 cannot be exported to JSON"
+      ⟩
+      ExportNumber         # Type 1: number
+      ! "Non-numeric atoms can't be exported to JSON" ∾ {
+        𝕊@: " (use <""null"" for null)" ;
+        6=•Type𝕩? " (objects are represented as keys≍values)" ;
+        ""
+      }
+    ⟩
 }
-Export ← (2⌊•Type)◶⟨ # Check type
-  (3⌊=)◶⟨            # Type 0, array: Check rank
-    ExportConst      #   0 constant (enclosed string)
-    ExportList       #   1 List or string
-    ExportObject     #   2 Object
-    !∘"Rank >2 cannot be exported to JSON"
-  ⟩
-  ExportNumber       # Type 1: number
-  ! "Non-numeric atoms can't be exported to JSON" ∾ {
-    𝕊@: " (use <""null"" for null)" ;
-    6=•Type𝕩? " (objects are represented as keys≍values)" ;
-    ""
-  }
-⟩
+
+Export ← {
+    # Compact format:
+    𝕊𝕩: 1 (MakeExporter ⟨"", "", ",", ":"⟩).Export 𝕩 ;
+    # Pretty format:
+    IsString 𝕨 ? 1 (MakeExporter ⟨𝕨, @+10, ",", ": "⟩).Export 𝕩 ;
+    # Custom format:
+    ⟨indentStr, lineBreakStr, itemSeparator, keySeparator⟩𝕊𝕩: 1 (MakeExporter 𝕨).Export 𝕩
+}
